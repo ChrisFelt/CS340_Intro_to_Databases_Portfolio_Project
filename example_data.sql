@@ -5,6 +5,103 @@
 -- INSERT INTO queries will be tested here before merging
 --   with DDL.sql file
 
+SET FOREIGN_KEY_CHECKS=0;
+SET AUTOCOMMIT = 0;
+
+-- -----------------------------------------------------
+-- Table Users
+-- -----------------------------------------------------
+CREATE OR REPLACE TABLE Users (
+  userID INT NOT NULL AUTO_INCREMENT UNIQUE,
+  name VARCHAR(75) NOT NULL,
+  address VARCHAR(155) NOT NULL,
+  specialization VARCHAR(155) NULL,
+  bio VARCHAR(3000) NULL,
+  PRIMARY KEY (userID));
+
+
+-- -----------------------------------------------------
+-- Table Rocks
+-- -----------------------------------------------------
+CREATE OR REPLACE TABLE Rocks (
+  rockID INT NOT NULL AUTO_INCREMENT UNIQUE,
+  userID INT NOT NULL,
+  name VARCHAR(75) NOT NULL,
+  geoOrigin VARCHAR(155) NOT NULL,
+  type VARCHAR(75) NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  chemicalComp VARCHAR(155) NOT NULL,
+  reviewAvg DECIMAL(3,2) UNSIGNED NULL,
+  PRIMARY KEY (rockID),
+  CONSTRAINT fk_Rocks_Users1
+    FOREIGN KEY (userID)
+    REFERENCES Users (userID)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table Reviews
+-- -----------------------------------------------------
+CREATE OR REPLACE TABLE Reviews (
+  reviewID INT NOT NULL AUTO_INCREMENT UNIQUE,
+  userID INT NOT NULL,
+  rockID INT NOT NULL,
+  title VARCHAR(75) NOT NULL,
+  body VARCHAR(3000) NOT NULL,
+  rating TINYINT(1) UNSIGNED NOT NULL,
+  PRIMARY KEY (reviewID),
+  CONSTRAINT fk_Reviews_Users1
+    FOREIGN KEY (userID)
+    REFERENCES Users (userID)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_Reviews_Rocks1
+    FOREIGN KEY (rockID)
+    REFERENCES Rocks (rockID)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table Shipments
+-- -----------------------------------------------------
+CREATE OR REPLACE TABLE Shipments (
+  shipmentID INT NOT NULL AUTO_INCREMENT UNIQUE,
+  userID INT NOT NULL,
+  shipOrigin VARCHAR(255) NOT NULL,
+  shipDest VARCHAR(255) NOT NULL,
+  shipDate DATE NOT NULL,
+  miscNote VARCHAR(3000) NULL,
+  PRIMARY KEY (shipmentID),
+  CONSTRAINT fk_Shipments_Users1
+    FOREIGN KEY (userID)
+    REFERENCES Users (userID)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table Shipments_has_Rocks
+-- -----------------------------------------------------
+CREATE OR REPLACE TABLE Shipments_has_Rocks (
+  shipmentHasRockID INT NOT NULL AUTO_INCREMENT UNIQUE,
+  shipmentID INT NOT NULL,
+  rockID INT NOT NULL,
+  PRIMARY KEY (shipmentHasRockID),
+  -- combination of shipmentID and rockID FKs must always be unique
+  CONSTRAINT fk_shipmentID_and_rockID_unique UNIQUE (shipmentID, rockID),
+  CONSTRAINT fk_Shipments_has_Rocks_Shipments1
+    FOREIGN KEY (shipmentID)
+    REFERENCES Shipments (shipmentID)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_Shipments_has_Rocks_Rocks1
+    FOREIGN KEY (rockID)
+    REFERENCES Rocks (rockID)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION);
+
 -- -----------------------------------------------------
 -- Table Users
 -- -----------------------------------------------------
@@ -21,15 +118,19 @@ VALUES (
     'Ricky has spent most of his life rolling rocks, aiming to be the very best there ever was'
 ), (
     'Rick McFarley',
-    '101 Sedimentary Way, New York City, NY 10001'
+    '101 Sedimentary Way, New York City, NY 10001',
+    NULL,
+    NULL
 ), (
     'Bobby James',
     '6000 Metamorphic Drive, Rock City, NM 87311 USA',
-    'Gem Cutter'
+    'Gem Cutter',
+    NULL
 ), (
     'Alice Liddel',
     '1 Igneous Court, Sydney, NSW 2000 Australia',
-    'Amateur Rockhound'
+    'Amateur Rockhound',
+    NULL
 ), (
     'Jimothy Riley',
     'Riley Castle Way, London, W1D 3AF United Kingdom',
@@ -55,35 +156,40 @@ VALUES (
     'Appalachia',
     'Igneous',
     'A rock for rolling, has moss growing on it',
-    'Quartz, Iron, Magnesium'
+    'Quartz, Iron, Magnesium',
+    NULL
 ), (
     3,
     'The One Rock',
     'Mt. Ruapehu, New Zealand',
     'Igneous',
     'Vastly superior to rocks that suffer from any form of plurality.',
-    'KALSi3O8'
+    'KALSi3O8',
+    NULL
 ), (
     4,
     'Old Man of the Mountain',
     'White Mountains, USA',
     'Igneous',
     'Shard from the OG.',
-    'SiO2'
+    'SiO2',
+    NULL
 ), (
     1,
     'Scarlet',
     'Wah Wah Mountains, USA',
     'Metamorphic',
     'Uncut red beryl in original rhyolite matrix. So shiny.',
-    'Be3Al2Si6O18 + Mn'
+    'Be3Al2Si6O18 + Mn',
+    NULL
 ), (
     1,
     'Rocky',
     'K2, Pakistan',
     'Igneous',
     'My little blue buddy',
-    'SiO2 + Cu3(CO3)2(OH)2'
+    'SiO2 + Cu3(CO3)2(OH)2',
+    NULL
 );
 
 -- -----------------------------------------------------
@@ -142,7 +248,7 @@ VALUES (
     1,
     'Rocklohoma',
     '123 Rocky Road',
-    2022-02-02,
+    '2022-02-02',
     'User has requested the rock be rolled to its destination'
 ), (
     4,
@@ -166,7 +272,8 @@ VALUES (
     2,
     '1 Igneous Court, Sydney, NSW 2000 Australia',
     '101 Sedimentary Way',
-    2022-12-24
+    2022-12-24,
+    NULL
 );
 
 -- -----------------------------------------------------
@@ -192,3 +299,6 @@ VALUES (
     5,
     2
 );
+
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;
