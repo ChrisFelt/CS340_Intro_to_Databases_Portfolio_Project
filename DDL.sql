@@ -12,20 +12,19 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Table Users
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Users (
-  userID INT NOT NULL AUTO_INCREMENT,
+  userID INT NOT NULL AUTO_INCREMENT UNIQUE,
   name VARCHAR(75) NOT NULL,
   address VARCHAR(155) NOT NULL,
   specialization VARCHAR(155) NULL,
   bio VARCHAR(3000) NULL,
-  PRIMARY KEY (userID),
-  UNIQUE INDEX userID_UNIQUE (userID ASC));
+  PRIMARY KEY (userID));
 
 
 -- -----------------------------------------------------
 -- Table Rocks
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Rocks (
-  rockID INT NOT NULL AUTO_INCREMENT,
+  rockID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
   name VARCHAR(75) NOT NULL,
   geoOrigin VARCHAR(155) NOT NULL,
@@ -34,7 +33,6 @@ CREATE TABLE IF NOT EXISTS Rocks (
   chemicalComp VARCHAR(155) NOT NULL,
   reviewAvg DECIMAL(3,2) UNSIGNED NOT NULL,
   PRIMARY KEY (rockID),
-  UNIQUE INDEX rockID_UNIQUE (rockID ASC),
   CONSTRAINT fk_Rocks_Users1
     FOREIGN KEY (userID)
     REFERENCES Users (userID)
@@ -46,14 +44,13 @@ CREATE TABLE IF NOT EXISTS Rocks (
 -- Table Reviews
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Reviews (
-  reviewID INT NOT NULL AUTO_INCREMENT,
+  reviewID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
   rockID INT NOT NULL,
   title VARCHAR(75) NOT NULL,
   body VARCHAR(3000) NOT NULL,
   rating TINYINT(1) UNSIGNED NOT NULL,
   PRIMARY KEY (reviewID),
-  UNIQUE INDEX reviewID_UNIQUE (reviewID ASC),
   CONSTRAINT fk_Reviews_Users1
     FOREIGN KEY (userID)
     REFERENCES Users (userID)
@@ -70,14 +67,13 @@ CREATE TABLE IF NOT EXISTS Reviews (
 -- Table Shipments
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Shipments (
-  shipmentID INT NOT NULL AUTO_INCREMENT,
+  shipmentID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
   shipOrigin VARCHAR(255) NOT NULL,
   shipDest VARCHAR(255) NOT NULL,
   shipDate DATE NOT NULL,
   miscNote VARCHAR(3000) NULL,
   PRIMARY KEY (shipmentID),
-  UNIQUE INDEX shipmentID_UNIQUE (shipmentID ASC),
   CONSTRAINT fk_Shipments_Users1
     FOREIGN KEY (userID)
     REFERENCES Users (userID)
@@ -89,11 +85,10 @@ CREATE TABLE IF NOT EXISTS Shipments (
 -- Table Shipments_has_Rocks
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Shipments_has_Rocks (
-  shipmentHasRockID INT NOT NULL AUTO_INCREMENT,
+  shipmentHasRockID INT NOT NULL AUTO_INCREMENT UNIQUE,
   shipmentID INT NOT NULL,
   rockID INT NOT NULL,
   PRIMARY KEY (shipmentHasRockID),
-  UNIQUE INDEX shipmentHasRockID_UNIQUE (shipmentHasRockID ASC),
   CONSTRAINT fk_Shipments_has_Rocks_Shipments1
     FOREIGN KEY (shipmentID)
     REFERENCES Shipments (shipmentID)
