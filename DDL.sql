@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS Shipments_has_Rocks (
   shipmentID INT NOT NULL,
   rockID INT NOT NULL,
   PRIMARY KEY (shipmentHasRockID),
+  -- combination of shipmentID and rockID FKs must always be unique
+  CONSTRAINT fk_shipmentID_and_rockID_unique UNIQUE (shipmentID, rockID),
   CONSTRAINT fk_Shipments_has_Rocks_Shipments1
     FOREIGN KEY (shipmentID)
     REFERENCES Shipments (shipmentID)
