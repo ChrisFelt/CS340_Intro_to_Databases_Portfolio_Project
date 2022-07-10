@@ -4,6 +4,10 @@
 -- Members: Robert Behring and Christopher Felt
 -- Modified from MySQL Workbench Forward Engineering
 
+
+SET FOREIGN_KEY_CHECKS=0;
+SET AUTOCOMMIT = 0;
+
 -- -----------------------------------------------------
 -- Table Users
 -- -----------------------------------------------------
@@ -96,3 +100,6 @@ CREATE OR REPLACE TABLE Shipments_has_Rocks (
     REFERENCES Rocks (rockID)
     ON DELETE RESTRICT
     ON UPDATE NO ACTION);
+
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;
