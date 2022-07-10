@@ -146,7 +146,7 @@ INSERT INTO Rocks (
     geoOrigin,
     type,
     description,
-    chemicalComp,
+    chemicalComp
 )
 VALUES (
     1,
