@@ -7,7 +7,7 @@
 -- -----------------------------------------------------
 -- Table Users
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Users (
+CREATE OR REPLACE TABLE Users (
   userID INT NOT NULL AUTO_INCREMENT UNIQUE,
   name VARCHAR(75) NOT NULL,
   address VARCHAR(155) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Users (
 -- -----------------------------------------------------
 -- Table Rocks
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Rocks (
+CREATE OR REPLACE TABLE Rocks (
   rockID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
   name VARCHAR(75) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Rocks (
 -- -----------------------------------------------------
 -- Table Reviews
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Reviews (
+CREATE OR REPLACE TABLE Reviews (
   reviewID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
   rockID INT NOT NULL,
@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS Reviews (
 -- -----------------------------------------------------
 -- Table Shipments
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Shipments (
+CREATE OR REPLACE TABLE Shipments (
   shipmentID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
-  shippingAddress VARCHAR(255) NOT NULL,
+  shipOrigin VARCHAR(255) NOT NULL,
+  shipDest VARCHAR(255) NOT NULL,
   shipDate DATE NOT NULL,
-  toHQ BIT NOT NULL DEFAULT 0,
   miscNote VARCHAR(3000) NULL,
   PRIMARY KEY (shipmentID),
   CONSTRAINT fk_Shipments_Users1
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS Shipments (
 -- -----------------------------------------------------
 -- Table Shipments_has_Rocks
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Shipments_has_Rocks (
+CREATE OR REPLACE TABLE Shipments_has_Rocks (
   shipmentHasRockID INT NOT NULL AUTO_INCREMENT UNIQUE,
   shipmentID INT NOT NULL,
   rockID INT NOT NULL,
