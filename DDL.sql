@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Rocks (
   rockID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
-  typeID INT NOT NULL,
   name VARCHAR(75) NOT NULL,
   geoOrigin VARCHAR(155) NOT NULL,
+  type VARCHAR(75) NOT NULL,
   description VARCHAR(255) NOT NULL,
   chemicalComp VARCHAR(155) NOT NULL,
   PRIMARY KEY (rockID),
@@ -33,20 +33,6 @@ CREATE TABLE IF NOT EXISTS Rocks (
     REFERENCES Users (userID)
     ON DELETE RESTRICT
     ON UPDATE NO ACTION);
-  CONSTRAINT fk_Rocks_Types1
-    FOREIGN KEY (typeID)
-    REFERENCES Types (typeID)
-    ON DELETE RESTRICT
-    ON UPDATE NO ACTION);
-
-
--- -----------------------------------------------------
--- Table Types - category table for Rocks
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS Types (
-  typeID INT NOT NULL AUTO_INCREMENT UNIQUE,
-  type VARCHAR(75) NOT NULL,
-  PRIMARY KEY (typeID);
 
 
 -- -----------------------------------------------------
