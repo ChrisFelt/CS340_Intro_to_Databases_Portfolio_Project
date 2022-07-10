@@ -31,7 +31,6 @@ CREATE OR REPLACE TABLE Rocks (
   type VARCHAR(75) NOT NULL,
   description VARCHAR(255) NOT NULL,
   chemicalComp VARCHAR(155) NOT NULL,
-  reviewAvg DECIMAL(3,2) UNSIGNED NULL,
   PRIMARY KEY (rockID),
   CONSTRAINT fk_Rocks_Users1
     FOREIGN KEY (userID)
@@ -147,8 +146,7 @@ INSERT INTO Rocks (
     geoOrigin,
     type,
     description,
-    chemicalComp,
-    reviewAvg
+    chemicalComp
 )
 VALUES (
     1,
@@ -156,40 +154,35 @@ VALUES (
     'Appalachia',
     'Igneous',
     'A rock for rolling, has moss growing on it',
-    'Quartz, Iron, Magnesium',
-    NULL
+    'Quartz, Iron, Magnesium'
 ), (
     3,
     'The One Rock',
     'Mt. Ruapehu, New Zealand',
     'Igneous',
     'Vastly superior to rocks that suffer from any form of plurality.',
-    'KALSi3O8',
-    NULL
+    'KALSi3O8'
 ), (
     4,
     'Old Man of the Mountain',
     'White Mountains, USA',
     'Igneous',
     'Shard from the OG.',
-    'SiO2',
-    NULL
+    'SiO2'
 ), (
     1,
     'Scarlet',
     'Wah Wah Mountains, USA',
     'Metamorphic',
     'Uncut red beryl in original rhyolite matrix. So shiny.',
-    'Be3Al2Si6O18 + Mn',
-    NULL
+    'Be3Al2Si6O18 + Mn'
 ), (
     1,
     'Rocky',
     'K2, Pakistan',
     'Igneous',
     'My little blue buddy',
-    'SiO2 + Cu3(CO3)2(OH)2',
-    NULL
+    'SiO2 + Cu3(CO3)2(OH)2'
 );
 
 -- -----------------------------------------------------
