@@ -25,19 +25,19 @@ def user():
 
 # rock route
 @app.route('/rocks', methods=["POST", "GET"])
-def user():
+def rock():
     return render_template("rocks.html")
 
 
 # review route
 @app.route('/reviews', methods=["POST", "GET"])
-def user():
+def review():
     return render_template("reviews.html")
 
 
 # user route
 @app.route('/shipments', methods=["POST", "GET"])
-def user():
+def shipment():
     return render_template("shipments.html")
 
 
