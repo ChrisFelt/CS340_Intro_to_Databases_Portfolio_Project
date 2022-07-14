@@ -42,15 +42,42 @@ INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
 
 -- READ
 -- get all Rocks for the browse Rocks table
-SELECT rockID, SELECT name FROM Users INNER JOIN Rocks ON Users.userID = Rocks.userID,
-    name, geoOrigin, type, description, chemicalComp
+SELECT rockID, Users.name AS owner, name, geoOrigin, type, description, chemicalComp
     FROM Rocks
+        INNER JOIN Users
+            ON Rocks.userID = Users.userID -- get name of User owner
 
 
 -- -----------------------------------------------------
 -- Reviews Data Manipulation Queries
 -- -----------------------------------------------------
 
+-- CREATE
+-- add a new Review
+INSERT INTO Reviews (userID, rockID, title, body, rating)
+    VALUES (SELECT userID FROM Users WHERE name = :name_from_dropdown_input,
+    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input,
+    title = :titleInput, body = :bodyInput, rating = :rating_from_dropdown_input)
+
+-- READ
+-- get all Reviews for the browse Reviews table
+SELECT reviewID, Users.name AS reviewer, Rocks.name AS rock, title, body, rating
+    FROM Reviews
+        INNER JOIN Users
+            ON Reviews.userID = Users.userID -- User doing Review
+        INNER JOIN Rocks
+            ON Reviews.rockID = Rocks.rockID -- name of Rock for Review
+
+-- UPDATE
+-- update Review data using form input data
+-- first, get Review
+SELECT reviewID, reviewer, rock, title, body, rating
+    FROM Reviews
+    WHERE reviewID = :reviewID_selected_in_form -- pulled from onclick event when edit Review link is clicked
+-- then, update Review
+UPDATE Reviewers
+    SET reviewer = :reviewerInput, rock = :rockInput, title = :titleInput, body = :bodyInput, rating = :ratingInput
+    WHERE reviewID = :reviewID_selected_in_form
 
 
 -- -----------------------------------------------------
