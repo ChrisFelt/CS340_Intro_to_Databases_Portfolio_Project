@@ -18,7 +18,7 @@ CREATE OR REPLACE TABLE Users (
   address VARCHAR(155) NOT NULL,
   specialization VARCHAR(155) NULL,
   bio VARCHAR(3000) NULL,
-  CONSTRAINT Unique_Name UNIQUE (fName, lName),
+  CONSTRAINT Unique_Name UNIQUE (first_name, last_name),
   PRIMARY KEY (userID));
 
 
@@ -246,7 +246,7 @@ INSERT INTO Shipments (
     miscNote
 )
 VALUES (
-    (SELECT userID FROM Users WHERE name='Ricky'),
+    (SELECT userID FROM Users WHERE first_name='Ricky' AND last_name='Bobby'),
     'Rocklohoma',
     '123 Rocky Road',
     '2022-02-02',
