@@ -76,7 +76,8 @@ SELECT reviewID, reviewer, rock, title, body, rating
     WHERE reviewID = :reviewID_selected_in_form -- pulled from onclick event when edit Review link is clicked
 -- then, update Review
 UPDATE Reviewers
-    SET reviewer = :reviewerInput, rock = :rockInput, title = :titleInput, body = :bodyInput, rating = :ratingInput
+    SET reviewer = :userID_from_dropdown_input, rock = :rockID_from_rock_input, title = :titleInput,
+    body = :bodyInput, rating = :ratingInput
     WHERE reviewID = :reviewID_selected_in_form
 
 
