@@ -43,7 +43,7 @@ INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
 
 -- READ
 -- get all Rocks for the browse Rocks table
-SELECT rockID, Users.name AS owner, name, geoOrigin, type, description, chemicalComp
+SELECT rockID, CONCAT(Users.firstName, ' ', Users.lastName) AS owner, name, geoOrigin, type, description, chemicalComp
     FROM Rocks
         INNER JOIN Users
             ON Rocks.userID = Users.userID -- get name of User owner
@@ -62,7 +62,7 @@ INSERT INTO Reviews (userID, rockID, title, body, rating)
 
 -- READ
 -- get all Reviews for the browse Reviews table
-SELECT reviewID, Users.name AS reviewer, Rocks.name AS rock, title, body, rating
+SELECT reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer, Rocks.name AS rock, title, body, rating
     FROM Reviews
         INNER JOIN Users
             ON Reviews.userID = Users.userID -- User doing Review
