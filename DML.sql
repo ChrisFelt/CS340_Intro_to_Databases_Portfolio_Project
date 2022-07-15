@@ -10,23 +10,24 @@
 
 -- CREATE
 -- add a new User
-INSERT INTO Users (name, address, specialization, bio)
-    VALUES (:nameInput, : addressInput, :specializationInput, :bioInput)
+INSERT INTO Users (firstName, lastName, address, specialization, bio)
+    VALUES (:firstNameInput, :lastNameInput, :addressInput, :specializationInput, :bioInput)
 
 -- READ
 -- get all Users for the browse Users table
-SELECT userID, name, address, specialization, bio
+SELECT userID, firstName, lastName, address, specialization, bio
     FROM Users
 
 -- UPDATE
 -- update a User's data using form input data
 -- first, get User
-SELECT userID, name, address, specialization, bio
+SELECT userID, firstName, lastName, address, specialization, bio
     FROM Users
     WHERE userID = :userID_selected_in_form -- pulled from onclick event when edit User link is clicked
 -- then, update User
 UPDATE Users
-    SET name = :nameInput, address = :addressInput, specialization = :specializationInput, bio = :bioInput
+    SET firstNme = :firstNameInput, lastName = :lastNameInput, address = :addressInput,
+    specialization = :specializationInput, bio = :bioInput
     WHERE userID = :userID_selected_in_form
 
 
@@ -37,7 +38,7 @@ UPDATE Users
 -- CREATE
 -- add a new Rock
 INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
-    VALUES (SELECT userID FROM Users WHERE name = :name_from_dropdown_input,　-- what about Users with same name?
+    VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,　
     name = :nameInput, geoOrigin = :geoOriginInput, type = :typeInput, chemicalComp = :chemicalCompInput)
 
 -- READ
@@ -55,7 +56,7 @@ SELECT rockID, Users.name AS owner, name, geoOrigin, type, description, chemical
 -- CREATE
 -- add a new Review
 INSERT INTO Reviews (userID, rockID, title, body, rating)
-    VALUES (SELECT userID FROM Users WHERE name = :name_from_dropdown_input,
+    VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input,
     title = :titleInput, body = :bodyInput, rating = :rating_from_dropdown_input)
 
@@ -87,10 +88,10 @@ UPDATE Reviewers
 
 -- CREATE
 -- add a new Shipment
-INSERT INTO Reviews (userID, rockID, title, body, rating)
-    VALUES (SELECT userID FROM Users WHERE name = :name_from_dropdown_input,
-    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input,
-    title = :titleInput, body = :bodyInput, rating = :rating_from_dropdown_input)
+INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
+    VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
+
+    )
 
 
 -- -----------------------------------------------------
