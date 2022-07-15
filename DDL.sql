@@ -17,10 +17,13 @@ SET AUTOCOMMIT = 0;
 -- -----------------------------------------------------
 CREATE OR REPLACE TABLE Users (
   userID INT NOT NULL AUTO_INCREMENT UNIQUE,
-  name VARCHAR(75) NOT NULL,
+  firstName VARCHAR(75) NOT NULL,
+  lastName VARCHAR(75) NOT NULL,
   address VARCHAR(155) NOT NULL,
   specialization VARCHAR(155) NULL,
   bio VARCHAR(3000) NULL,
+  CONSTRAINT full_name_Users1
+    UNIQUE (firstName, lastName),
   PRIMARY KEY (userID));
 
 
@@ -93,7 +96,8 @@ CREATE OR REPLACE TABLE Shipments_has_Rocks (
   rockID INT NOT NULL,
   PRIMARY KEY (shipmentHasRockID),
   -- combination of shipmentID and rockID FKs must always be unique
-  CONSTRAINT fk_shipmentID_and_rockID_unique UNIQUE (shipmentID, rockID),
+  CONSTRAINT fk_shipmentID_and_rockID_unique
+    UNIQUE (shipmentID, rockID),
   CONSTRAINT fk_Shipments_has_Rocks_Shipments1
     FOREIGN KEY (shipmentID)
     REFERENCES Shipments (shipmentID)
@@ -108,42 +112,39 @@ CREATE OR REPLACE TABLE Shipments_has_Rocks (
 
 -- #####################################################
 -- INSERT QUERIES
--- WORK IN PROGRESS - HARD CODED FKS WILL BE REPLACED WITH
--- SELECT STATEMENTS, AND DATA WILL BE BROUGHT IN LINE
--- WITH TABLES FROM THE REPORT.
 -- #####################################################
 
 -- -----------------------------------------------------
 -- Table Users
 -- -----------------------------------------------------
 INSERT INTO Users (
-    name,
+    firstName,
+    lastName,
     address,
     specialization,
     bio
 )
 VALUES (
     'Ricky',
-    '123 Rocky Road',
-    'Rolling Rocks',
-    'Ricky has spent most of his life rolling rocks, aiming to be the very best there ever was'
-), (
-    'Rick McFarley',
-    '101 Sedimentary Way, New York City, NY 10001 USA',
+    'McFarley',
+    '101 Sedimentary Way, New York City, NY 10001',
     NULL,
     NULL
 ), (
-    'Bobby James',
+    'Bobby',
+    'James',
     '6000 Metamorphic Drive, Rock City, NM 87311 USA',
     'Gem Cutter',
     NULL
 ), (
-    'Alice Liddel',
+    'Alice',
+    'Liddel',
     '1 Igneous Court, Sydney, NSW 2000 Australia',
     'Amateur Rockhound',
     NULL
 ), (
-    'Jimothy Riley',
+    'Jimothy',
+    'Riley',
     'Riley Castle Way, London, W1D 3AF United Kingdom',
     'Mineral Photographer',
     "I've spent the last 23 years photographing priceless rocks all across the UK and US."
@@ -161,35 +162,28 @@ INSERT INTO Rocks (
     chemicalComp
 )
 VALUES (
-    1,
-    'Mossy Rock',
-    'Appalachia',
-    'Igneous',
-    'A rock for rolling, has moss growing on it',
-    'Quartz, Iron, Magnesium'
-), (
-    3,
+    (SELECT userID FROM Users WHERE firstName='Alice' AND lastName='Liddel'),
     'The One Rock',
     'Mt. Ruapehu, New Zealand',
     'Igneous',
     'Vastly superior to rocks that suffer from any form of plurality.',
     'KALSi3O8'
 ), (
-    4,
+    (SELECT userID FROM Users WHERE firstName='Jimothy' AND lastName='Riley'),
     'Old Man of the Mountain',
     'White Mountains, USA',
     'Igneous',
     'Shard from the OG.',
     'SiO2'
 ), (
-    1,
+    (SELECT userID FROM Users WHERE firstName='Bobby' AND lastName='James'),
     'Scarlet',
     'Wah Wah Mountains, USA',
     'Metamorphic',
     'Uncut red beryl in original rhyolite matrix. So shiny.',
     'Be3Al2Si6O18 + Mn'
 ), (
-    1,
+    (SELECT userID FROM Users WHERE firstName='Bobby' AND lastName='James'),
     'Rocky',
     'K2, Pakistan',
     'Igneous',
@@ -208,35 +202,29 @@ INSERT INTO Reviews (
     rating
 )
 VALUES (
-    1,
-    1,
-    'BEST ROCK EVER',
-    'The original rolling stone, why would anyone ever want another?',
-    5
-), (
-    2,
-    4,
+    (SELECT userID FROM Users WHERE firstName='Ricky' AND lastName='McFarley'),
+    (SELECT rockID FROM Rocks WHERE name='Scarlet'),
     'not so good rock',
     "too shiny, didn't like it. ",
     2
 ), (
-    2,
-    2,
+    (SELECT userID FROM Users WHERE firstName='Bobby' AND lastName='James'),
+    (SELECT rockID FROM Rocks WHERE name='The One Rock'),
     'WOW THAT CRYSTAL STRUCTURE THO',
     'I cut it and ground it down into a thin section just so I could see the FANTASTIC twinning structure of the K-spar crystals under a microscope - THREE DAYS OF ROCK GRINDING WELL SPENT.',
     5
 ), (
-    3,
-    4,
+    (SELECT userID FROM Users WHERE firstName='Alice' AND lastName='Liddel'),
+    (SELECT rockID FROM Rocks WHERE name='Old Man of the Mountain'),
     'meh',
-    "Kind of your average, middle of the road rock. Honestly I'm not sure what the individual who sent this in was thinking.",
+    "Kind of your average, middle of the road rock. Honestly I'm not sure what the individual who sent this in was thinking. Clearly the caliber of his or her upbringing is questionable.",
     3
 ), (
-    4,
-    5,
+    (SELECT userID FROM Users WHERE firstName='Jimothy' AND lastName='Riley'),
+    (SELECT rockID FROM Rocks WHERE name='Rocky'),
     'Nope',
     'Not nearly as good as my rock, which is the best rock.',
-    5
+    1
 );
 
 -- -----------------------------------------------------
@@ -250,28 +238,28 @@ INSERT INTO Shipments (
     miscNote
 )
 VALUES (
-    4,
-    '6000 Metamorphic Drive, Rock City, NM 87311 USA',
+    (SELECT userID FROM Users WHERE firstName='Alice' AND lastName='Liddel'),
+    'YouBreccia Way 71, Ramersberg 6060 Switzerland',
     '1 Igneous Court, Sydney, NSW 2000 Australia',
-    2022-11-08,
+    '2022-11-08',
     'VIP, HANDLE WITH CARE'
 ), (
-    5,
-    '101 Sedimentary Way, New York City, NY 10001',
+    (SELECT userID FROM Users WHERE firstName='Jimothy' AND lastName='Riley'),
+    'YouBreccia Way 71, Ramersberg 6060 Switzerland',
     'Riley Castle Way, London, W1D 3AF United Kingdom',
-    2023-07-07,
+    '2023-07-07',
     'Special delivery instructions by Mr. Riley - leave at portcullis #2.'
 ), (
-    3,
-    'Riley Castle Way, London, W1D 3AF United Kingdom',
+    (SELECT userID FROM Users WHERE firstName='Bobby' AND lastName='James'),
+    'YouBreccia Way 71, Ramersberg 6060 Switzerland',
     '6000 Metamorphic Drive, Rock City, NM 87311 USA',
-    2023-04-10,
+    '2023-04-10',
     'User has requested the rock be rolled to its destination'
 ), (
-    2,
-    '1 Igneous Court, Sydney, NSW 2000 Australia',
-    '101 Sedimentary Way',
-    2022-12-24,
+    (SELECT userID FROM Users WHERE firstName='Ricky' AND lastName='McFarley'),
+    '101 Sedimentary Way, New York City, NY 10001',
+    'YouBreccia Way 71, Ramersberg 6060 Switzerland',
+    '2022-12-24',
     NULL
 );
 
@@ -283,20 +271,29 @@ INSERT INTO Shipments_has_Rocks (
     rockID
 )
 VALUES (
-    1,
-    1
+    (SELECT shipmentID FROM Shipments
+        WHERE shipOrigin='YouBreccia Way 71, Ramersberg 6060 Switzerland'
+        AND shipDest='1 Igneous Court, Sydney, NSW 2000 Australia'
+        AND shipDate='2022-11-08'),
+    (SELECT rockID FROM Rocks WHERE name='Old Man of the Mountain')
 ), (
-    2,
-    4
+    (SELECT shipmentID FROM Shipments
+        WHERE shipOrigin='YouBreccia Way 71, Ramersberg 6060 Switzerland'
+        AND shipDest='Riley Castle Way, London, W1D 3AF United Kingdom'
+        AND shipDate='2023-07-07'),
+    (SELECT rockID FROM Rocks WHERE name='Rocky')
 ), (
-    3,
-    3
+    (SELECT shipmentID FROM Shipments
+        WHERE shipOrigin='YouBreccia Way 71, Ramersberg 6060 Switzerland'
+        AND shipDest='6000 Metamorphic Drive, Rock City, NM 87311 USA'
+        AND shipDate='2023-04-10'),
+    (SELECT rockID FROM Rocks WHERE name='The One Rock')
 ), (
-    4,
-    5
-), (
-    5,
-    2
+    (SELECT shipmentID FROM Shipments
+        WHERE shipOrigin='101 Sedimentary Way, New York City, NY 10001'
+        AND shipDest='YouBreccia Way 71, Ramersberg 6060 Switzerland'
+        AND shipDate='2022-12-24'),
+    (SELECT rockID FROM Rocks WHERE name='Scarlet')
 );
 
 

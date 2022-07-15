@@ -85,6 +85,12 @@ UPDATE Reviewers
 -- Shipments Data Manipulation Queries
 -- -----------------------------------------------------
 
+-- CREATE
+-- add a new Shipment
+INSERT INTO Reviews (userID, rockID, title, body, rating)
+    VALUES (SELECT userID FROM Users WHERE name = :name_from_dropdown_input,
+    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input,
+    title = :titleInput, body = :bodyInput, rating = :rating_from_dropdown_input)
 
 
 -- -----------------------------------------------------
