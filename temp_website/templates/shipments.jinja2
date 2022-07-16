@@ -1,0 +1,175 @@
+<html>
+<!-- NOTES Need to add edit/delete hyperlink functionality. Update the references and update the templates associated with them-->
+<head>
+	<title>People</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * four DIVS: browse, insert, update, delete
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		} else if(dowhat == 'update') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('delete').style.display = 'none';
+		} else if(dowhat == 'delete') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'block';
+		} else if(dowhat == 'all') {
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('delete').style.display = 'block';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+	function newUser() {
+		showform('insert');
+	}
+	function updateUser(pid) {
+		showform('update');
+	}
+	function deletePerson(pid) {
+		showform('delete');
+	}
+	function browseUsers() {
+		showform('browse');
+	}
+	function showAll() {
+		showform('all');
+	}
+	</script>
+</head>
+<body>
+
+[ <a href="/index">Home<a/> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> ]
+<h1>Shipments</h1> 
+	<div id="browse">
+		<p><a href="#" onClick="newUser()">Add New</a> </p>
+		<table border="1" cellpadding="5">
+            {% if data %}
+			<thead>
+				<tr>
+					{% for key in data[0].keys() %}
+					<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+					{% endfor %} 
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in data %}
+				<tr>
+					{% for key in item.keys() %}
+					<td> {{item[key]}} </td> 
+					{% endfor %}
+					<td><a href="edit_people/{{item.id}}" class="btn btn-default">Edit</a></td>
+					<td><a href="delete_people/{{item.id}}" class="btn btn-default">Delete</a></td>
+				</tr> 
+				{% endfor %} 
+			</tbody>
+			{% endif %} 
+        </table>   
+	<p>&nbsp;</p>
+	</div>	<!-- browse -->
+
+<br>
+
+<div id="insert">
+		<!-- form to INSERT new data into Shipments-->
+	<form id="insertPerson" action="/people" method="post">
+		<legend><strong>Add Shipment</strong></legend>
+		<fieldset>
+
+			<label for="make">Ship to: </label>
+			<select name="name" id="name">
+				{% for item in users %}
+					{% for user in item %}
+						<option> {{item[user]}} </option>
+					{% endfor %}
+				{% endfor %} 
+			</select>
+
+			<label for="make">Rock: </label>
+			<select name="name" id="name">
+				{% for item in rocks %}
+					{% for rock in item %}
+						<option> {{item[rock]}} </option>
+					{% endfor %}
+				{% endfor %} 
+			</select>
+
+			<label for="make"> Shipment Origin: </label>
+			<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+			<label> Shipment Destination: </label> 
+			<input type="text" name="shipDest">
+
+			<label> Shipment Date </label> 
+			<input type="Date" name="shipDate">
+
+		</fieldset>
+
+	<input type="submit" value="Add Shipment" name="Add_Shipment" class="btn btn-primary" style="margin:.5rem;">
+	<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
+
+	</form>
+</div><!--insert-->
+
+<div id="edit">
+<!-- form to edit data in Reviews-->
+<form id="editPerson" action="/edit_people/{{data[0].id}}" method="post">
+  <legend><strong>Update Shipment</strong></legend>
+  	<fieldset>
+
+			<input type="hidden" value="{{data[0].id}}" class="form-control" id="rockID" name="rockID" required>
+            
+			<label for="make">Ship to: </label>
+			<select name="name" id="name">
+				{% for item in users %}
+					{% for user in item %}
+						<option> {{item[user]}} </option>
+					{% endfor %}
+				{% endfor %} 
+			</select>
+
+			<label for="make">Rock: </label>
+			<select name="name" id="name">
+				{% for item in rocks %}
+					{% for rock in item %}
+						<option> {{item[rock]}} </option>
+					{% endfor %}
+				{% endfor %} 
+			</select>
+
+			<label for="make"> Shipment Origin: </label>
+            <input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+            <label> Shipment Destination: </label> 
+            <input type="text" name="shipDest">
+
+            <label> Shipment Date </label> 
+            <input type="Date" name="shipDate">
+
+	</fieldset>
+
+    <input type="submit" value="Edit Shipment" name="Edit_Shipment" class="btn btn-primary" style="margin:.5rem;">
+    <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;">
+
+    </form>
+</div><!--edit-->
+
+
+</body>
+</html>
