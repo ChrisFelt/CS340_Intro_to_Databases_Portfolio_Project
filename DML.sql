@@ -56,7 +56,8 @@ INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
 
 -- READ
 -- get all Rocks for the browse Rocks table
-SELECT rockID, CONCAT(Users.firstName, ' ', Users.lastName) AS owner, name, geoOrigin, type, description, chemicalComp
+SELECT Rocks.rockID, CONCAT(Users.firstName, ' ', Users.lastName) AS owner, Rocks.name, Rocks.geoOrigin, Rocks.type,
+    Rocks.description, Rocks.chemicalComp
     FROM Rocks
         INNER JOIN Users
             ON Rocks.userID = Users.userID -- get name of User owner
@@ -78,7 +79,8 @@ INSERT INTO Reviews (userID, rockID, title, body, rating)
 
 -- READ
 -- get all Reviews for the browse Reviews table
-SELECT reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer, Rocks.name AS rock, title, body, rating
+SELECT Reviews.reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer, Rocks.name AS rock, Reviews.title,
+    Reviews.body, Reviews.rating
     FROM Reviews
         INNER JOIN Users
             ON Reviews.userID = Users.userID -- User doing Review
@@ -106,7 +108,7 @@ UPDATE Reviewers
 -- Shipments Data Manipulation Queries - includes Shipments_has_Rocks Data Manipulation
 -- -----------------------------------------------------
 
--- CREATE
+-- CREATE I
 -- SHIP -FROM- USER (the User's address will auto-populate in the shipOrigin field)
 -- Part I: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
@@ -121,7 +123,7 @@ INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
     AND shipDate = :shipDate_in_form,
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
 
--- CREATE
+-- CREATE II
 -- SHIP -TO- USER (the User's address will auto-populate in the shipDest field)
 -- Part I: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
@@ -139,8 +141,8 @@ INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
 
 -- READ
 -- get all Shipments for the browse Shipments table
-SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, shipOrigin, shipDest, shipDate,
-    miscNote, Rocks.name AS rock
+SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Rocks.name AS rock,
+    Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote
     FROM Shipments
         INNER JOIN Users
             ON Shipments.userID = Users.userID -- user sending/receiving the Shipment
@@ -154,3 +156,40 @@ SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS nam
 -- UPDATE
 -- update Shipment from form data
 -- first, get Shipment and Shipments_has_Rocks
+SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Rocks.name AS rock,
+    Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote
+    FROM Shipments
+        INNER JOIN Users
+            ON Shipments.userID = Users.userID -- user sending/receiving the Shipment
+        INNER JOIN Shipments_has_Rocks
+            ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID -- join to intersection table to get rockID
+        LEFT JOIN Rocks
+            ON Shipments_has_Rocks.rockID = Rocks.rockID -- name of Rock in shipment
+    WHERE Shipments.shipmentID = :shipmentID_selected_in_form
+-- then, update Shipment
+UPDATE Shipments
+    SET name = :userID_from_dropdown_input,
+    rock = :rockID_from_rock_input,
+    shipOrigin = :shipOriginInput,
+    shipDest = :shipDestInput,
+    shipDate = :shipDateInput,
+    miscNote = :miscNoteInput
+    WHERE shipmentID = :shipmentID_selected_in_form
+-- additionally, update Shipments_has_Rocks
+UPDATE Shipments_has_Rocks
+    SET rockID = :rockID_from_rock_input
+    WHERE shipmentID = :shipmentID_selected_in_form
+
+
+-- DELETE I
+-- delete a Shipment from form data
+-- also deletes records with matching shipmentID from Shipments_has_Rocks
+-- because of ON DELETE CASCADE operation under shipmentID FK CONSTRAINT
+DELETE FROM Shipments WHERE shipmentID = :shipmentID_from_browse_shipment_page
+
+-- DELETE II
+-- delete a rock from a Shipment
+DELETE FROM Shipments_has_Rocks WHERE rockID = :rockID_from_browse_shipment_page
+-- check Shipment to see if last Rock was removed
+SELECT * FROM Shipments_has_Rocks WHERE shipmentID = :shipmentID_from_browse_shipment_page
+-- if empty set is returned, browser runs DELETE I as well

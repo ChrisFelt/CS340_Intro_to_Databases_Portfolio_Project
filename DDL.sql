@@ -101,7 +101,7 @@ CREATE OR REPLACE TABLE Shipments_has_Rocks (
   CONSTRAINT fk_Shipments_has_Rocks_Shipments1
     FOREIGN KEY (shipmentID)
     REFERENCES Shipments (shipmentID)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE  -- delete Shipments_has-Rocks when Shipment with matching shipmentID is deleted
     ON UPDATE NO ACTION,
   CONSTRAINT fk_Shipments_has_Rocks_Rocks1
     FOREIGN KEY (rockID)
