@@ -1,7 +1,7 @@
 <html>
 <!-- NOTES Need to add edit/delete hyperlink functionality. Update the references and update the templates associated with them-->
 <head>
-	<title>People</title>
+	<title>Reviews</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	<script language="JavaScript">
 	function showform(dowhat) {
@@ -58,7 +58,7 @@
 [ <a href="/index">Home<a/> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> ]
 <h1>Reviews</h1> 
 	<div id="browse">
-		<p><a href="#" onClick="newUser()">Add New</a> </p>
+		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
 		<table border="1" cellpadding="5">
             {% if data %}
 			<thead>
@@ -91,6 +91,24 @@
 			<legend><strong>Add Review</strong></legend>
 			<fieldset>
 
+				<label for="make">Reviewer: </label>
+				<select name="name" id="name">
+					{% for item in users %}
+						{% for user in item %}
+							<option> {{item[user]}} </option>
+						{% endfor %}
+					{% endfor %} 
+				</select>
+
+				<label for="make">Rock: </label>
+				<select name="name" id="name">
+					{% for item in rocks %}
+						{% for rock in item %}
+							<option> {{item[rock]}} </option>
+						{% endfor %}
+					{% endfor %} 
+				</select>
+
 				<label for="make"> Review Title: </label>
 				<input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
 
@@ -98,9 +116,14 @@
 				<textarea id="body" name="body" rows="5" cols="33"></textarea>
 
 				<br/><label> Rating: </label>
-				<span>0
-				<input type="range" id="rating" name="rating" min="0" max="5">
-				5</span>
+				<select name="rating" id="rating">
+					<option>0</option>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
 
 			</fieldset>
 
@@ -117,6 +140,24 @@
 
 		<input type="hidden" value="{{data[0].id}}" class="form-control" id="rockID" name="rockID" required>
 
+		<label for="make">Reviewer: </label>
+		<select name="name" id="name">
+			{% for item in users %}
+				{% for user in item %}
+					<option> {{item[user]}} </option>
+				{% endfor %}
+			{% endfor %} 
+		</select>
+
+		<label for="make">Rock: </label>
+		<select name="name" id="name">
+			{% for item in rocks %}
+				{% for rock in item %}
+					<option> {{item[rock]}} </option>
+				{% endfor %}
+			{% endfor %} 
+		</select>
+
 		<label for="make"> Review Title: </label>
 		<input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
 
@@ -124,9 +165,14 @@
 		<textarea id="body" name="body" rows="5" cols="33"></textarea>
 
 		<br/><label> Rating: </label>
-		<span>0
-		<input type="range" id="rating" name="rating" min="0" max="5">
-		5</span>
+		<select name="rating" id="rating">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>
+			<option>5</option>
+		</select>
 
 	</fieldset>
 
