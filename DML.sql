@@ -100,7 +100,7 @@ SELECT Reviews.reviewID,
     Reviews.body,
     Reviews.rating
     FROM Reviews
-        INNER JOIN Users
+        LEFT JOIN Users -- select Reviews that have a NULL userID as well
             ON Reviews.userID = Users.userID -- User doing Review
         INNER JOIN Rocks
             ON Reviews.rockID = Rocks.rockID -- name of Rock for Review
@@ -118,7 +118,7 @@ SELECT reviewID,
     FROM Reviews
     WHERE reviewID = :reviewID_selected_in_form -- pulled from onclick event when edit Review link is clicked
 -- then, update Review
-UPDATE Reviewers
+UPDATE Reviews
     SET reviewer = :userID_from_dropdown_input,
     rock = :rockID_from_rock_input,
     title = :titleInput,
