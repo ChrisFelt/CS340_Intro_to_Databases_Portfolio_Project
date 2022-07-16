@@ -32,7 +32,7 @@ SELECT userID, firstName, lastName, address, specialization, bio
     WHERE userID = :userID_selected_in_form -- pulled from onclick event when edit User link is clicked
 -- then, update User
 UPDATE Users
-    SET firstNme = :firstNameInput,
+    SET firstName = :firstNameInput,
     lastName = :lastNameInput,
     address = :addressInput,
     specialization = :specializationInput,
