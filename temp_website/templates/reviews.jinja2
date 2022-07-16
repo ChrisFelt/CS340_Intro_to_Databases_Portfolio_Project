@@ -56,40 +56,29 @@
 <body>
 
 [ <a href="/index">Home<a/> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> ]
-<h1>Users</h1> 
+<h1>Reviews</h1> 
 	<div id="browse">
 		<p><a href="#" onClick="newUser()">Add New</a> </p>
 		<table border="1" cellpadding="5">
-            <!-- Access data tuple passed from app.py --> 
             {% if data %}
-			    <thead>
-				    <tr>
-					    <!-- Iterate through each key in the first entry to get the column name -->
-                        {% for key in data[0].keys() %}
-					    
-                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
-					    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-					
-                        <!-- End of this for loop -->
-                        {% endfor %} 
-                    </tr>
-
-				<tbody>
-					<!-- Now, iterate through every item in data -->{% for item in data %}
-					    <tr>
-						    <!-- Then iterate through every key in the current item dictionary -->
-                            {% for key in item.keys() %}
-
-						    <!-- Create a <td> element with the value of that key in it -->
-						    <td> {{item[key]}} </td> 
-                            {% endfor %}
-
-                            <!-- Create our edit/delete buttons -->
-						    <td><a href="edit_people/{{item.id}}" class="btn btn-default">Edit</a></td>
-
-					    </tr> 
-                        {% endfor %} 
-                {% endif %} 
+			<thead>
+				<tr>
+					{% for key in data[0].keys() %}
+					<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+					{% endfor %} 
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in data %}
+				<tr>
+					{% for key in item.keys() %}
+					<td> {{item[key]}} </td> 
+					{% endfor %}
+					<td><a href="edit_people/{{item.id}}" class="btn btn-default">Edit</a></td>
+				</tr> 
+				{% endfor %} 
+			</tbody>
+            {% endif %} 
         </table>   
 	<p>&nbsp;</p>
 	</div>	<!-- browse -->
@@ -99,50 +88,51 @@
 <div id="insert">
 		<!-- form to INSERT new data into Users-->
 		<form id="insertPerson" action="/people" method="post">
-			<legend><strong>Add User</strong></legend>
+			<legend><strong>Add Review</strong></legend>
 			<fieldset>
-        <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-				
-        <label for="make">Name:</label>
-				<input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>
 
-				<label> Address </label> 
-        <input type="text" name="address">
+				<label for="make"> Review Title: </label>
+				<input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
 
-				<label> Specialization </label> 
-        <input type="text" name="specialization">
+				<br/><label> Body </label><br/> 
+				<textarea id="body" name="body" rows="5" cols="33"></textarea>
 
-        <label> Bio </label> 
-        <input type="text" name="bio">
-        </fieldset>
+				<br/><label> Rating: </label>
+				<span>0
+				<input type="range" id="rating" name="rating" min="0" max="5">
+				5</span>
 
-      <!-- Create 'Add Person' and 'Cancel' buttons -->
-			<input type="submit" value="Add User" name="Add_User" class="btn btn-primary" style="margin:.5rem;">
+			</fieldset>
+
+			<input type="submit" value="Add Review" name="Add_Review" class="btn btn-primary" style="margin:.5rem;">
 			<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
         </form>
 </div><!--insert-->
 
 <div id="edit">
-<!-- form to edit data in bsg_people-->
+<!-- form to edit data in Reviews-->
 <form id="editPerson" action="/edit_people/{{data[0].id}}" method="post">
-  <legend><strong>Update User</strong></legend>
+  <legend><strong>Update Review</strong></legend>
   	<fieldset>
-		<input type="hidden" value="{{data[0].id}}" class="form-control" id="personID" name="personID" required>
-		<label for="make">Name:</label>
-		<input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="{{data[0].fname}}" required>
-		
-		<label> Address </label> 
-		<input type="text"  name="address", New York City, NY 10001">
-		
-		<label> Specialization </label> 
-		<input type="text" name="specialization" value="">
-		
-		<label> Bio </label> 
-		<input type="text" name="bio" value="">
+
+		<input type="hidden" value="{{data[0].id}}" class="form-control" id="rockID" name="rockID" required>
+
+		<label for="make"> Review Title: </label>
+		<input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+		<br/><label> Body </label><br/> 
+		<textarea id="body" name="body" rows="5" cols="33"></textarea>
+
+		<br/><label> Rating: </label>
+		<span>0
+		<input type="range" id="rating" name="rating" min="0" max="5">
+		5</span>
+
 	</fieldset>
 
-    <input type="submit" value="Edit User" name="Edit_User" class="btn btn-primary" style="margin:.5rem;">
+    <input type="submit" value="Edit Review" name="Edit_Review" class="btn btn-primary" style="margin:.5rem;">
     <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;"> 
+
     </form>
 </div><!--edit-->
 
