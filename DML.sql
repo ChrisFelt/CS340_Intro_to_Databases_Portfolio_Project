@@ -17,10 +17,12 @@ INSERT INTO Users (firstName, lastName, address, specialization, bio)
     :specializationInput,
     :bioInput)
 
+
 -- READ
 -- get all Users for the browse Users table
 SELECT userID, firstName, lastName, address, specialization, bio
     FROM Users
+
 
 -- UPDATE
 -- update a User's data using form input data
@@ -51,6 +53,7 @@ INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
     type = :typeInput,
     chemicalComp = :chemicalCompInput)
 
+
 -- READ
 -- get all Rocks for the browse Rocks table
 SELECT rockID, CONCAT(Users.firstName, ' ', Users.lastName) AS owner, name, geoOrigin, type, description, chemicalComp
@@ -72,6 +75,7 @@ INSERT INTO Reviews (userID, rockID, title, body, rating)
     body = :bodyInput,
     rating = :rating_from_dropdown_input)
 
+
 -- READ
 -- get all Reviews for the browse Reviews table
 SELECT reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer, Rocks.name AS rock, title, body, rating
@@ -80,6 +84,7 @@ SELECT reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer, Rocks
             ON Reviews.userID = Users.userID -- User doing Review
         INNER JOIN Rocks
             ON Reviews.rockID = Rocks.rockID -- name of Rock for Review
+
 
 -- UPDATE
 -- update Review data using form input data
@@ -98,11 +103,11 @@ UPDATE Reviewers
 
 
 -- -----------------------------------------------------
--- Shipments Data Manipulation Queries
+-- Shipments Data Manipulation Queries - includes Shipments_has_Rocks Data Manipulation
 -- -----------------------------------------------------
 
 -- CREATE
--- SHIP -FROM- USER
+-- SHIP -FROM- USER (the User's address will auto-populate in the shipOrigin field)
 -- Part I: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
@@ -110,14 +115,14 @@ INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     shipDest = :shipDestInput,
     shipDate = :shipDateInput,
     miscNote = :miscNoteInput)
--- Part II: insert new row in Shipments_has_Rocks intersection table
+-- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :auto_populates AND shipDest = :auto_populates AND
-    shipDate = :auto_populates,
+    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form AND shipDest = :shipDest_in_form
+    AND shipDate = :shipDate_in_form,
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
 
 -- CREATE
--- SHIP -TO- USER
+-- SHIP -TO- USER (the User's address will auto-populate in the shipDest field)
 -- Part I: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     VALUES (SELECT address FROM Users WHERE CONCAT(firstName, ' ', lastName) = :auto_populates_from_name_dropdown_input,
@@ -125,14 +130,27 @@ INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     shipDest = :shipDestInput,
     shipDate = :shipDateInput,
     miscNote = :miscNoteInput)
--- Part II: insert new row in Shipments_has_Rocks intersection table
+-- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :auto_populates AND shipDest = :auto_populates AND
-    shipDate = :auto_populates,
+    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form AND shipDest = :shipDest_in_form
+    AND shipDate = :shipDate_in_form,
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
 
 
+-- READ
+-- get all Shipments for the browse Shipments table
+SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, shipOrigin, shipDest, shipDate,
+    miscNote, Rocks.name AS rock
+    FROM Shipments
+        INNER JOIN Users
+            ON Shipments.userID = Users.userID -- user sending/receiving the Shipment
+        INNER JOIN Shipments_has_Rocks
+            ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID -- join to intersection table to get rockID
+        LEFT JOIN Rocks
+            ON Shipments_has_Rocks.rockID = Rocks.rockID -- name of Rock in shipment
+    ORDER BY Shipments.shipmentID
 
--- -----------------------------------------------------
--- Shipments_has_Rocks Data Manipulation Queries
--- -----------------------------------------------------
+
+-- UPDATE
+-- update Shipment from form data
+-- first, get Shipment and Shipments_has_Rocks

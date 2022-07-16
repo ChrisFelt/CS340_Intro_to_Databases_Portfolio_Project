@@ -51,7 +51,7 @@ CREATE OR REPLACE TABLE Rocks (
 -- -----------------------------------------------------
 CREATE OR REPLACE TABLE Reviews (
   reviewID INT NOT NULL AUTO_INCREMENT UNIQUE,
-  userID INT NOT NULL,
+  userID INT NULL, -- userID can be removed
   rockID INT NOT NULL,
   title VARCHAR(75) NOT NULL,
   body VARCHAR(3000) NOT NULL,
@@ -61,7 +61,7 @@ CREATE OR REPLACE TABLE Reviews (
     FOREIGN KEY (userID)
     REFERENCES Users (userID)
     ON DELETE RESTRICT
-    ON UPDATE NO ACTION,
+    ON UPDATE NO ACTION, --
   CONSTRAINT fk_Reviews_Rocks1
     FOREIGN KEY (rockID)
     REFERENCES Rocks (rockID)
@@ -275,7 +275,7 @@ VALUES (
         WHERE shipOrigin='YouBreccia Way 71, Ramersberg 6060 Switzerland'
         AND shipDest='1 Igneous Court, Sydney, NSW 2000 Australia'
         AND shipDate='2022-11-08'),
-    (SELECT rockID FROM Rocks WHERE name='Old Man of the Mountain')
+    (SELECT rockID FROM Rocks WHERE name='Scarlet')
 ), (
     (SELECT shipmentID FROM Shipments
         WHERE shipOrigin='YouBreccia Way 71, Ramersberg 6060 Switzerland'
