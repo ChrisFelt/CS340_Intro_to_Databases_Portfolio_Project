@@ -20,14 +20,24 @@ INSERT INTO Users (firstName, lastName, address, specialization, bio)
 
 -- READ
 -- get all Users for the browse Users table
-SELECT userID, firstName, lastName, address, specialization, bio
+SELECT userID,
+    firstName,
+    lastName,
+    address,
+    specialization,
+    bio
     FROM Users
 
 
 -- UPDATE
 -- update a User's data using form input data
 -- first, get User
-SELECT userID, firstName, lastName, address, specialization, bio
+SELECT userID,
+    firstName,
+    lastName,
+    address,
+    specialization,
+    bio
     FROM Users
     WHERE userID = :userID_selected_in_form -- pulled from onclick event when edit User link is clicked
 -- then, update User
@@ -56,7 +66,11 @@ INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
 
 -- READ
 -- get all Rocks for the browse Rocks table
-SELECT Rocks.rockID, CONCAT(Users.firstName, ' ', Users.lastName) AS owner, Rocks.name, Rocks.geoOrigin, Rocks.type,
+SELECT Rocks.rockID,
+    CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
+    Rocks.name,
+    Rocks.geoOrigin,
+    Rocks.type,
     Rocks.description, Rocks.chemicalComp
     FROM Rocks
         INNER JOIN Users
@@ -79,8 +93,12 @@ INSERT INTO Reviews (userID, rockID, title, body, rating)
 
 -- READ
 -- get all Reviews for the browse Reviews table
-SELECT Reviews.reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer, Rocks.name AS rock, Reviews.title,
-    Reviews.body, Reviews.rating
+SELECT Reviews.reviewID,
+    CONCAT(Users.firstName, ' ', Users.lastName) AS reviewer,
+    Rocks.name AS rock,
+    Reviews.title,
+    Reviews.body,
+    Reviews.rating
     FROM Reviews
         INNER JOIN Users
             ON Reviews.userID = Users.userID -- User doing Review
@@ -91,7 +109,12 @@ SELECT Reviews.reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS reviewe
 -- UPDATE
 -- update Review data using form input data
 -- first, get Review
-SELECT reviewID, reviewer, rock, title, body, rating
+SELECT reviewID,
+    reviewer,
+    rock,
+    title,
+    body,
+    rating
     FROM Reviews
     WHERE reviewID = :reviewID_selected_in_form -- pulled from onclick event when edit Review link is clicked
 -- then, update Review
@@ -119,7 +142,8 @@ INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     miscNote = :miscNoteInput)
 -- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form AND shipDest = :shipDest_in_form
+    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form
+    AND shipDest = :shipDest_in_form
     AND shipDate = :shipDate_in_form,
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
 
@@ -134,15 +158,21 @@ INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     miscNote = :miscNoteInput)
 -- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form AND shipDest = :shipDest_in_form
+    VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form
+    AND shipDest = :shipDest_in_form
     AND shipDate = :shipDate_in_form,
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
 
 
 -- READ
 -- get all Shipments for the browse Shipments table
-SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Rocks.name AS rock,
-    Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote
+SELECT Shipments.shipmentID,
+    CONCAT(Users.firstName, ' ', Users.lastName) AS name,
+    Rocks.name AS rock,
+    Shipments.shipOrigin,
+    Shipments.shipDest,
+    Shipments.shipDate,
+    Shipments.miscNote
     FROM Shipments
         INNER JOIN Users
             ON Shipments.userID = Users.userID -- user sending/receiving the Shipment
@@ -156,8 +186,13 @@ SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS nam
 -- UPDATE
 -- update Shipment from form data
 -- first, get Shipment and Shipments_has_Rocks
-SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Rocks.name AS rock,
-    Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote
+SELECT Shipments.shipmentID,
+    CONCAT(Users.firstName, ' ', Users.lastName) AS name,
+    Rocks.name AS rock,
+    Shipments.shipOrigin,
+    Shipments.shipDest,
+    Shipments.shipDate,
+    Shipments.miscNote
     FROM Shipments
         INNER JOIN Users
             ON Shipments.userID = Users.userID -- user sending/receiving the Shipment

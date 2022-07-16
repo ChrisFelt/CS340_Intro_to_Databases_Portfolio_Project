@@ -33,7 +33,7 @@ CREATE OR REPLACE TABLE Users (
 CREATE OR REPLACE TABLE Rocks (
   rockID INT NOT NULL AUTO_INCREMENT UNIQUE,
   userID INT NOT NULL,
-  name VARCHAR(75) NOT NULL,
+  name VARCHAR(75) NOT NULL UNIQUE, -- Rock names are unique
   geoOrigin VARCHAR(155) NOT NULL,
   type VARCHAR(75) NOT NULL,
   description VARCHAR(255) NOT NULL,
@@ -61,7 +61,7 @@ CREATE OR REPLACE TABLE Reviews (
     FOREIGN KEY (userID)
     REFERENCES Users (userID)
     ON DELETE RESTRICT
-    ON UPDATE NO ACTION, --
+    ON UPDATE NO ACTION,
   CONSTRAINT fk_Reviews_Rocks1
     FOREIGN KEY (rockID)
     REFERENCES Rocks (rockID)
@@ -101,7 +101,7 @@ CREATE OR REPLACE TABLE Shipments_has_Rocks (
   CONSTRAINT fk_Shipments_has_Rocks_Shipments1
     FOREIGN KEY (shipmentID)
     REFERENCES Shipments (shipmentID)
-    ON DELETE CASCADE  -- delete Shipments_has-Rocks when Shipment with matching shipmentID is deleted
+    ON DELETE CASCADE  -- delete Shipments_has_Rocks when Shipment with matching shipmentID is deleted
     ON UPDATE NO ACTION,
   CONSTRAINT fk_Shipments_has_Rocks_Rocks1
     FOREIGN KEY (rockID)
