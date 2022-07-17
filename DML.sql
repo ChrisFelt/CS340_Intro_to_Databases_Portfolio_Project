@@ -128,7 +128,8 @@ UPDATE Reviews
 
 
 -- -----------------------------------------------------
--- Shipments Data Manipulation Queries - includes Shipments_has_Rocks Data Manipulation
+-- Shipments Data Manipulation Queries
+-- and Shipments_has_Rocks Data Manipulation Queries
 -- -----------------------------------------------------
 
 -- CREATE I
