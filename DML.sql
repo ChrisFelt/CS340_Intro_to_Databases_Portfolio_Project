@@ -15,7 +15,7 @@ INSERT INTO Users (firstName, lastName, address, specialization, bio)
     :lastNameInput,
     :addressInput,
     :specializationInput,
-    :bioInput)
+    :bioInput);
 
 
 -- READ
@@ -26,7 +26,7 @@ SELECT userID,
     address,
     specialization,
     bio
-    FROM Users
+    FROM Users;
 
 
 -- UPDATE
@@ -39,7 +39,7 @@ SELECT userID,
     specialization,
     bio
     FROM Users
-    WHERE userID = :userID_selected_in_form -- pulled from onclick event when edit User link is clicked
+    WHERE userID = :userID_selected_in_form; -- pulled from onclick event when edit User link is clicked
 -- then, update User
 UPDATE Users
     SET firstName = :firstNameInput,
@@ -47,7 +47,7 @@ UPDATE Users
     address = :addressInput,
     specialization = :specializationInput,
     bio = :bioInput
-    WHERE userID = :userID_selected_in_form
+    WHERE userID = :userID_selected_in_form;
 
 
 -- -----------------------------------------------------
@@ -61,7 +61,7 @@ INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
     name = :nameInput,
     geoOrigin = :geoOriginInput,
     type = :typeInput,
-    chemicalComp = :chemicalCompInput)
+    chemicalComp = :chemicalCompInput);
 
 
 -- READ
@@ -74,7 +74,31 @@ SELECT Rocks.rockID,
     Rocks.description, Rocks.chemicalComp
     FROM Rocks
         INNER JOIN Users
-            ON Rocks.userID = Users.userID -- get name of User owner
+            ON Rocks.userID = Users.userID; -- get name of User owner
+
+
+-- SEARCH
+-- search all non-key attributes as well as owners of Rocks for any rows that match the search criteria
+WITH rockSearch AS
+    (
+        SELECT Rocks.rockID,
+            CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
+            Rocks.name,
+            Rocks.geoOrigin,
+            Rocks.type,
+            Rocks.description, Rocks.chemicalComp
+            FROM Rocks
+                INNER JOIN Users
+                    ON Rocks.userID = Users.userID -- get name of User owner
+    )
+-- SELECT rows that match search criteria from rockSearch
+SELECT * FROM rockSearch
+    WHERE owner LIKE :searchInput
+        OR name LIKE :searchInput
+        OR geoOrigin LIKE :searchInput
+        OR type LIKE :searchInput
+        OR description LIKE :searchInput
+        OR chemicalComp LIKE :searchInput;
 
 
 -- -----------------------------------------------------
@@ -88,7 +112,7 @@ INSERT INTO Reviews (userID, rockID, title, body, rating)
     SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input,
     title = :titleInput,
     body = :bodyInput,
-    rating = :rating_from_dropdown_input)
+    rating = :rating_from_dropdown_input);
 
 
 -- READ
@@ -103,7 +127,7 @@ SELECT Reviews.reviewID,
         LEFT JOIN Users -- select Reviews that have a NULL userID as well
             ON Reviews.userID = Users.userID -- User doing Review
         INNER JOIN Rocks
-            ON Reviews.rockID = Rocks.rockID -- name of Rock for Review
+            ON Reviews.rockID = Rocks.rockID; -- name of Rock for Review
 
 
 -- UPDATE
@@ -116,7 +140,7 @@ SELECT reviewID,
     body,
     rating
     FROM Reviews
-    WHERE reviewID = :reviewID_selected_in_form -- pulled from onclick event when edit Review link is clicked
+    WHERE reviewID = :reviewID_selected_in_form; -- pulled from onclick event when edit Review link is clicked
 -- then, update Review
 UPDATE Reviews
     SET reviewer = :userID_from_dropdown_input,
@@ -124,7 +148,7 @@ UPDATE Reviews
     title = :titleInput,
     body = :bodyInput,
     rating = :ratingInput
-    WHERE reviewID = :reviewID_selected_in_form
+    WHERE reviewID = :reviewID_selected_in_form;
 
 
 -- -----------------------------------------------------
@@ -140,13 +164,13 @@ INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     SELECT address FROM Users WHERE CONCAT(firstName, ' ', lastName) = :auto_populates_from_name_dropdown_input,
     shipDest = :shipDestInput,
     shipDate = :shipDateInput,
-    miscNote = :miscNoteInput)
+    miscNote = :miscNoteInput);
 -- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
     VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form
     AND shipDest = :shipDest_in_form
     AND shipDate = :shipDate_in_form,
-    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
+    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input);
 
 -- CREATE II
 -- SHIP -TO- USER (the User's address will auto-populate in the shipDest field)
@@ -156,13 +180,13 @@ INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
     SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
     shipDest = :shipDestInput,
     shipDate = :shipDateInput,
-    miscNote = :miscNoteInput)
+    miscNote = :miscNoteInput);
 -- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
     VALUES (SELECT shipmentID FROM Shipments WHERE shipOrigin = :shipOrigin_in_form
     AND shipDest = :shipDest_in_form
     AND shipDate = :shipDate_in_form,
-    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input)
+    SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input);
 
 
 -- READ
@@ -181,7 +205,7 @@ SELECT Shipments.shipmentID,
             ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID -- join to intersection table to get rockID
         LEFT JOIN Rocks
             ON Shipments_has_Rocks.rockID = Rocks.rockID -- name of Rock in shipment
-    ORDER BY Shipments.shipmentID
+    ORDER BY Shipments.shipmentID;
 
 
 -- UPDATE
@@ -201,7 +225,7 @@ SELECT Shipments.shipmentID,
             ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID -- join to intersection table to get rockID
         LEFT JOIN Rocks
             ON Shipments_has_Rocks.rockID = Rocks.rockID -- name of Rock in shipment
-    WHERE Shipments.shipmentID = :shipmentID_selected_in_form
+    WHERE Shipments.shipmentID = :shipmentID_selected_in_form;
 -- then, update Shipment
 UPDATE Shipments
     SET name = :userID_from_dropdown_input,
@@ -210,22 +234,22 @@ UPDATE Shipments
     shipDest = :shipDestInput,
     shipDate = :shipDateInput,
     miscNote = :miscNoteInput
-    WHERE shipmentID = :shipmentID_selected_in_form
+    WHERE shipmentID = :shipmentID_selected_in_form;
 -- additionally, update Shipments_has_Rocks
 UPDATE Shipments_has_Rocks
     SET rockID = :rockID_from_rock_input
-    WHERE shipmentID = :shipmentID_selected_in_form
+    WHERE shipmentID = :shipmentID_selected_in_form;
 
 
 -- DELETE I
 -- delete a Shipment from form data
 -- also deletes records with matching shipmentID from Shipments_has_Rocks
 -- because of ON DELETE CASCADE operation under shipmentID FK CONSTRAINT
-DELETE FROM Shipments WHERE shipmentID = :shipmentID_from_browse_shipment_page
+DELETE FROM Shipments WHERE shipmentID = :shipmentID_from_browse_shipment_page;
 
 -- DELETE II
 -- delete a rock from a Shipment
-DELETE FROM Shipments_has_Rocks WHERE rockID = :rockID_from_browse_shipment_page
+DELETE FROM Shipments_has_Rocks WHERE rockID = :rockID_from_browse_shipment_page;
 -- check Shipment to see if last Rock was removed
-SELECT * FROM Shipments_has_Rocks WHERE shipmentID = :shipmentID_from_browse_shipment_page
+SELECT * FROM Shipments_has_Rocks WHERE shipmentID = :shipmentID_from_browse_shipment_page;
 -- if empty set is returned, browser runs DELETE I as well
