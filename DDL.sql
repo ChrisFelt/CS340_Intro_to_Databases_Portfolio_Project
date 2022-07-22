@@ -217,7 +217,7 @@ VALUES (
     (SELECT userID FROM Users WHERE firstName='Alice' AND lastName='Liddel'),
     (SELECT rockID FROM Rocks WHERE name='Old Man of the Mountain'),
     'meh',
-    "Kind of your average, middle of the road rock. Honestly I'm not sure what the individual who sent this in was thinking. Clearly the caliber of his or her upbringing is questionable.",
+    "Kind of your average, middle of the road rock. Honestly I'm not sure what the individual who sent this in was thinking.",
     3
 ), (
     (SELECT userID FROM Users WHERE firstName='Jimothy' AND lastName='Riley'),
