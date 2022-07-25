@@ -3,7 +3,7 @@
 -- Team Rock Bottom
 -- Members: Robert Behring and Christopher Felt
 -- Modified from MySQL Workbench Forward Engineering
--- test
+
 
 SET FOREIGN_KEY_CHECKS=0;
 SET AUTOCOMMIT = 0;
