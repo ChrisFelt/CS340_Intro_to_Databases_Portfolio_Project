@@ -55,12 +55,31 @@
 </head>
 <body>
 
-[ <a href="/index">Home<a/> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> ]
-<h1>Shipment Details</h1> 
+	[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> | <a href="/edit_shipment">Shipments_has_Rocks</a> ]
+	<h1>Shipment Details</h1> 
+
+		<div id="insert">
+			<!-- form to INSERT new data into Shipments-->
+		<form id="insertPerson" action="/people" method="post">
+			<legend><strong>Add Rock to Shipment</strong></legend>
+			<fieldset>
+				<label for="make">Rock: </label>
+				<select name="name" id="name">
+					{% for item in rocks %}
+						{% for rock in item %}
+							<option> {{item[rock]}} </option>
+						{% endfor %}
+					{% endfor %} 
+				</select>
+			</fieldset>
+			<input type="submit" value="Add to Shipment" name="Add_Shipment" class="btn btn-primary" style="margin:.5rem;">
+		</form>
+	</div><!--insert-->
+
 	<div id="browse">
 		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
 		<table border="1" cellpadding="5">
-            {% if shipment_details %}
+			{% if shipment_details %}
 			<thead>
 				<tr>
 					{% for key in shipment_details[0].keys() %}
@@ -79,48 +98,12 @@
 				{% endfor %} 
 			</tbody>
 			{% endif %} 
-        </table>   
+		</table>  
 	<p>&nbsp;</p>
 	</div>	<!-- browse -->
 
-<br>
 
-<div id="edit">
-<!-- form to edit data in Reviews-->
-<form id="editPerson" action="/edit_people/{{shipment_details[0].id}}" method="post">
-  <legend><strong>Update Shipment</strong></legend>
-  	<fieldset>
 
-			<input type="hidden" value="{{shipment_details[0].id}}" class="form-control" id="rockID" name="rockID" required>
-            
-			<label>Return to Headquarters</label>
-			<input type="checkbox" name="tohq" id="tohq"> 
-
-			<label for="make">Rock: </label>
-			<select name="name" id="name">
-				{% for item in rocks %}
-					{% for rock in item %}
-						<option> {{item[rock]}} </option>
-					{% endfor %}
-				{% endfor %} 
-			</select>
-
-			<label for="make"> Shipment Origin: </label>
-            <input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z]{1,}" placeholder="" required>
-
-            <label> Shipment Destination: </label> 
-            <input type="text" name="shipDest">
-
-            <label> Shipment Date </label> 
-            <input type="Date" name="shipDate">
-
-	</fieldset>
-
-    <input type="submit" value="Edit Shipment" name="Edit_Shipment" class="btn btn-primary" style="margin:.5rem;">
-    <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;">
-
-    </form>
-</div><!--edit-->
 
 
 </body>

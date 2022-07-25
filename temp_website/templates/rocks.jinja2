@@ -10,42 +10,47 @@
 		 * this function sets one visible the others not
 		 */
 		if(dowhat == 'insert') {
+            document.getElementById('search').style.display = 'none';
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'block';
 			document.getElementById('edit').style.display = 'none';
 			document.getElementById('delete').style.display = 'none';
 		} else if(dowhat == 'update') {
+            document.getElementById('search').style.display = 'none';
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'none';
 			document.getElementById('edit').style.display = 'block';
 			document.getElementById('delete').style.display = 'none';
 		} else if(dowhat == 'delete') {
+            document.getElementById('search').style.display = 'none';
 			document.getElementById('browse').style.display = 'none';
 			document.getElementById('insert').style.display = 'none';
 			document.getElementById('edit').style.display = 'none';
 			document.getElementById('delete').style.display = 'block';
 		} else if(dowhat == 'all') {
+            document.getElementById('search').style.display = 'block';
 			document.getElementById('browse').style.display = 'block';
 			document.getElementById('insert').style.display = 'block';
 			document.getElementById('edit').style.display = 'block';
 			document.getElementById('delete').style.display = 'block';
 		} else { //by default display browse
+            document.getElementById('search').style.display = 'block';
 			document.getElementById('browse').style.display = 'block';
 			document.getElementById('insert').style.display = 'none';
 			document.getElementById('edit').style.display = 'none';
 			document.getElementById('delete').style.display = 'none';
 		}
 	}
-	function newUser() {
+	function newRock() {
 		showform('insert');
 	}
-	function updateUser(pid) {
+	function updateRock(pid) {
 		showform('update');
 	}
-	function deletePerson(pid) {
+	function deleteRock(pid) {
 		showform('delete');
 	}
-	function browseUsers() {
+	function browseRocks() {
 		showform('browse');
 	}
 	function showAll() {
@@ -53,14 +58,70 @@
 	}
 	</script>
 </head>
-<body>
-
-	[ <a href="/index">Home<a/> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> ]
+<body onload="browseRocks()">
+	[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> | <a href="/edit_shipment">Shipments_has_Rocks</a> ]
 	<h1>Rocks</h1> 
+
+	<div id="search">
+		<form id="searchRocks">
+			<legend><strong>Search Rocks</strong></legend>
+			<fieldset>
+				<label> Search criteria </label> 
+				<input type="text" name="search">
+			</fieldset>
+			<input type="submit" value="Search" name="rock_search" class="btn btn-primary" style="margin:.5rem;">
+		</form>
+	</div>
+
+
+	<div id="insert">
+			<form id="insertRock" action="/rocks" method="post">
+				<legend><strong>Add Rock</strong></legend>
+				<fieldset>
+
+					<label for="userID">Owner: </label>
+					<select name="userID" id="userID">
+						{% for item in users %}
+							{% for user in item %}
+								<option value={{ item["userID"] }}> {{item[user]}} </option>
+							{% endfor %}
+						{% endfor %} 
+					</select>
+
+					<label for="name"> Rock Name: </label>
+					<input type="text" class="form-control" id="name" name="name" placeholder="" required>
+
+					<label> geoOrigin </label> 
+					<input type="text" class="form-control" id="geoOrigin" name="geoOrigin" placeholder="" required>
+
+					<label>Type:</label>
+					<select class="form-control" id="type" name="type" placeholder="" required>
+						<option value="">-- Rock Type --</option>
+						<option value="igneous">Igneous</option>
+						<option value="metamorphic">Metamorphic</option>
+						<option value="sedimentary">Sedimentary</option>
+					</select>
+
+					<label> Chemical Composition </label> 
+					<input type="text" class="form-control" id="chemicalComp" name="chemicalComp" placeholder="" required>
+
+					<br/><label> Description </label><br/>
+					<textarea class="form-control" id="description" name="description" rows="5" cols="33" placeholder="" required></textarea>
+
+				</fieldset>
+
+				<input type="submit" value="Add Rock" name="Add_Rock" class="btn btn-primary" style="margin:.5rem;">
+				<input class="btn" type="button" value="Cancel" onClick="browseRocks()">
+
+			</form>
+	</div>
+	<!--insert-->
+
+
+
 	<div id="browse">
-		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
+		 <p><a href="#" onClick="newRock()">Add New</a> </p>
 		<table border="1" cellpadding="5">
-			<!-- Access data tuple passed from app.py --> 
 			{% if data %}
 				<thead>
 					<tr>
@@ -86,50 +147,6 @@
 	<!-- browse -->
 
 	<br/>
-
-	<div id="insert">
-			<!-- form to INSERT new data into Users-->
-			<form id="insertPerson" action="/people" method="post">
-				<legend><strong>Add Rock</strong></legend>
-				<fieldset>
-
-					<label for="make">Owner: </label>
-					<select name="name" id="name">
-						{% for item in users %}
-							{% for user in item %}
-								<option> {{item[user]}} </option>
-							{% endfor %}
-						{% endfor %} 
-					</select>
-
-					<label for="make"> Rock Name: </label>
-					<input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
-
-					<label> geoOrigin </label> 
-					<input type="text" name="geoOrigin">
-
-					<label>Type:</label>
-					<select name="type" id="type">
-						<option value="">-- Rock Type --</option>
-						<option value="igneous">Igneous</option>
-						<option value="metamorphic">Metamorphic</option>
-						<option value="sedimentary">Sedimentary</option>
-					</select>
-
-					<label> Chemical Composition </label> 
-					<input type="text" name="chemicalComp">
-
-					<br/><label> Description </label><br/>
-					<textarea id="description" name="description" rows="5" cols="33"></textarea>
-
-				</fieldset>
-
-				<input type="submit" value="Add Rock" name="Add_Rock" class="btn btn-primary" style="margin:.5rem;">
-				<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
-
-			</form>
-	</div>
-	<!--insert-->
 
 
 </body>
