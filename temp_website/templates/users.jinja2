@@ -80,43 +80,6 @@
 			</form>
 	</div><!--insert-->
 
-	<div id="edit">
-        <form id="editUser" action="/edit_user/{{data[0].id}}" method="post">
-            <legend><strong>Update User</strong></legend>
-            <fieldset>
-                <input type="hidden" value="{{data[0].id}}" class="form-control" id="personID" name="personID" required>
-
-                <label for="make">User: </label>
-                <select name="name" id="name">
-                    {% for item in users %}
-                        {% for user in item %}
-                            <option> {{item[user]}} </option>
-                        {% endfor %}
-                    {% endfor %}
-                </select>
-
-                <label for="make">First Name:</label>
-                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>
-
-                <label for="make">Last Name:</label>
-                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>
-
-                <label> Address </label>
-                <input type="text"  name="address", New York City, NY 10001">
-
-                <label> Specialization </label>
-                <input type="text" name="specialization" value="">
-
-                <label> Bio </label>
-                <input type="text" name="bio" value="">
-            </fieldset>
-
-            <input type="submit" value="Edit User" name="Edit_User" class="btn btn-primary" style="margin:.5rem;">
-            <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;">
-		</form>
-	</div>
-	<!--edit-->
-
 	<div id="browse">
 		 <p><a href="#" onClick="newUser()">Add New</a> </p>
 		<table border="1" cellpadding="5">
@@ -141,6 +104,43 @@
 		</table>   
 	<p>&nbsp;</p>
 	</div>	<!-- browse -->
+
+{#	<div id="edit">#}
+{#        <form id="editUser" action="/edit_user/{{data[0].id}}" method="post">#}
+{#            <legend><strong>Update User</strong></legend>#}
+{#            <fieldset>#}
+{#                <input type="hidden" value="{{data[0].id}}" class="form-control" id="personID" name="personID" required>#}
+{##}
+{#                <label for="make">User: </label>#}
+{#                <select name="name" id="name">#}
+{#                    {% for item in users %}#}
+{#                        {% for user in item %}#}
+{#                            <option> {{item[user]}} </option>#}
+{#                        {% endfor %}#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{##}
+{#                <label for="make">First Name:</label>#}
+{#                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>#}
+{##}
+{#                <label for="make">Last Name:</label>#}
+{#                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>#}
+{##}
+{#                <label> Address </label>#}
+{#                <input type="text"  name="address", New York City, NY 10001">#}
+{##}
+{#                <label> Specialization </label>#}
+{#                <input type="text" name="specialization" value="">#}
+{##}
+{#                <label> Bio </label>#}
+{#                <input type="text" name="bio" value="">#}
+{#            </fieldset>#}
+{##}
+{#            <input type="submit" value="Edit User" name="Edit_User" class="btn btn-primary" style="margin:.5rem;">#}
+{#            <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;">#}
+{#		</form>#}
+{#	</div>#}
+{#	<!--edit-->#}
 
 </body>
 </html>
