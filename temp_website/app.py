@@ -164,8 +164,57 @@ def shipment():
 
         return render_template("shipments.jinja2", data=data, rocks=rocks, users=users, shipment_ids=shipment_ids)
 
-@app.route('/edit_user')
+@app.route('/edit_user/<int:id>', methods=["POST", "GET"])
+def edit_user(id):
+    if request.method == "GET":
+        # mySQL query to grab the info of the person with our passed id
+        query = "SELECT * FROM Users WHERE userID = %s" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
 
+        return render_template("edit_user.jinja2", data=data)
+
+    if request.method == "POST":
+        if request.method == "POST":
+            """
+            TODO: Create more user friendly error message when firstName/lastName are not unique.
+            """
+            userID = request.form["userID"]
+            firstName = request.form["firstName"]
+            lastName = request.form["lastName"]
+            address = request.form["address"]
+            specialization = request.form["specialization"]
+            bio = request.form["bio"]
+
+            if request.form.get("Edit_User"):
+                # account for null specialization AND bio
+                if specialization == "" and bio == "":
+                    # mySQL query to insert a new person into bsg_people with our form inputs
+                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = NULL, Users.bio = NULL WHERE Users.userID = %s"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, userID))
+                    mysql.connection.commit()
+                # account for null specialization
+                elif specialization == "":
+                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = NULL, Users.bio = %s WHERE Users.userID = %s"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, bio, userID))
+                    mysql.connection.commit()
+                # account for null bio
+                elif bio == "":
+                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = %s, Users.bio = NULL WHERE Users.userID = %s"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, specialization, userID))
+                    mysql.connection.commit()
+                # account for NO null
+                else:
+                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = %s, Users.bio = %s WHERE Users.userID = %s"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, specialization, bio, userID))
+                    mysql.connection.commit()
+
+            return redirect("/users")
 
 @app.route('/edit_shipment', methods=["POST", "GET"])
 def shipment_has_rocks():
