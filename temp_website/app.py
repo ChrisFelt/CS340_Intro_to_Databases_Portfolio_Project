@@ -164,6 +164,8 @@ def shipment():
 
         return render_template("shipments.jinja2", data=data, rocks=rocks, users=users, shipment_ids=shipment_ids)
 
+@app.route('/edit_user')
+
 
 @app.route('/edit_shipment', methods=["POST", "GET"])
 def shipment_has_rocks():
