@@ -105,12 +105,28 @@ def rock():
         cur.execute(query)
         data = cur.fetchall()
 
-        usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) as fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
         return render_template("rocks.jinja2", data=data, users=users)
+
+    if request.method == "POST":
+        userID = request.form["userID"]
+        name = request.form["name"]
+        geoOrigin = request.form["geoOrigin"]
+        type = request.form["type"]
+        description = request.form["description"]
+        chemicalComp = request.form["chemicalComp"]
+
+        if request.form.get("Add_Rock"):
+            query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
+            mysql.connection.commit()
+
+        return redirect("/rocks")
 
 
 @app.route('/reviews', methods=["POST", "GET"])
@@ -164,6 +180,7 @@ def shipment():
 
         return render_template("shipments.jinja2", data=data, rocks=rocks, users=users, shipment_ids=shipment_ids)
 
+
 @app.route('/edit_user/<int:id>', methods=["POST", "GET"])
 def edit_user(id):
     if request.method == "GET":
@@ -215,6 +232,7 @@ def edit_user(id):
                     mysql.connection.commit()
 
             return redirect("/users")
+
 
 @app.route('/edit_shipment', methods=["POST", "GET"])
 def shipment_has_rocks():
