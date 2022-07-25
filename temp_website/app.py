@@ -91,6 +91,9 @@ def user():
 
 @app.route('/rocks', methods=["POST", "GET"])
 def rock():
+    """
+    TODO: Work on SEARCH
+    """
     if request.method == "GET":
         query = """SELECT Rocks.rockID AS 'Rock Number', 
                         Rocks.name AS 'Rock Name', 
