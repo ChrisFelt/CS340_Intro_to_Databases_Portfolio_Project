@@ -237,27 +237,16 @@ def edit_user(id):
             return redirect("/users")
 
 
-@app.route('/edit_shipment', methods=["POST", "GET"])
-def shipment_has_rocks():
+@app.route('/edit_shipment/<int:id>', methods=["POST", "GET"])
+def edit_shipment(id):
     if request.method == "GET":
-        shipment_has_rocksQuery = "SELECT Rocks.name AS Rock, Shipments.shipOrigin AS 'Shipment Origin', Shipments.shipDest AS 'Shipment Destination', Shipments.shipDate AS 'Shipment Date' FROM Shipments_has_Rocks INNER JOIN Rocks ON Shipments_has_Rocks.rockID = Rocks.rockID INNER JOIN Shipments ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID"
-        cur = mysql.connection.cursor()
-        cur.execute(shipment_has_rocksQuery)
-        shipment_details = cur.fetchall()
 
-        shipmentsQuery = "SELECT Shipments.shipmentID AS 'Shipping Number' , shipOrigin AS 'Origin', shipDest as 'Destination', shipDate AS 'Date Shipped' FROM Shipments"
+        shipmentsQuery = "SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote FROM Shipments INNER JOIN Users ON Shipments.userID = Users.userID WHERE Shipments.shipmentID = %s" % (id)
         cur = mysql.connection.cursor()
         cur.execute(shipmentsQuery)
-        shipments = cur.fetchall()
+        shipment = cur.fetchall()
 
-        rocksQuery = "SELECT name FROM Rocks"
-        cur = mysql.connection.cursor()
-        cur.execute(rocksQuery)
-        rocks = cur.fetchall()
-
-        return render_template("shipments_has_rocks.jinja2", rocks=rocks, shipment_details=shipment_details,
-                               shipments=shipments)
-
+        return render_template("edit_shipment.jinja2", shipment=shipment)
 
 ###########################################
 
