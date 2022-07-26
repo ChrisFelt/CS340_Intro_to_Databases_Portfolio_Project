@@ -54,8 +54,9 @@ FROM Users;
 -- UPDATE
 -- update a User's data using form input data
 -- Display selected userID information on edit_user page
-SELECT * FROM Users
-         WHERE userID = :userIDInput;
+SELECT *
+FROM Users
+WHERE userID = :userIDInput;
 -- Accounting for 4 different UPDATES depending on NULL inputs
 -- account for null specialization AND bio
 UPDATE Users
@@ -98,31 +99,33 @@ WHERE Users.userID = :userIDInput;
 -- CREATE
 -- add a new Rock
 INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp)
-VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input, 　
-        name = :nameInput,
-        geoOrigin = :geoOriginInput,
-        type = :typeInput,
-        chemicalComp = :chemicalCompInput);
+VALUES (:userIDInput,
+        :nameInput,
+        :geoOriginInput,
+        :typeInput,
+        :descriptionInput,
+        :chemicalCompInput);
 
 
 -- READ
 -- get all Rocks for the browse Rocks table
-SELECT Rocks.rockID,
-       CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
-       Rocks.name,
-       Rocks.geoOrigin,
-       Rocks.type,
-       Rocks.description,
-       Rocks.chemicalComp
+SELECT Rocks.rockID                                 AS 'Rock Number',
+       CONCAT(Users.firstName, ' ', Users.lastName) AS Owner,
+       Rocks.name                                   AS 'Rock Name',
+       Rocks.geoOrigin                              AS 'Place of Origin',
+       Rocks.type                                   AS 'Rock Type',
+       Rocks.description                            AS 'Description',
+       Rocks.chemicalComp                           AS 'Chemical Composition'
 FROM Rocks
          INNER JOIN Users
                     ON Rocks.userID = Users.userID;
 -- get name of User owner
+SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName
+FROM Users
 
-
--- SEARCH
+         -- SEARCH
 -- search all non-key attributes as well as owners of Rocks for any rows that match the search criteria
-WITH rockSearch AS
+         WITH rockSearch AS
          (SELECT Rocks.rockID,
                  CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
                  Rocks.name,
@@ -241,13 +244,13 @@ VALUES (SELECT shipmentID
 
 -- READ
 -- get all Shipments for the browse Shipments table
-SELECT Shipments.shipmentID,
-       CONCAT(Users.firstName, ' ', Users.lastName) AS name,
-       Rocks.name                                   AS rock,
-       Shipments.shipOrigin,
-       Shipments.shipDest,
-       Shipments.shipDate,
-       Shipments.miscNote
+SELECT Shipments.shipmentID                         AS 'Shipping Number',
+       CONCAT(Users.firstName, ' ', Users.lastName) AS 'Associated User',
+       Rocks.name                                   AS Rock,
+       Shipments.shipOrigin                         AS Origin,
+       Shipments.shipDest                           AS Destination,
+       Shipments.shipDate                           AS 'Date Shipped',
+       Shipments.miscNote                           AS Notes
 FROM Shipments
          INNER JOIN Users
                     ON Shipments.userID = Users.userID -- user sending/receiving the Shipment
@@ -256,7 +259,6 @@ FROM Shipments
          LEFT JOIN Rocks
                    ON Shipments_has_Rocks.rockID = Rocks.rockID -- name of Rock in shipment
 ORDER BY Shipments.shipmentID;
-
 
 -- UPDATE
 -- update Shipment from form data

@@ -155,7 +155,7 @@ def rock():
         cur.execute(query)
         data = cur.fetchall()
 
-        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) as fullName FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
@@ -224,7 +224,18 @@ def review():
 @app.route('/shipments', methods=["POST", "GET"])
 def shipment():
     if request.method == "GET":
-        shipmentsQuery = "SELECT Shipments.shipmentID AS 'Shipping Number', CONCAT(Users.firstName, ' ', Users.lastName) AS 'Associated User', Shipments.shipOrigin AS 'Origin', Shipments.shipDest as 'Destination', Shipments.shipDate AS 'Date Shipped', Shipments.miscNote AS Notes FROM Shipments INNER JOIN Users ON Shipments.userID = Users.userID"
+        shipmentsQuery = """SELECT Shipments.shipmentID AS 'Shipping Number',
+                               CONCAT(Users.firstName, ' ', Users.lastName) AS 'Associated User',
+                               Rocks.name                                   AS Rock,
+                               Shipments.shipOrigin AS Origin,
+                               Shipments.shipDest AS Destination,
+                               Shipments.shipDate AS 'Date Shipped',
+                               Shipments.miscNote AS Notes 
+                            FROM Shipments 
+                                INNER JOIN Users ON Shipments.userID = Users.userID
+                                INNER JOIN Shipments_has_Rocks ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID
+                                LEFT JOIN Rocks ON Shipments_has_Rocks.rockID = Rocks.rockID
+                            ORDER BY Shipments.shipmentID"""
         cur = mysql.connection.cursor()
         cur.execute(shipmentsQuery)
         data = cur.fetchall()
