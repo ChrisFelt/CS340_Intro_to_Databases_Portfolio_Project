@@ -240,13 +240,14 @@ def edit_user(id):
 @app.route('/edit_shipment/<int:id>', methods=["POST", "GET"])
 def edit_shipment(id):
     if request.method == "GET":
-
-        shipmentsQuery = "SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote FROM Shipments INNER JOIN Users ON Shipments.userID = Users.userID WHERE Shipments.shipmentID = %s" % (id)
+        shipmentsQuery = "SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote FROM Shipments INNER JOIN Users ON Shipments.userID = Users.userID WHERE Shipments.shipmentID = %s" % (
+            id)
         cur = mysql.connection.cursor()
         cur.execute(shipmentsQuery)
         shipment = cur.fetchall()
 
         return render_template("edit_shipment.jinja2", shipment=shipment)
+
 
 ###########################################
 
