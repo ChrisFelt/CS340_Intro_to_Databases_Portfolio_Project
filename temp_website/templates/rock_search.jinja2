@@ -55,62 +55,18 @@
 </head>
 <body onload="browseRocks()">
 	[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> | <a href="/edit_shipment">Shipments_has_Rocks</a> ]
-	<h1>Rocks</h1> 
+	<h1>Rocks</h1>
 
 	<div id="search">
-		<form id="searchRocks" action="/rocks" method="post">
+		<form id="searchRocks" action="/rocks" method="get">
 			<legend><strong>Search Rocks</strong></legend>
 			<fieldset>
-				<label> Search criteria </label> 
+				<label> Search criteria </label>
 				<input type="text" class="form-control" id="search" name="search" placeholder="" required>
 			</fieldset>
 			<input type="submit" value="Rock Search" name="Rock_Search" class="btn btn-primary" style="margin:.5rem;">
 		</form>
 	</div>
-
-
-	<div id="insert">
-			<form id="insertRock" action="/rocks" method="post">
-				<legend><strong>Add Rock</strong></legend>
-				<fieldset>
-
-					<label for="userID">Owner: </label>
-					<select name="userID" id="userID">
-						{% for item in users %}
-								<option value={{ item["userID"] }}> {{item["fullName"]}} </option>
-						{% endfor %}
-					</select>
-
-					<label for="name"> Rock Name: </label>
-					<input type="text" class="form-control" id="name" name="name" placeholder="" required>
-
-					<label> geoOrigin </label> 
-					<input type="text" class="form-control" id="geoOrigin" name="geoOrigin" placeholder="" required>
-
-					<label>Type:</label>
-					<select class="form-control" id="type" name="type" placeholder="" required>
-						<option value="">-- Rock Type --</option>
-						<option value="igneous">Igneous</option>
-						<option value="metamorphic">Metamorphic</option>
-						<option value="sedimentary">Sedimentary</option>
-					</select>
-
-					<label> Chemical Composition </label> 
-					<input type="text" class="form-control" id="chemicalComp" name="chemicalComp" placeholder="" required>
-
-					<br/><label> Description </label><br/>
-					<textarea class="form-control" id="description" name="description" rows="5" cols="33" placeholder="" required></textarea>
-
-				</fieldset>
-
-				<input type="submit" value="Add Rock" name="Add_Rock" class="btn btn-primary" style="margin:.5rem;">
-				<input class="btn" type="button" value="Cancel" onClick="browseRocks()">
-
-			</form>
-	</div>
-	<!--insert-->
-
-
 
 	<div id="browse">
 		 <p><a href="#" onClick="newRock()">Add New</a> </p>
@@ -120,7 +76,7 @@
 					<tr>
 						{% for key in data[0].keys() %}
 						<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-						{% endfor %} 
+						{% endfor %}
 					</tr>
 				</thead>
 
@@ -128,15 +84,15 @@
 						{% for item in data %}
 						<tr>
 							{% for key in item.keys() %}
-							<td> {{item[key]}} </td> 
+							<td> {{item[key]}} </td>
 							{% endfor %}
-						</tr> 
-						{% endfor %} 
+						</tr>
+						{% endfor %}
 				</tbody>
-			{% endif %} 
-		</table>   
+			{% endif %}
+		</table>
 	<p>&nbsp;</p>
-	</div>	
+	</div>
 	<!-- browse -->
 
 	<br/>

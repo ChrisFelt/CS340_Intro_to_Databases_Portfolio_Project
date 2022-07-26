@@ -185,6 +185,21 @@ def rock():
         return redirect("/rocks")
 
 
+@app.route('/rock_search', methods=["POST", "GET"])
+def rock_search():
+    if request.method == "POST":
+        search = request.form["search"]
+
+        if request.form.get("Rock_Search"):
+            print("working kinda")
+            query = "SELECT * FROM Rocks WHERE rockID = 1"
+            cur = mysql.connection.cursor()
+            cur.execute(query)
+            data = cur.fetchall()
+
+            return render_template("rock_search.jinja2", data=data)
+
+
 @app.route('/reviews', methods=["POST", "GET"])
 def review():
     if request.method == "GET":
