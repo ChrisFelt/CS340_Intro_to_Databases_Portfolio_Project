@@ -1,0 +1,67 @@
+<html>
+<!-- NOTES Need to add edit/delete hyperlink functionality. Update the references and update the templates associated with them-->
+<head>
+	<title>Shipment Details</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <div>
+        <table border="1" cellpadding="5">
+            <caption> Editing Shipment: </caption>
+            {% if shipment %}
+                <thead>
+                    <tr>
+                        {% for key in shipment[0].keys() %}
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                <tbody>
+                    {% for item in shipment %}
+                    <tr>
+                        {% for key in item.keys() %}
+                        <td>{{item[key]}}</td> {% endfor %}
+                    </tr>
+                    {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+
+<br>
+
+	<div id="edit">
+	<!-- form to edit data in Shipment-->
+	<form id="editShipment" action="/edit_shipment/{{shipment[0].shipmentID}}" method="post">
+	<legend><strong>Update Shipment</strong></legend>
+		<fieldset>
+
+				<input type="hidden" value="{{shipment[0].shipmentID}}" class="form-control" id="shipmentID" name="shipmentID" required>
+
+				<label>Return to Headquarters</label>
+				<input type="checkbox" name="tohq" id="tohq">
+
+				<label for="make">User Name</label>
+				<input type="text" value="{{shipment[0].name}}" class="form-control" id="User Name" name="User Name" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+				<label for="make">Origin</label>
+				<input type="text" value="{{shipment[0].shipOrigin}}" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+				<label for="make">Destination</label>
+				<input type="text" value="{{shipment[0].shipDest}}" class="form-control" id="shipDest" name="shipDest" pattern="[A-Za-z]{1,}" required>
+
+				<label>Shipment Date</label>
+				<input type="Date" value="{{shipment[0].shipDate}}" name="shipDate">
+
+				<label>Notes</label>
+				<textare value="{{shipment[0].miscNote}}" id="miscNote" name="miscNote" rows="5" cols="33"></textarea>
+
+		</fieldset>
+
+		<input type="submit" value="Edit Shipment" name="Edit_Shipment" class="btn btn-primary" style="margin:.5rem;">
+		<a href='/shipments'><input class="btn" type="button" value="cancel"></a>
+
+		</form>
+	</div><!--edit-->
+
+</body>
+</html>
