@@ -42,12 +42,7 @@ def user():
         cur.execute(query)
         data = cur.fetchall()
 
-        usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users"
-        cur = mysql.connection.cursor()
-        cur.execute(usersQuery)
-        users = cur.fetchall()
-
-        return render_template("users.jinja2", data=data, users=users)
+        return render_template("users.jinja2", data=data)
 
     if request.method == "POST":
         """
@@ -115,7 +110,6 @@ def edit_user(id):
             if request.form.get("Edit_User"):
                 # account for null specialization AND bio
                 if specialization == "" and bio == "":
-                    # mySQL query to insert a new person into bsg_people with our form inputs
                     query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = NULL, Users.bio = NULL WHERE Users.userID = %s"
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, userID))
