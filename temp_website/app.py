@@ -334,7 +334,7 @@ def edit_shipment(id):
         cur.execute(editShipmentQuery)
         editShipment = cur.fetchall()
 
-        # get Rock names and their owner's names
+        # get Rock names and their owner's names - MUST join on Shipments_has_Rocks table to avoid errors!
         rocksQuery = """SELECT Shipments_has_Rocks.shipmentHasRockID,
                             CONCAT(Users.firstName, ' ', Users.lastName) AS 'Owner', 
                             Rocks.name AS 'Rock Name' 
@@ -345,7 +345,7 @@ def edit_shipment(id):
                                     ON Shipments_has_Rocks.rockID = Rocks.rockID
                                 LEFT JOIN Users
                                     ON Rocks.userID = Users.userID
-                                WHERE Shipments_has_Rocks.shipmentID = %s""" % (id)
+                            WHERE Shipments_has_Rocks.shipmentID = %s""" % (id)
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
