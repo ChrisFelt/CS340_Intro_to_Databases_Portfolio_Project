@@ -8,16 +8,16 @@
 
     <div>
         <table border="1" cellpadding="5">
-            <caption> Editing Shipment: </caption>
-            {% if shipment %}
+            <legend><strong>Editing Shipment:</strong></legend>
+            {% if readShipment %}
                 <thead>
                     <tr>
-                        {% for key in shipment[0].keys() %}
+                        {% for key in readShipment[0].keys() %}
                         <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
                         {% endfor %}
                     </tr>
                 <tbody>
-                    {% for item in shipment %}
+                    {% for item in readShipment %}
                     <tr>
                         {% for key in item.keys() %}
                         <td>{{item[key]}}</td> {% endfor %}
@@ -27,41 +27,81 @@
         </table>
     </div>
 
-<br>
+<p>&nbsp;</p>
 
 	<div id="edit">
 	<!-- form to edit data in Shipment-->
-	<form id="editShipment" action="/edit_shipment/{{shipment[0].shipmentID}}" method="post">
-	<legend><strong>Update Shipment</strong></legend>
+	<form id="editShipment" action="/edit_shipment/{{editShipment[0].shipmentID}}" method="post">
+	<legend><strong>Update Shipment Details:</strong></legend>
 		<fieldset>
 
-				<input type="hidden" value="{{shipment[0].shipmentID}}" class="form-control" id="shipmentID" name="shipmentID" required>
+				<input type="hidden" value="{{ editShipment[0].shipmentID }}" class="form-control" id="shipmentID" name="shipmentID" required>
 
-				<label>Return to Headquarters</label>
-				<input type="checkbox" name="tohq" id="tohq">
+				<label for="user">User Name</label>
+				<select name="user" id="user">
+					<option selected>
+						{{shipUser[0].name}}
+					</option>
+					{% for item in shipUsersOption %}
+						{% for shipUsersOption in item %}
+							<option> {{item[shipUsersOption]}} </option>
+						{% endfor %}
+					{% endfor %}
+				</select>
 
-				<label for="make">User Name</label>
-				<input type="text" value="{{shipment[0].name}}" class="form-control" id="User Name" name="User Name" pattern="[A-Za-z]{1,}" placeholder="" required>
+				<label for="shipOrigin">Origin</label>
+				<input type="text" value="{{ editShipment[0].shipOrigin }}" class="form-control" id="shipOrigin" name="shipOrigin" size="35" required>
 
-				<label for="make">Origin</label>
-				<input type="text" value="{{shipment[0].shipOrigin}}" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z]{1,}" placeholder="" required>
+				<label for="shipDest">Destination</label>
+				<input type="text" value="{{ editShipment[0].shipDest }}" class="form-control" id="shipDest" name="shipDest" size="35" required>
 
-				<label for="make">Destination</label>
-				<input type="text" value="{{shipment[0].shipDest}}" class="form-control" id="shipDest" name="shipDest" pattern="[A-Za-z]{1,}" required>
+				<label for="shipDate">Shipment Date</label>
+				<input type="Date" value="{{ editShipment[0].shipDate }}" class="form-control" id="shipDate" name="shipDate" required>
 
-				<label>Shipment Date</label>
-				<input type="Date" value="{{shipment[0].shipDate}}" name="shipDate">
-
-				<label>Notes</label>
-				<textarea value="{{shipment[0].miscNote}}" id="miscNote" name="miscNote" rows="5" cols="33"></textarea>
+				<label for="miscNote">Notes</label>
+				<input type="text" value="{{ editShipment[0].miscNote }}" class="form-control" id="miscNote" name="miscNote" size="35"></input>
 
 		</fieldset>
 
-		<input type="submit" value="Edit Shipment" name="Edit_Shipment" class="btn btn-primary" style="margin:.5rem;">
-		<a href='/shipments'><input class="btn" type="button" value="cancel"></a>
+		<input type="submit" value="Update Shipment" name="Edit_Shipment" class="btn btn-primary" style="margin:.5rem;">
+		<a href='/shipments'><input class="btn" type="button" value="Cancel"></a>
 
 		</form>
 	</div><!--edit-->
+
+<p>&nbsp;</p>
+
+	<div id="browse">
+		<legend><strong>Rocks in this shipment:</strong></legend>
+		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
+		<table border="1" cellpadding="5">
+			{% if rocks %}
+			<thead>
+				<tr>
+					{% for key in rocks[0].keys() %}
+						{% if not loop.first %}
+							<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+						{% endif %}
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in rocks %}
+				<tr>
+					{% for key in item.keys() %}
+						{% if not loop.first %}
+							<td> {{item[key]}} </td>
+						{% endif %}
+					{% endfor %}
+					<td><a href="../delete_shipments_has_rocks/{{item.shipmentHasRockID}}" class="btn btn-default">Remove</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+			{% endif %}
+		</table>
+	<p>&nbsp;</p>
+	</div>	<!-- browse rocks in shipment-->
+
 
 </body>
 </html>

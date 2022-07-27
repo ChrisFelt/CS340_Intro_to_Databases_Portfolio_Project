@@ -64,11 +64,8 @@
 			<legend><strong>Add Shipment</strong></legend>
 			<fieldset>
 
-				<label>Return to Headquarters</label>
-				<input type="checkbox" name="tohq" id="tohq">
-
-				<label for="make">Ship to: </label>
-				<select name="name" id="name">
+				<label for="user">Ship to: </label>
+				<select name="user" id="user">
 					{% for item in users %}
 						{% for user in item %}
 							<option> {{item[user]}} </option>
@@ -76,8 +73,8 @@
 					{% endfor %}
 				</select>
 
-				<label for="make">Rock: </label>
-				<select name="name" id="name">
+				<label for="rock">Rock: </label>
+				<select name="rock" id="rock">
 					{% for item in rocks %}
 						{% for rock in item %}
 							<option> {{item[rock]}} </option>
@@ -85,19 +82,21 @@
 					{% endfor %}
 				</select>
 
-				<label for="make"> Shipment Origin: </label>
-				<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z]{1,}" placeholder="" required>
+				<label for="shipOrigin">Origin</label>
+				<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" placeholder="" required>
 
-				<label> Shipment Destination: </label>
-				<input type="text" name="shipDest">
+				<label for="shipDest">Destination</label>
+				<input type="text" class="form-control" id="shipDest" name="shipDest" placeholder="" required>
 
-				<label> Shipment Date </label>
-				<input type="Date" name="shipDate">
+				<label for="shipDate">Shipment Date</label>
+				<input type="Date" class="form-control" id="shipDate" name="shipDate" placeholder="" required>
+
+				<label for="miscNote">Notes</label>
+				<input type="text" class="form-control" id="miscNote" name="miscNote" placeholder="Optional">
 
 			</fieldset>
 
 		<input type="submit" value="Add Shipment" name="Add_Shipment" class="btn btn-primary" style="margin:.5rem;">
-		<input class="btn" type="button" value="Cancel" onClick="browseShipments()">
 
 		</form>
 	</div><!--insert-->
@@ -122,7 +121,7 @@
 					<td> {{item[key]}} </td>
 					{% endfor %}
 					<td><a href="edit_shipment/{{ item["Shipment Number"] }}" class="btn btn-default">Edit</a></td>
-					<td><a href="delete_people/{{item.id}}" class="btn btn-default">Delete</a></td>
+					<td><a href="delete_shipment/{{ item["Shipment Number"] }}" class="btn btn-default">Delete</a></td>
 				</tr> 
 				{% endfor %} 
 			</tbody>

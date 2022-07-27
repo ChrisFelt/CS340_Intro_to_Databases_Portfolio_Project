@@ -223,19 +223,17 @@ def review():
 
 @app.route('/shipments', methods=["POST", "GET"])
 def shipment():
+    # READ Shipment data
     if request.method == "GET":
-        shipmentsQuery = """SELECT Shipments.shipmentID AS 'Shipping Number',
-                               CONCAT(Users.firstName, ' ', Users.lastName) AS 'Associated User',
-                               Rocks.name                                   AS Rock,
-                               Shipments.shipOrigin AS Origin,
-                               Shipments.shipDest AS Destination,
-                               Shipments.shipDate AS 'Date Shipped',
-                               Shipments.miscNote AS Notes 
-                            FROM Shipments 
-                                INNER JOIN Users ON Shipments.userID = Users.userID
-                                INNER JOIN Shipments_has_Rocks ON Shipments.shipmentID = Shipments_has_Rocks.shipmentID
-                                LEFT JOIN Rocks ON Shipments_has_Rocks.rockID = Rocks.rockID
-                            ORDER BY Shipments.shipmentID"""
+        shipmentsQuery = """SELECT Shipments.shipmentID AS 'Shipment Number', 
+                                CONCAT(Users.firstName, ' ', Users.lastName) AS 'User', 
+                                Shipments.shipOrigin AS 'Origin', 
+                                Shipments.shipDest AS 'Destination', 
+                                Shipments.shipDate AS 'Date Shipped', 
+                                Shipments.miscNote AS 'Notes' 
+                                FROM Shipments 
+                                    INNER JOIN Users 
+                                        ON Shipments.userID = Users.userID"""
         cur = mysql.connection.cursor()
         cur.execute(shipmentsQuery)
         data = cur.fetchall()
@@ -257,17 +255,188 @@ def shipment():
 
         return render_template("shipments.jinja2", data=data, rocks=rocks, users=users, shipment_ids=shipment_ids)
 
+    # CREATE Shipment
+    if request.method == "POST":
+        user = request.form["user"]
+        rock = request.form["rock"]
+        shipOrigin = request.form["shipOrigin"]
+        shipDest = request.form["shipDest"]
+        shipDate = request.form["shipDate"]
+        miscNote = request.form["miscNote"]
 
+        if request.form.get("Add_Shipment"):
+            # account for null miscNote
+            if miscNote == "":
+                # first, SQL query to insert new Shipment
+                shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate) 
+                                VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), %s, %s, %s)"""
+                cur = mysql.connection.cursor()
+                cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate))
+                mysql.connection.commit()
+                # next, SQL query to insert new Shipments_has_Rocks
+                shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
+                                    VALUES ((SELECT shipmentID FROM Shipments WHERE shipOrigin = %s AND shipDest = %s AND shipDate = %s), 
+                                    (SELECT rockID FROM Rocks WHERE name = %s))"""
+                cur = mysql.connection.cursor()
+                cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
+                mysql.connection.commit()
+            # account for NO null
+            else:
+                # first, SQL query to insert new Shipment
+                shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote) 
+                                VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), %s, %s, %s, %s)"""
+                cur = mysql.connection.cursor()
+                cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate, miscNote))
+                mysql.connection.commit()
+                # next, SQL query to insert new Shipments_has_Rocks
+                shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
+                                    VALUES ((SELECT shipmentID FROM Shipments WHERE shipOrigin = %s AND shipDest = %s AND shipDate = %s), 
+                                    (SELECT rockID FROM Rocks WHERE name = %s))"""
+                cur = mysql.connection.cursor()
+                cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
+                mysql.connection.commit()
+
+            return redirect("/shipments")
+
+
+# edit Shipments and Shipments_has_Rocks page
 @app.route('/edit_shipment/<int:id>', methods=["POST", "GET"])
 def edit_shipment(id):
+    # READ Shipment data
     if request.method == "GET":
-        shipmentsQuery = "SELECT Shipments.shipmentID, CONCAT(Users.firstName, ' ', Users.lastName) AS name, Shipments.shipOrigin, Shipments.shipDest, Shipments.shipDate, Shipments.miscNote FROM Shipments INNER JOIN Users ON Shipments.userID = Users.userID WHERE Shipments.shipmentID = %s" % (
-            id)
+        # get shipment data with some snappy monikers
+        readShipmentQuery = """SELECT Shipments.shipmentID AS 'Shipment Number', 
+                                CONCAT(Users.firstName, ' ', Users.lastName) AS 'User', 
+                                Shipments.shipOrigin AS 'Origin', 
+                                Shipments.shipDest AS 'Destination', 
+                                Shipments.shipDate AS 'Date Shipped', 
+                                Shipments.miscNote AS 'Notes'
+                                FROM Shipments 
+                                    INNER JOIN Users 
+                                        ON Shipments.userID = Users.userID 
+                                WHERE Shipments.shipmentID = %s""" % (id)
         cur = mysql.connection.cursor()
-        cur.execute(shipmentsQuery)
-        shipment = cur.fetchall()
+        cur.execute(readShipmentQuery)
+        readShipment = cur.fetchall()
 
-        return render_template("edit_shipment.jinja2", shipment=shipment)
+        # get shipment data vanilla style
+        editShipmentQuery = """SELECT Shipments.shipmentID, 
+                                CONCAT(Users.firstName, ' ', Users.lastName), 
+                                Shipments.shipOrigin, 
+                                Shipments.shipDest, 
+                                Shipments.shipDate, 
+                                Shipments.miscNote
+                                FROM Shipments 
+                                    INNER JOIN Users 
+                                        ON Shipments.userID = Users.userID 
+                                WHERE Shipments.shipmentID = %s""" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(editShipmentQuery)
+        editShipment = cur.fetchall()
+
+        # get Rock names and their owner's names
+        rocksQuery = """SELECT Shipments_has_Rocks.shipmentHasRockID,
+                            CONCAT(Users.firstName, ' ', Users.lastName) AS 'Owner', 
+                            Rocks.name AS 'Rock Name' 
+                            From Shipments_has_Rocks
+                                INNER JOIN Shipments
+                                    ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
+                                INNER JOIN Rocks
+                                    ON Shipments_has_Rocks.rockID = Rocks.rockID
+                                LEFT JOIN Users
+                                    ON Rocks.userID = Users.userID
+                                WHERE Shipments_has_Rocks.shipmentID = %s""" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(rocksQuery)
+        rocks = cur.fetchall()
+
+        # get all User names BESIDES the original User in the Shipment
+        shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
+                                    FROM Users 
+                                    WHERE userID != (SELECT userID from Shipments WHERE shipmentID = %s)
+                                    GROUP BY name""" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(shipUsersOptionQuery)
+        shipUsersOption = cur.fetchall()
+
+        # get the original User in the Shipment
+        shipUserQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name 
+                            FROM Users 
+                            WHERE userID = (SELECT userID from Shipments WHERE shipmentID = %s)""" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(shipUserQuery)
+        shipUser = cur.fetchall()
+
+        return render_template("edit_shipment.jinja2", readShipment=readShipment, editShipment=editShipment,
+                               rocks=rocks, shipUsersOption=shipUsersOption, shipUser=shipUser)
+
+    # UPDATE Shipment
+    if request.method == "POST":
+
+        if request.form.get("Edit_Shipment"):
+
+            # gather variables from Add_Shipment form
+            user = request.form["user"]
+            shipOrigin = request.form["shipOrigin"]
+            shipDest = request.form["shipDest"]
+            shipDate = request.form["shipDate"]
+            miscNote = request.form["miscNote"]
+
+            # account for null miscNote
+            if miscNote == "":
+                # first, SQL query to insert new Shipment
+                shipUpdateQuery = """UPDATE Shipments
+                                        SET userID = (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s),
+                                        shipOrigin = %s,
+                                        shipDest = %s,
+                                        shipDate = %s, 
+                                        miscNote = NULL
+                                        WHERE shipmentID = %s;"""
+                cur = mysql.connection.cursor()
+                cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
+                mysql.connection.commit()
+
+            # account for NO null
+            else:
+                # first, SQL query to insert new Shipment
+                shipUpdateQuery = """UPDATE Shipments
+                                        SET userID = (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s),
+                                        shipOrigin = %s,
+                                        shipDest = %s,
+                                        shipDate = %s,
+                                        miscNote = %s
+                                        WHERE shipmentID = %s;"""
+                cur = mysql.connection.cursor()
+                cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, miscNote, id))
+                mysql.connection.commit()
+
+            return redirect("/shipments")
+
+
+# delete Shipments
+@app.route("/delete_shipment/<int:id>")
+def delete_shipment(id):
+    # SQL query to delete the Shipment given id
+    query = "DELETE FROM Shipments WHERE shipmentID =  '%s';"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+
+    # redirect back to Shipments
+    return redirect("/shipments")
+
+
+# delete Shipments
+@app.route("/delete_shipments_has_rocks/<int:id>")
+def delete_shipments_has_rocks(id):
+    # SQL query to delete the Shipment given id
+    query = "DELETE FROM Shipments_has_Rocks WHERE shipmentHasRockID =  '%s';"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+
+    # redirect back to Shipments
+    return redirect("/edit_shipment")
 
 
 ###########################################
