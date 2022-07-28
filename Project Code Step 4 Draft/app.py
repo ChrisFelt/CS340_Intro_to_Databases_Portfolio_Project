@@ -9,9 +9,11 @@ app = Flask(__name__)
 db_connection = db.connect_to_database()
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_feltc'
-app.config['MYSQL_PASSWORD'] = 'xxxx' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_feltc'
+# app.config['MYSQL_USER'] = 'cs340_feltc'
+app.config['MYSQL_USER'] = 'cs340_behringr'
+app.config['MYSQL_PASSWORD'] = '1834'  # last 4 of onid
+# app.config['MYSQL_DB'] = 'cs340_feltc'
+app.config['MYSQL_DB'] = 'cs340_behringr'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 mysql = MySQL(app)
@@ -105,12 +107,28 @@ def rock():
         cur.execute(query)
         data = cur.fetchall()
 
-        usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
         return render_template("rocks.jinja2", data=data, users=users)
+
+    if request.method == "POST":
+        userID = request.form["userID"]
+        name = request.form["name"]
+        geoOrigin = request.form["geoOrigin"]
+        type = request.form["type"]
+        description = request.form["description"]
+        chemicalComp = request.form["chemicalComp"]
+
+        if request.form.get("Add_Rock"):
+            query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
+            mysql.connection.commit()
+
+        return redirect("/rocks")
 
 
 @app.route('/reviews', methods=["POST", "GET"])
@@ -283,7 +301,6 @@ def edit_user(id):
 def edit_shipment(id):
     # READ Shipment data
     if request.method == "GET":
-
         # get shipment data with some snappy monikers
         readShipmentQuery = """SELECT Shipments.shipmentID AS 'Shipment Number', 
                                 CONCAT(Users.firstName, ' ', Users.lastName) AS 'User', 
@@ -333,11 +350,12 @@ def edit_shipment(id):
         # get Rock names and their owner's names 
         addRocksQuery = """SELECT Rocks.name AS rock
                             FROM Rocks
-                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)""" % (id)
+                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)""" % (
+            id)
         cur = mysql.connection.cursor()
         cur.execute(addRocksQuery)
         addRocks = cur.fetchall()
-        
+
         # get all User names BESIDES the original User in the Shipment
         shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
                                     FROM Users 
@@ -355,7 +373,8 @@ def edit_shipment(id):
         cur.execute(shipUserQuery)
         shipUser = cur.fetchall()
 
-        return render_template("edit_shipment.jinja2", readShipment=readShipment, editShipment=editShipment, rocks=rocks, addRocks=addRocks, shipUsersOption=shipUsersOption, shipUser=shipUser)
+        return render_template("edit_shipment.jinja2", readShipment=readShipment, editShipment=editShipment,
+                               rocks=rocks, addRocks=addRocks, shipUsersOption=shipUsersOption, shipUser=shipUser)
 
     # UPDATE Shipment
     if request.method == "POST":
@@ -410,7 +429,7 @@ def delete_shipment(id):
     mysql.connection.commit()
 
     # redirect back to Shipments
-    return redirect("/shipments")    
+    return redirect("/shipments")
 
 
 # delete Shipments_has_Rocks
