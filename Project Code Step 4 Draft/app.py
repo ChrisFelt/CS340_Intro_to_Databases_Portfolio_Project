@@ -318,7 +318,7 @@ def edit_shipment(id):
         rocksQuery = """SELECT Shipments_has_Rocks.shipmentHasRockID,
                             CONCAT(Users.firstName, ' ', Users.lastName) AS 'Owner', 
                             Rocks.name AS 'Rock Name' 
-                            From Shipments_has_Rocks
+                            FROM Shipments_has_Rocks
                                 INNER JOIN Shipments
                                     ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
                                 INNER JOIN Rocks
@@ -332,7 +332,7 @@ def edit_shipment(id):
 
         # get Rock names and their owner's names 
         addRocksQuery = """SELECT Rocks.name AS rock
-                            From Rocks
+                            FROM Rocks
                                 WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)""" % (id)
         cur = mysql.connection.cursor()
         cur.execute(addRocksQuery)
