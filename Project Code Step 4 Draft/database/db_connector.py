@@ -7,11 +7,11 @@ load_dotenv(find_dotenv())
 
 # Set the variables in our application with those environment variables
 host = 'classmysql.engr.oregonstate.edu'      # MUST BE THIS
-# user = 'cs340_feltc'                          # don't forget the CS_340 prefix
-user = 'cs340_behringr'                          # don't forget the CS_340 prefix
-passwd = '1834'                               # should only be 4 digits if default
-# db = 'cs340_feltc'
-db = 'cs340_behringr'
+user = 'cs340_feltc'                          # don't forget the CS_340 prefix
+# user = 'cs340_behringr'                          # don't forget the CS_340 prefix
+passwd = 'xxxx'                               # should only be 4 digits if default
+db = 'cs340_feltc'
+# db = 'cs340_behringr'
 
 def connect_to_database(host = host, user = user, passwd = passwd, db = db):
     '''
