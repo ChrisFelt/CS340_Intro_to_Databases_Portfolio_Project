@@ -80,6 +80,8 @@ CREATE OR REPLACE TABLE Shipments (
   shipDate DATE NOT NULL,
   miscNote VARCHAR(3000) NULL,
   PRIMARY KEY (shipmentID),
+  CONSTRAINT unique_Shipment1
+    UNIQUE (shipOrigin, shipDest, shipDate, miscNote),
   CONSTRAINT fk_Shipments_Users1
     FOREIGN KEY (userID)
     REFERENCES Users (userID)
