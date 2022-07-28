@@ -243,9 +243,8 @@ VALUES (SELECT shipmentID
 
 ---------------------------------------------------------------------------------------------------------
 
--- ACCOUNT FOR NO NULL INPUTS
 -- CREATE I
--- SHIP -FROM- USER (the User's address will auto-populate in the shipOrigin field)
+-- NULL miscNote
 -- Part I: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
 VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
@@ -255,16 +254,16 @@ VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_
         miscNote = :miscNoteInput);
 -- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-VALUES (SELECT shipmentID
+VALUES ((SELECT shipmentID
         FROM Shipments
         WHERE shipOrigin = :shipOrigin_in_form
           AND shipDest = :shipDest_in_form
-          AND shipDate = :shipDate_in_form,
-        SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input);
+          AND shipDate = :shipDate_in_form
+          AND miscNote IS NULL),
+        (SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input));
 
--- ACCOUNT FOR NO NULL INPUTS
 -- CREATE II
--- SHIP -TO- USER (the User's address will auto-populate in the shipDest field)
+-- Not NULL miscNote
 -- Part I: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
 VALUES (SELECT address FROM Users WHERE CONCAT(firstName, ' ', lastName) = :auto_populates_from_name_dropdown_input,
@@ -274,15 +273,17 @@ VALUES (SELECT address FROM Users WHERE CONCAT(firstName, ' ', lastName) = :auto
         miscNote = :miscNoteInput);
 -- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-VALUES (SELECT shipmentID
+VALUES ((SELECT shipmentID
         FROM Shipments
         WHERE shipOrigin = :shipOrigin_in_form
           AND shipDest = :shipDest_in_form
-          AND shipDate = :shipDate_in_form,
-        SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input);
+          AND shipDate = :shipDate_in_form
+          AND miscNote = :miscNote_in_form),
+        (SELECT rockID FROM Rocks WHERE name = :name_from_dropdown_input));
 
 
--- READ
+-- READ I
+-- with user friendly AS labels
 -- get all Shipments for the browse Shipments table
 SELECT Shipments.shipmentID                         AS 'Shipment Number',
        CONCAT(Users.firstName, ' ', Users.lastName) AS 'User',
@@ -290,9 +291,23 @@ SELECT Shipments.shipmentID                         AS 'Shipment Number',
        Shipments.shipDest                           AS 'Destination',
        Shipments.shipDate                           AS 'Date Shipped',
        Shipments.miscNote                           AS 'Notes'
-FROM Shipments
-         INNER JOIN Users
-                    ON Shipments.userID = Users.userID;
+       FROM Shipments
+            INNER JOIN Users
+                ON Shipments.userID = Users.userID;
+
+-- READ II
+-- for server side /edit_shipment
+-- get all Shipments for the browse Shipments table
+SELECT Shipments.shipmentID,
+    CONCAT(Users.firstName, ' ', Users.lastName),
+    Shipments.shipOrigin,
+    Shipments.shipDest,
+    Shipments.shipDate,
+    Shipments.miscNote
+    FROM Shipments
+        INNER JOIN Users
+            ON Shipments.userID = Users.userID
+    WHERE Shipments.shipmentID = :shipmentIDInput;
 
 -- display rocks by name
 SELECT name
@@ -306,6 +321,35 @@ FROM Users;
 SELECT shipmentID
 FROM Shipments;
 
+-- display Rocks with Owner's name for specific shipment
+SELECT Shipments_has_Rocks.shipmentHasRockID,
+                            CONCAT(Users.firstName, ' ', Users.lastName) AS 'Owner',
+                            Rocks.name AS 'Rock Name'
+                            From Shipments_has_Rocks
+                                INNER JOIN Shipments
+                                    ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
+                                INNER JOIN Rocks
+                                    ON Shipments_has_Rocks.rockID = Rocks.rockID
+                                LEFT JOIN Users
+                                    ON Rocks.userID = Users.userID
+                            WHERE Shipments_has_Rocks.shipmentID = :shipmentIDInput;
+
+-- display Rocks with Owner's name for all BUT a specific shipment
+SELECT Rocks.name AS rock
+    FROM Rocks
+        WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = :shipmentIDInput);
+
+-- display Users BESIDES the User in the Shipment
+SELECT CONCAT(firstName, ' ', lastName) AS name
+    FROM Users
+        WHERE userID != (SELECT userID from Shipments WHERE shipmentID = %s)
+            GROUP BY name;
+
+-- display User from Shipment
+SELECT CONCAT(firstName, ' ', lastName) AS name
+    FROM Users
+        WHERE userID = (SELECT userID from Shipments WHERE shipmentID = :shipmentIDInput;
+
 -- UPDATE '/edit_shipment'
 -- update Shipment from form data
 -- first, get Shipment and Shipments_has_Rocks
@@ -318,8 +362,7 @@ SELECT Shipments.shipmentID AS 'Shipment Number',
                                 FROM Shipments
                                     INNER JOIN Users
                                         ON Shipments.userID = Users.userID
-                                WHERE Shipments.shipmentID = :userIDInput
-WHERE Shipments.shipmentID = :shipmentID_selected_in_form;
+                                WHERE Shipments.shipmentID = :shipmentIDInput;
 -- then, update Shipment
 UPDATE Shipments
 SET name       = :userID_from_dropdown_input,
@@ -349,7 +392,7 @@ DELETE
 FROM Shipments_has_Rocks
 WHERE rockID = :rockID_from_browse_shipment_page;
 -- check Shipment to see if last Rock was removed
-SELECT *
-FROM Shipments_has_Rocks
-WHERE shipmentID = :shipmentID_from_browse_shipment_page;
+SELECT COUNT(shipmentID) AS count
+    FROM Shipments_has_Rocks
+    WHERE shipmentHasRockID = :shipmentHasRockID_from_browse_shipment_page;
 -- if empty set is returned, browser runs DELETE I as well
