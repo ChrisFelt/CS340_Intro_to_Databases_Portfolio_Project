@@ -220,6 +220,14 @@ def review():
 
         return render_template("reviews.jinja2", data=data, rocks=rocks, users=users, reviews=reviews)
 
+@app.route('/edit_review', methods=["POST", "GET"])
+def edit_review(id):
+    if request.method == "GET":
+        pass
+
+    if request.method == "POST":
+        pass
+
 
 @app.route('/shipments', methods=["POST", "GET"])
 def shipment():
