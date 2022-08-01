@@ -198,7 +198,7 @@ def rock_search():
 @app.route('/reviews', methods=["POST", "GET"])
 def review():
     if request.method == "GET":
-        query = "SELECT Reviews.reviewID, CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, Rocks.name AS Rock, Reviews.title AS Title, Reviews.body AS Review, Reviews.rating AS Rating FROM Reviews LEFT JOIN Users ON Reviews.userID = Users.userID INNER JOIN Rocks ON Reviews.rockID = Rocks.rockID ORDER BY Reviews.reviewID ASC"
+        query = "SELECT Reviews.reviewID AS 'Review ID', CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, Rocks.name AS Rock, Reviews.title AS Title, Reviews.body AS Review, Reviews.rating AS Rating FROM Reviews LEFT JOIN Users ON Reviews.userID = Users.userID INNER JOIN Rocks ON Reviews.rockID = Rocks.rockID ORDER BY Reviews.reviewID ASC"
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
@@ -243,10 +243,15 @@ def review():
 
         return redirect("/reviews")
 
-@app.route('/edit_review', methods=["POST", "GET"])
+@app.route('/edit_review/<int:id>', methods=["POST", "GET"])
 def edit_review(id):
     if request.method == "GET":
-        pass
+        query = "SELECT * FROM Reviews WHERE reviewID = %s" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
+
+        return render_template("edit_review.jinja2", data=data)
 
     if request.method == "POST":
         pass
