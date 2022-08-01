@@ -2,59 +2,9 @@
 <head>
     <title>Users</title>
     <link href="style.css" rel="stylesheet" type="text/css"/>
-    {#    <script type="application/javascript">#}
-    {#        function showform(dowhat) {#}
-    {#            if (dowhat == 'insert') {#}
-    {#                document.getElementById('browse').style.display = 'none';#}
-    {#                document.getElementById('insert').style.display = 'block';#}
-    {#                document.getElementById('edit').style.display = 'none';#}
-    {#                document.getElementById('delete').style.display = 'none';#}
-    {#            } else if (dowhat == 'update') {#}
-    {#                document.getElementById('browse').style.display = 'none';#}
-    {#                document.getElementById('insert').style.display = 'none';#}
-    {#                document.getElementById('edit').style.display = 'block';#}
-    {#                document.getElementById('delete').style.display = 'none';#}
-    {#            } else if (dowhat == 'delete') {#}
-    {#                document.getElementById('browse').style.display = 'none';#}
-    {#                document.getElementById('insert').style.display = 'none';#}
-    {#                document.getElementById('edit').style.display = 'none';#}
-    {#                document.getElementById('delete').style.display = 'block';#}
-    {#            } else if (dowhat == 'all') {#}
-    {#                document.getElementById('browse').style.display = 'block';#}
-    {#                document.getElementById('insert').style.display = 'block';#}
-    {#                document.getElementById('edit').style.display = 'block';#}
-    {#                document.getElementById('delete').style.display = 'block';#}
-    {#            } else { //by default display browse#}
-    {#                document.getElementById('browse').style.display = 'block';#}
-    {#                document.getElementById('insert').style.display = 'none';#}
-    {#                document.getElementById('edit').style.display = 'none';#}
-    {#                document.getElementById('delete').style.display = 'none';#}
-    {#            }#}
-    {#        }#}
-    {##}
-    {#        function newUser() {#}
-    {#            showform('insert');#}
-    {#        }#}
-    {##}
-    {#        function updateUser(pid) {#}
-    {#            showform('update');#}
-    {#        }#}
-    {##}
-    {#        function deletePerson(pid) {#}
-    {#            showform('delete');#}
-    {#        }#}
-    {##}
-    {#        function browseUsers() {#}
-    {#            showform('browse');#}
-    {#        }#}
-    {##}
-    {#        function showAll() {#}
-    {#            showform('all');#}
-    {#        }#}
-    {#    </script>#}
 </head>
 
-<body onload="browseUsers()">
+<body>
 
 [ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a
         href="shipments">Shipments</a> ]
@@ -88,7 +38,6 @@
 </div><!--insert-->
 
 <div id="browse">
-    {#    <p><a href="#" onClick="newUser()">Add New</a></p>#}
     <table border="1" cellpadding="5">
         {% if data %}
             <thead>
