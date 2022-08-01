@@ -1,0 +1,81 @@
+<html>
+<head>
+    <title>Reviews</title>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a
+        href="shipments">Shipments</a> ]
+<h1>Reviews</h1>
+
+<div id="insert">
+    <form id="insertReview" action="/reviews" method="post">
+        <legend><strong>Add Review</strong></legend>
+        <fieldset>
+
+            <label for="userID">Reviewer: </label>
+            <select name="userID" id="userID">
+                <option value="">None</option>
+                {% for item in users %}
+                    <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
+                {% endfor %}
+            </select>
+
+            <label for="rockID">Rock: </label>
+            <select name="rockID" id="rockID">
+                {% for item in rocks %}
+                    <option value={{ item["rockID"] }}> {{ item["name"] }} </option>
+                {% endfor %}
+            </select>
+
+            <label for="title"> Review Title: </label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="" required>
+
+            <br/><label> Body </label><br/>
+            <textarea id="body" name="body" rows="5" cols="33" required></textarea>
+
+            <br/><label> Rating: </label>
+            <select name="rating" id="rating" required>
+                {% for x in range(6) %}
+                    <option value={{ x }}>{{ x }}</option>
+                {% endfor %}
+            </select>
+
+        </fieldset>
+
+        <input type="submit" value="Add Review" name="Add_Review" class="btn btn-primary" style="margin:.5rem;">
+    </form>
+</div><!--insert-->
+
+
+<div id="browse">
+    <table border="1" cellpadding="5">
+        {% if data %}
+            <thead>
+            <tr>
+                {% for key in data[0].keys() %}
+                    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in data %}
+                <tr>
+                    {% for key in item.keys() %}
+                        <td> {{ item[key] }} </td>
+                    {% endfor %}
+                    <td><a href="edit_review/{{ item["Review ID"] }}" class="btn btn-default">Edit</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% endif %}
+    </table>
+    <p>&nbsp;</p>
+</div>    <!-- browse -->
+
+<br>
+
+
+</body>
+</html>
