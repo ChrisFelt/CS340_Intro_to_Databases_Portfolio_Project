@@ -37,12 +37,9 @@
 
             <br/><label> Rating: </label>
             <select name="rating" id="rating" required>
-                <option>0</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+                {% for x in range(6) %}
+                <option value={{ x }}>{{ x }}</option>
+                {% endfor %}
             </select>
 
         </fieldset>

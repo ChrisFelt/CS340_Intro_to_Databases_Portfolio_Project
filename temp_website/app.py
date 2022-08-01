@@ -243,6 +243,7 @@ def review():
 
         return redirect("/reviews")
 
+
 @app.route('/edit_review/<int:id>', methods=["POST", "GET"])
 def edit_review(id):
     if request.method == "GET":
@@ -251,10 +252,41 @@ def edit_review(id):
         cur.execute(query)
         data = cur.fetchall()
 
-        return render_template("edit_review.jinja2", data=data)
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
+        cur = mysql.connection.cursor()
+        cur.execute(usersQuery)
+        users = cur.fetchall()
+
+        rocksQuery = "SELECT rockID, name FROM Rocks"
+        cur = mysql.connection.cursor()
+        cur.execute(rocksQuery)
+        rocks = cur.fetchall()
+
+        return render_template("edit_review.jinja2", data=data, users=users, rocks=rocks)
 
     if request.method == "POST":
-        pass
+        reviewID = id
+        userID = request.form["userID"]
+        rockID = request.form["rockID"]
+        title = request.form["title"]
+        body = request.form["body"]
+        rating = request.form["rating"]
+
+        if request.form.get("Edit_Review"):
+            # account for NULL userID
+            if userID == "":
+                query = "UPDATE Reviews SET Reviews.userID = NULL, Reviews.rockID = %s, Reviews.title = %s, Reviews.body = %s, Reviews.rating = %s WHERE Reviews.reviewID = %s"
+                cur = mysql.connection.cursor()
+                cur.execute(query, (rockID, title, body, rating, reviewID))
+                mysql.connection.commit()
+            # account for no NULL
+            else:
+                query = "UPDATE Reviews SET Reviews.userID = %s, Reviews.rockID = %s, Reviews.title = %s, Reviews.body = %s, Reviews.rating = %s WHERE Reviews.reviewID = %s"
+                cur = mysql.connection.cursor()
+                cur.execute(query, (userID, rockID, title, body, rating, reviewID))
+                mysql.connection.commit()
+
+        return redirect("/reviews")
 
 
 @app.route('/shipments', methods=["POST", "GET"])
