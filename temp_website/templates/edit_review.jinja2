@@ -1,0 +1,49 @@
+<div id="edit">
+    <form id="editPerson" action="/edit_people/{{ data[0].id }}" method="post">
+        <legend><strong>Update Review</strong></legend>
+        <fieldset>
+
+            <input type="hidden" value="{{ data[0].id }}" class="form-control" id="rockID" name="rockID" required>
+
+            {# <label for="make">Review ID: </label>
+			<select name="name" id="name">
+				{% for item in reviews %}
+					{% for review in item %}
+						<option> {{item[review]}} </option>
+					{% endfor %}
+				{% endfor %}
+			</select> #}
+
+            <label for="make">Rock: </label>
+            <select name="name" id="name">
+                {% for item in rocks %}
+                    {% for rock in item %}
+                        <option> {{ item[rock] }} </option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+
+            <label for="make"> Review Title: </label>
+            <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder=""
+                   required>
+
+            <br/><label> Body </label><br/>
+            <textarea id="body" name="body" rows="5" cols="33"></textarea>
+
+            <br/><label> Rating: </label>
+            <select name="rating" id="rating">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+
+        </fieldset>
+
+        <input type="submit" value="Edit Review" name="Edit_Review" class="btn btn-primary" style="margin:.5rem;">
+        <input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;">
+
+    </form>
+</div><!--edit-->

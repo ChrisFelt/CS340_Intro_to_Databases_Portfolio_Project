@@ -203,12 +203,12 @@ def review():
         cur.execute(query)
         data = cur.fetchall()
 
-        usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
-        rocksQuery = "SELECT name FROM Rocks"
+        rocksQuery = "SELECT rockID, name FROM Rocks"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
@@ -219,6 +219,29 @@ def review():
         reviews = cur.fetchall()
 
         return render_template("reviews.jinja2", data=data, rocks=rocks, users=users, reviews=reviews)
+
+    if request.method == "POST":
+        userID = request.form["userID"]
+        rockID = request.form["rockID"]
+        title = request.form["title"]
+        body = request.form["body"]
+        rating = request.form["rating"]
+
+        if request.form.get("Add_Review"):
+            # account for NULL userID
+            if userID == "":
+                query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s)"
+                cur = mysql.connection.cursor()
+                cur.execute(query, (rockID, title, body, rating))
+                mysql.connection.commit()
+            # account for no NULL
+            else:
+                query = "INSERT INTO Reviews (userID, rockID, title, body, rating) VALUES (%s, %s, %s, %s, %s)"
+                cur = mysql.connection.cursor()
+                cur.execute(query, (userID, rockID, title, body, rating))
+                mysql.connection.commit()
+
+        return redirect("/reviews")
 
 @app.route('/edit_review', methods=["POST", "GET"])
 def edit_review(id):
