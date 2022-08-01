@@ -213,12 +213,7 @@ def review():
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
 
-        review_id_query = "SELECT reviewID FROM Reviews"
-        cur = mysql.connection.cursor()
-        cur.execute(review_id_query)
-        reviews = cur.fetchall()
-
-        return render_template("reviews.jinja2", data=data, rocks=rocks, users=users, reviews=reviews)
+        return render_template("reviews.jinja2", data=data, rocks=rocks, users=users)
 
     if request.method == "POST":
         userID = request.form["userID"]
