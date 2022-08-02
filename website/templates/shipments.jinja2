@@ -3,55 +3,7 @@
 <head>
 	<title>Shipments</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
-	<script language="JavaScript">
-	function showform(dowhat) {
-		/*
-		 * four DIVS: browse, insert, update, delete
-		 * this function sets one visible the others not
-		 */
-		if(dowhat == 'insert') {
-			document.getElementById('browse').style.display = 'none';
-			document.getElementById('insert').style.display = 'block';
-			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'update') {
-			document.getElementById('browse').style.display = 'none';
-			document.getElementById('insert').style.display = 'none';
-			document.getElementById('edit').style.display = 'block';
-			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'delete') {
-			document.getElementById('browse').style.display = 'none';
-			document.getElementById('insert').style.display = 'none';
-			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'block';
-		} else if(dowhat == 'all') {
-			document.getElementById('browse').style.display = 'block';
-			document.getElementById('insert').style.display = 'block';
-			document.getElementById('edit').style.display = 'block';
-			document.getElementById('delete').style.display = 'block';
-		} else { //by default display browse
-			document.getElementById('browse').style.display = 'block';
-			document.getElementById('insert').style.display = 'none';
-			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'none';
-		}
-	}
-	function newShipment() {
-		showform('insert');
-	}
-	function updateShipment(sid) {
-		showform('update');
-	}
-	function deleteShipment(sid) {
-		showform('delete');
-	}
-	function browseShipments() {
-		showform('browse');
-	}
-	function showAll() {
-		showform('all');
-	}
-	</script>
+
 </head>
 <body>
 
@@ -59,9 +11,9 @@
 	<h1>Shipments</h1>
 
 	<div id="insert">
-			<!-- form to INSERT new data into Shipments-->
+		<!-- form to INSERT new data into Shipments-->
 		<form id="insertShipment" action="/shipments" method="post">
-			<legend><strong>Add Shipment</strong></legend>
+			<legend><strong>Add Shipment: </strong></legend>
 			<fieldset>
 
 				<label for="user">Ship to: </label>
@@ -82,16 +34,16 @@
 					{% endfor %}
 				</select>
 
-				<label for="shipOrigin">Origin</label>
-				<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" placeholder="" required>
+				<label for="shipOrigin">Origin: </label>
+				<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" placeholder="Required" required>
 
-				<label for="shipDest">Destination</label>
-				<input type="text" class="form-control" id="shipDest" name="shipDest" placeholder="" required>
+				<label for="shipDest">Destination: </label>
+				<input type="text" class="form-control" id="shipDest" name="shipDest" placeholder="Required" required>
 
-				<label for="shipDate">Shipment Date</label>
-				<input type="Date" class="form-control" id="shipDate" name="shipDate" placeholder="" required>
+				<label for="shipDate">Shipment Date: </label>
+				<input type="Date" class="form-control" id="shipDate" name="shipDate" placeholder="Required" required>
 
-				<label for="miscNote">Notes</label>
+				<label for="miscNote">Notes: </label>
 				<input type="text" class="form-control" id="miscNote" name="miscNote" placeholder="Optional">
 
 			</fieldset>
@@ -103,7 +55,8 @@
 
 
 	<div id="browse">
-		<legend><strong>To add or remove rocks from a shipment, select edit</strong></legend>
+		<h2><strong>Viewing all Shipments</strong></h2>
+		<p>To add or remove rocks from a shipment, select edit.</p>
 		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
 		<table border="1" cellpadding="5">
 			{% if data %}

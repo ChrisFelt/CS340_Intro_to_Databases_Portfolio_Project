@@ -72,7 +72,7 @@
 <p>&nbsp;</p>
 
 	<div id="browse">
-		<legend><strong>Rocks in this shipment:</strong></legend>
+		<legend><strong>Rocks in This Shipment:</strong></legend>
 		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
 		<table border="1" cellpadding="5">
 			{% if rocks %}
@@ -99,8 +99,33 @@
 			</tbody>
 			{% endif %}
 		</table>
+		<p>Note: removing the last Rock will also delete the Shipment!</p>
 	<p>&nbsp;</p>
 	</div>	<!-- browse rocks in shipment-->
+
+
+	<div id="edit">
+	<!-- form to add rocks to Shipment-->
+	<form id="addShipmentsHasRocks" action="/add_shipments_has_rocks/{{editShipment[0].shipmentID}}" method="post">
+	<legend><strong>Add Rock to Shipment: </strong></legend>
+		<fieldset>
+
+			<tr>
+				<select name="rock" id="rock">
+					{% for item in addRocks %}
+						{% for rock in item %}
+							<option> {{item[rock]}} </option>
+						{% endfor %}
+					{% endfor %}
+				</select>
+
+			</tr>
+
+		</fieldset>
+		<input type="submit" value="Add" name="Add_Shipments_has_Rocks" class="btn btn-primary" style="margin:.5rem;">
+
+		</form>
+	</div><!--edit-->
 
 
 </body>
