@@ -190,13 +190,26 @@ def rock():
 
 @app.route('/rock_search/<string:term>', methods=["POST", "GET"])
 def rock_search(term):
+    # get rock column names for table - can't figure out how to make the search work with aliases containing spaces
+    colNameQuery = """SELECT Rocks.rockID AS 'Rock Number', 
+                    Rocks.name AS 'Rock Name', 
+                    CONCAT(Users.firstName, ' ', Users.lastName) AS Owner, 
+                    Rocks.geoOrigin AS 'Place of Origin', 
+                    Rocks.type AS 'Rock Type', 
+                    Rocks.description AS 'Description', 
+                    Rocks.chemicalComp AS 'Chemical Composition' 
+                FROM Rocks 
+                    INNER JOIN Users ON Rocks.userID = Users.userID"""
+    cur = mysql.connection.cursor()
+    cur.execute(colNameQuery)
+    colData = cur.fetchall()
 
     if request.method == "GET":
         # mySQL query to return all rows in Rocks that contain the given substring
         query = """WITH rockSearch AS
                      (SELECT Rocks.rockID,
-                             CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
                              Rocks.name,
+                             CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
                              Rocks.geoOrigin,
                              Rocks.type,
                              Rocks.description,
@@ -219,7 +232,7 @@ def rock_search(term):
                             '%' + term + '%', '%' + term + '%'))
         data = cur.fetchall()
 
-        return render_template("rock_search.jinja2", data=data)
+        return render_template("rock_search.jinja2", data=data, colData=colData)
 
 
     # NOT WORKING

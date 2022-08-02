@@ -6,6 +6,11 @@
 </head>
 <body>
 
+	[ <a href="../index">Home</a> | <a href="../users">Users</a> | <a href="../rocks">Rocks</a> | <a href="../reviews">Reviews</a> | <a
+        href="../shipments">Shipments</a> ]
+
+	<p>&nbsp;</p>
+
     <div>
         <table border="1" cellpadding="5">
             <legend><strong>Editing Shipment:</strong></legend>
@@ -37,7 +42,7 @@
 
 				<input type="hidden" value="{{ editShipment[0].shipmentID }}" class="form-control" id="shipmentID" name="shipmentID" required>
 
-				<label for="user">User Name</label>
+				<label for="user">User Name: </label>
 				<select name="user" id="user">
 					<option selected>
 						{{shipUser[0].name}}
@@ -49,16 +54,16 @@
 					{% endfor %}
 				</select>
 
-				<label for="shipOrigin">Origin</label>
+				<label for="shipOrigin">Origin: </label>
 				<input type="text" value="{{ editShipment[0].shipOrigin }}" class="form-control" id="shipOrigin" name="shipOrigin" size="35" required>
 
-				<label for="shipDest">Destination</label>
+				<label for="shipDest">Destination: </label>
 				<input type="text" value="{{ editShipment[0].shipDest }}" class="form-control" id="shipDest" name="shipDest" size="35" required>
 
-				<label for="shipDate">Shipment Date</label>
+				<label for="shipDate">Shipment Date: </label>
 				<input type="Date" value="{{ editShipment[0].shipDate }}" class="form-control" id="shipDate" name="shipDate" required>
 
-				<label for="miscNote">Notes</label>
+				<label for="miscNote">Notes: </label>
 				<input type="text" value="{{ editShipment[0].miscNote }}" class="form-control" id="miscNote" name="miscNote" size="35"></input>
 
 		</fieldset>
