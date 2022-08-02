@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, redirect
+from flask import Flask, render_template, json, redirect, url_for
 from flask_mysqldb import MySQL
 from flask import request
 import os
@@ -185,14 +185,14 @@ def rock():
             term = request.form["search"]
 
             # send GET request to rock search page
-            return redirect("/rock_search/" + str(term))
+            return redirect(url_for("rock_search", term=str(term)))
 
 
 @app.route('/rock_search/<string:term>', methods=["POST", "GET"])
 def rock_search(term):
 
     if request.method == "GET":
-        # mySQL query to grab the info of the person with our passed id
+        # mySQL query to return all rows in Rocks that contain the given substring
         query = """WITH rockSearch AS
                      (SELECT Rocks.rockID,
                              CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
@@ -215,7 +215,8 @@ def rock_search(term):
                        OR description LIKE %s
                        OR chemicalComp LIKE %s;"""
         cur = mysql.connection.cursor()
-        cur.execute(query, (term, term, term, term, term, term))
+        cur.execute(query, ('%' + term + '%', '%' + term + '%', '%' + term + '%', '%' + term + '%',
+                            '%' + term + '%', '%' + term + '%'))
         data = cur.fetchall()
 
         return render_template("rock_search.jinja2", data=data)
