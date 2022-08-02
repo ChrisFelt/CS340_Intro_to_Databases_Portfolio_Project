@@ -484,6 +484,8 @@ def edit_shipment(id):
         cur.execute(addRocksQuery)
         addRocks = cur.fetchall()
 
+        print(addRocks)
+
         # get all User names BESIDES the original User in the Shipment
         shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
                                     FROM Users 

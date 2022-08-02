@@ -115,20 +115,28 @@
 	<legend><strong>Add Rock to Shipment: </strong></legend>
 		<fieldset>
 
+        {% if addRocks|length == 0 %}
+            <tr>No rocks remaining!</tr>
+
+        {% else %}
 			<tr>
 				<select name="rock" id="rock">
-					{% for item in addRocks %}
-						{% for rock in item %}
-							<option> {{item[rock]}} </option>
-						{% endfor %}
-					{% endfor %}
+
+                        {% for item in addRocks %}
+                            {% for rock in item %}
+
+                                <option> {{item[rock]}} </option>
+
+                            {% endfor %}
+                        {% endfor %}
+
 				</select>
 
 			</tr>
 
 		</fieldset>
 		<input type="submit" value="Add" name="Add_Shipments_has_Rocks" class="btn btn-primary" style="margin:.5rem;">
-
+        {% endif %}
 		</form>
 	</div><!--edit-->
 
