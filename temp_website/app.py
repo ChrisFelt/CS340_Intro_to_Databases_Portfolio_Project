@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, redirect
+from flask import Flask, render_template, json, redirect, url_for
 from flask_mysqldb import MySQL
 from flask import request
 import os
@@ -163,24 +163,78 @@ def rock():
         return render_template("rocks.jinja2", data=data, users=users)
 
     if request.method == "POST":
-        userID = request.form["userID"]
-        name = request.form["name"]
-        geoOrigin = request.form["geoOrigin"]
-        type = request.form["type"]
-        description = request.form["description"]
-        chemicalComp = request.form["chemicalComp"]
 
         if request.form.get("Add_Rock"):
+            # get form variables
+            userID = request.form["userID"]
+            name = request.form["name"]
+            geoOrigin = request.form["geoOrigin"]
+            type = request.form["type"]
+            description = request.form["description"]
+            chemicalComp = request.form["chemicalComp"]
+
             query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
             cur = mysql.connection.cursor()
             cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
             mysql.connection.commit()
 
-        return redirect("/rocks")
+            return redirect("/rocks")
+
+        elif request.form.get("Rock_Search"):
+            # get search term
+            term = request.form["search"]
+
+            # send GET request to rock search page
+            return redirect(url_for("rock_search", term=str(term)))
 
 
-@app.route('/rock_search', methods=["POST", "GET"])
-def rock_search():
+@app.route('/rock_search/<string:term>', methods=["POST", "GET"])
+def rock_search(term):
+    # get rock column names for table - can't figure out how to make the search work with aliases containing spaces
+    colNameQuery = """SELECT Rocks.rockID AS 'Rock Number', 
+                    Rocks.name AS 'Rock Name', 
+                    CONCAT(Users.firstName, ' ', Users.lastName) AS Owner, 
+                    Rocks.geoOrigin AS 'Place of Origin', 
+                    Rocks.type AS 'Rock Type', 
+                    Rocks.description AS 'Description', 
+                    Rocks.chemicalComp AS 'Chemical Composition' 
+                FROM Rocks 
+                    INNER JOIN Users ON Rocks.userID = Users.userID"""
+    cur = mysql.connection.cursor()
+    cur.execute(colNameQuery)
+    colData = cur.fetchall()
+
+    if request.method == "GET":
+        # mySQL query to return all rows in Rocks that contain the given substring
+        query = """WITH rockSearch AS
+                     (SELECT Rocks.rockID,
+                             Rocks.name,
+                             CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
+                             Rocks.geoOrigin,
+                             Rocks.type,
+                             Rocks.description,
+                             Rocks.chemicalComp
+                      FROM Rocks
+                               INNER JOIN Users
+                                          ON Rocks.userID = Users.userID -- get name of User owner
+                     )
+                    -- SELECT rows that match search criteria from rockSearch
+                    SELECT *
+                    FROM rockSearch
+                    WHERE owner LIKE %s
+                       OR name LIKE %s
+                       OR geoOrigin LIKE %s
+                       OR type LIKE %s
+                       OR description LIKE %s
+                       OR chemicalComp LIKE %s;"""
+        cur = mysql.connection.cursor()
+        cur.execute(query, ('%' + term + '%', '%' + term + '%', '%' + term + '%', '%' + term + '%',
+                            '%' + term + '%', '%' + term + '%'))
+        data = cur.fetchall()
+
+        return render_template("rock_search.jinja2", data=data, colData=colData)
+
+
     # NOT WORKING
     if request.method == "POST":
         search = request.form["search"]
@@ -331,14 +385,18 @@ def shipment():
             # account for null miscNote
             if miscNote == "":
                 # first, SQL query to insert new Shipment
-                shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate) 
-                                VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), %s, %s, %s)"""
+                shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote) 
+                                VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), %s, %s, %s, NULL)"""
                 cur = mysql.connection.cursor()
                 cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate))
                 mysql.connection.commit()
                 # next, SQL query to insert new Shipments_has_Rocks
                 shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
-                                    VALUES ((SELECT shipmentID FROM Shipments WHERE shipOrigin = %s AND shipDest = %s AND shipDate = %s), 
+                                    VALUES ((SELECT shipmentID FROM Shipments 
+                                        WHERE shipOrigin = %s 
+                                            AND shipDest = %s 
+                                            AND shipDate = %s 
+                                            AND miscNote IS NULL), 
                                     (SELECT rockID FROM Rocks WHERE name = %s))"""
                 cur = mysql.connection.cursor()
                 cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
@@ -353,10 +411,14 @@ def shipment():
                 mysql.connection.commit()
                 # next, SQL query to insert new Shipments_has_Rocks
                 shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
-                                    VALUES ((SELECT shipmentID FROM Shipments WHERE shipOrigin = %s AND shipDest = %s AND shipDate = %s), 
+                                    VALUES ((SELECT shipmentID FROM Shipments 
+                                        WHERE shipOrigin = %s 
+                                            AND shipDest = %s 
+                                            AND shipDate = %s 
+                                            AND miscNote = %s), 
                                     (SELECT rockID FROM Rocks WHERE name = %s))"""
                 cur = mysql.connection.cursor()
-                cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
+                cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, miscNote, rock))
                 mysql.connection.commit()
 
             return redirect("/shipments")
@@ -397,7 +459,7 @@ def edit_shipment(id):
         cur.execute(editShipmentQuery)
         editShipment = cur.fetchall()
 
-        # get Rock names and their owner's names - MUST join on Shipments_has_Rocks table to avoid errors!
+        # get Rock names and their owner's names
         rocksQuery = """SELECT Shipments_has_Rocks.shipmentHasRockID,
                             CONCAT(Users.firstName, ' ', Users.lastName) AS 'Owner', 
                             Rocks.name AS 'Rock Name' 
@@ -412,6 +474,17 @@ def edit_shipment(id):
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
+
+        # get Rock names and their owner's names
+        addRocksQuery = """SELECT Rocks.name AS rock
+                            FROM Rocks
+                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)""" % (
+            id)
+        cur = mysql.connection.cursor()
+        cur.execute(addRocksQuery)
+        addRocks = cur.fetchall()
+
+        print(addRocks)
 
         # get all User names BESIDES the original User in the Shipment
         shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
@@ -431,11 +504,11 @@ def edit_shipment(id):
         shipUser = cur.fetchall()
 
         return render_template("edit_shipment.jinja2", readShipment=readShipment, editShipment=editShipment,
-                               rocks=rocks, shipUsersOption=shipUsersOption, shipUser=shipUser)
+                               rocks=rocks, addRocks=addRocks, shipUsersOption=shipUsersOption, shipUser=shipUser)
 
     # UPDATE Shipment
     if request.method == "POST":
-
+        # update shipment attributes only
         if request.form.get("Edit_Shipment"):
 
             # gather variables from Add_Shipment form
@@ -476,7 +549,6 @@ def edit_shipment(id):
             return redirect("/shipments")
 
 
-# delete Shipments
 @app.route("/delete_shipment/<int:id>")
 def delete_shipment(id):
     # SQL query to delete the Shipment given id
@@ -485,21 +557,65 @@ def delete_shipment(id):
     cur.execute(query, (id,))
     mysql.connection.commit()
 
-    # redirect back to Shipments
     return redirect("/shipments")
 
 
-# delete Shipments
+# add Shipments_has_Rocks (single Rock addition to existing Shipment)
+@app.route("/add_shipments_has_rocks/<int:id>",  methods=["POST"])
+def add_shipments_has_rocks(id):
+    # add rock to shipment
+    if request.form.get("Add_Shipments_has_Rocks"):
+        # gather variables from Add_Shipments_has_Rocks form
+        rock = request.form["rock"]
+
+        # add Shipments_has_Rocks SQL query
+        query = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
+                    VALUES (%s,
+                    (SELECT rockID FROM Rocks WHERE name = %s));"""
+        cur = mysql.connection.cursor()
+        cur.execute(query, (id, rock))
+        mysql.connection.commit()
+
+        return redirect("/edit_shipment/" + str(id))
+
+
 @app.route("/delete_shipments_has_rocks/<int:id>")
 def delete_shipments_has_rocks(id):
+    # save shipmentID
+    shipQuery = "SELECT shipmentID FROM Shipments_has_Rocks WHERE shipmentHasRockID = %s" % (id)
+    cur = mysql.connection.cursor()
+    cur.execute(shipQuery)
+    shipmentID = cur.fetchall()
+    # get value from query
+    shipmentID = str(shipmentID[0]["shipmentID"])
+
     # SQL query to delete the Shipment given id
-    query = "DELETE FROM Shipments_has_Rocks WHERE shipmentHasRockID =  '%s';"
+    query = "DELETE FROM Shipments_has_Rocks WHERE shipmentHasRockID =  %s"
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
 
-    # redirect back to Shipments
-    return redirect("/edit_shipment")
+    # check if no Rocks left in Shipment
+    checkQuery = "SELECT COUNT(shipmentID) AS count FROM Shipments_has_Rocks WHERE shipmentID = %s"
+    cur = mysql.connection.cursor()
+    cur.execute(checkQuery, (shipmentID))
+    checkRocks = cur.fetchall()
+    # get value from query
+    checkRocks = str(checkRocks[0]["count"])
+
+    # if no Rocks left in Shipment, delete Shipment
+    if checkRocks == "0":
+        # delete Shipment
+        deleteShipmentQuery = "DELETE FROM Shipments WHERE shipmentID = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(deleteShipmentQuery, (shipmentID,))
+        mysql.connection.commit()
+
+        return redirect("/shipments")
+
+    else:
+
+        return redirect("/edit_shipment/" + shipmentID)
 
 
 ###########################################
