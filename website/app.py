@@ -163,24 +163,64 @@ def rock():
         return render_template("rocks.jinja2", data=data, users=users)
 
     if request.method == "POST":
-        userID = request.form["userID"]
-        name = request.form["name"]
-        geoOrigin = request.form["geoOrigin"]
-        type = request.form["type"]
-        description = request.form["description"]
-        chemicalComp = request.form["chemicalComp"]
 
         if request.form.get("Add_Rock"):
+            # get form variables
+            userID = request.form["userID"]
+            name = request.form["name"]
+            geoOrigin = request.form["geoOrigin"]
+            type = request.form["type"]
+            description = request.form["description"]
+            chemicalComp = request.form["chemicalComp"]
+
             query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
             cur = mysql.connection.cursor()
             cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
             mysql.connection.commit()
 
-        return redirect("/rocks")
+            return redirect("/rocks")
+
+        elif request.form.get("Rock_Search"):
+            # get search term
+            term = request.form["search"]
+
+            # send GET request to rock search page
+            return redirect("/rock_search/" + str(term))
 
 
-@app.route('/rock_search', methods=["POST", "GET"])
-def rock_search():
+@app.route('/rock_search/<string:term>', methods=["POST", "GET"])
+def rock_search(term):
+
+    if request.method == "GET":
+        # mySQL query to grab the info of the person with our passed id
+        query = """WITH rockSearch AS
+                     (SELECT Rocks.rockID,
+                             CONCAT(Users.firstName, ' ', Users.lastName) AS owner,
+                             Rocks.name,
+                             Rocks.geoOrigin,
+                             Rocks.type,
+                             Rocks.description,
+                             Rocks.chemicalComp
+                      FROM Rocks
+                               INNER JOIN Users
+                                          ON Rocks.userID = Users.userID -- get name of User owner
+                     )
+                    -- SELECT rows that match search criteria from rockSearch
+                    SELECT *
+                    FROM rockSearch
+                    WHERE owner LIKE %s
+                       OR name LIKE %s
+                       OR geoOrigin LIKE %s
+                       OR type LIKE %s
+                       OR description LIKE %s
+                       OR chemicalComp LIKE %s;"""
+        cur = mysql.connection.cursor()
+        cur.execute(query, (term, term, term, term, term, term))
+        data = cur.fetchall()
+
+        return render_template("rock_search.jinja2", data=data)
+
+
     # NOT WORKING
     if request.method == "POST":
         search = request.form["search"]

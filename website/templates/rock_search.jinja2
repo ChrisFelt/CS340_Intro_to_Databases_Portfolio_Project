@@ -2,56 +2,7 @@
 <head>
 	<title>Rocks</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
-	<script language="JavaScript">
-	function showform(dowhat) {
-		if(dowhat == 'insert') {
-            document.getElementById('search').style.display = 'none';
-			document.getElementById('browse').style.display = 'none';
-			document.getElementById('insert').style.display = 'block';
-			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'update') {
-            document.getElementById('search').style.display = 'none';
-			document.getElementById('browse').style.display = 'none';
-			document.getElementById('insert').style.display = 'none';
-			document.getElementById('edit').style.display = 'block';
-			document.getElementById('delete').style.display = 'none';
-		} else if(dowhat == 'delete') {
-            document.getElementById('search').style.display = 'none';
-			document.getElementById('browse').style.display = 'none';
-			document.getElementById('insert').style.display = 'none';
-			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'block';
-		} else if(dowhat == 'all') {
-            document.getElementById('search').style.display = 'block';
-			document.getElementById('browse').style.display = 'block';
-			document.getElementById('insert').style.display = 'block';
-			document.getElementById('edit').style.display = 'block';
-			document.getElementById('delete').style.display = 'block';
-		} else { //by default display browse
-            document.getElementById('search').style.display = 'block';
-			document.getElementById('browse').style.display = 'block';
-			document.getElementById('insert').style.display = 'none';
-			document.getElementById('edit').style.display = 'none';
-			document.getElementById('delete').style.display = 'none';
-		}
-	}
-	function newRock() {
-		showform('insert');
-	}
-	function updateRock(pid) {
-		showform('update');
-	}
-	function deleteRock(pid) {
-		showform('delete');
-	}
-	function browseRocks() {
-		showform('browse');
-	}
-	function showAll() {
-		showform('all');
-	}
-	</script>
+
 </head>
 <body onload="browseRocks()">
 	[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> | <a href="/edit_shipment">Shipments_has_Rocks</a> ]
@@ -61,8 +12,7 @@
 		<form id="searchRocks" action="/rocks" method="get">
 			<legend><strong>Search Rocks</strong></legend>
 			<fieldset>
-				<label> Search criteria </label>
-				<input type="text" class="form-control" id="search" name="search" placeholder="" required>
+				<input type="text" class="form-control" id="search" name="search" placeholder="New search criteria" required>
 			</fieldset>
 			<input type="submit" value="Rock Search" name="Rock_Search" class="btn btn-primary" style="margin:.5rem;">
 		</form>
