@@ -493,7 +493,6 @@ def edit_shipment(id):
             return redirect("/shipments")
 
 
-# delete Shipments
 @app.route("/delete_shipment/<int:id>")
 def delete_shipment(id):
     # SQL query to delete the Shipment given id
@@ -502,7 +501,6 @@ def delete_shipment(id):
     cur.execute(query, (id,))
     mysql.connection.commit()
 
-    # redirect back to Shipments
     return redirect("/shipments")
 
 
@@ -522,11 +520,9 @@ def add_shipments_has_rocks(id):
         cur.execute(query, (id, rock))
         mysql.connection.commit()
 
-        # redirect back to Shipments
         return redirect("/edit_shipment/" + str(id))
 
 
-# delete Shipments_has_Rocks
 @app.route("/delete_shipments_has_rocks/<int:id>")
 def delete_shipments_has_rocks(id):
     # save shipmentID
@@ -559,12 +555,10 @@ def delete_shipments_has_rocks(id):
         cur.execute(deleteShipmentQuery, (shipmentID,))
         mysql.connection.commit()
 
-        # go back to Shipments page
         return redirect("/shipments")
 
     else:
 
-        # reload edit Shipment page
         return redirect("/edit_shipment/" + shipmentID)
 
 
