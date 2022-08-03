@@ -42,19 +42,22 @@
 
                 <label for="make">First name:</label>
                 <input type="text" value="{{ data[0].firstName }}" class="form-control" id="firstName" name="firstName"
-                       pattern="[A-Za-z]{1,}" required>
+                       pattern="[A-Za-z]{1,}" title="First Name (One word, numbers and special characters not allowed)"
+                       required>
 
                 <label for="model">Last name:</label>
                 <input type="text" value="{{ data[0].lastName }}" class="form-control" id="lastName" name="lastName"
-                       pattern="[A-Za-z0-9]{1,}" required>
+                       pattern="[A-Za-z]{1,}" title="Last Name (One word, numbers and special characters not allowed)"
+                       required>
 
                 <label for="address">Address:</label>
                 <input type="text" value="{{ data[0].address }}" class="form-control" id="address" name="address"
+                       pattern="[A-Za-z0-9, ]{1,}" title="Address (No special characters besides commas)"
                        required>
 
                 <label for="specialization">Specialization:</label>
                 <input type="text" value="{{ data[0].specialization }}" class="form-control" id="specialization"
-                       name="specialization">
+                       name="specialization" pattern="[A-Za-z0-9 ]+" title="Specialization (No special characters allowed)">
 
                 <br/><label for="bio"> Bio </label><br/>
                 <textarea class="form-control" id="bio" name="bio" rows="5" cols="33"
