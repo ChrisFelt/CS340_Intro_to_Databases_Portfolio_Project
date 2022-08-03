@@ -1,12 +1,13 @@
-<html>
+<html lang="en">
+
+{% extends 'base_template.jinja2' %}
+{% block content %}
+
 <head>
     <title>Reviews</title>
-    <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 
-[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a
-        href="shipments">Shipments</a> ]
 <h1>Reviews</h1>
 
 <div id="insert">
@@ -16,7 +17,7 @@
 
             <label for="userID">Reviewer: </label>
             <select name="userID" id="userID">
-                <option value="">None</option>
+                <option value="">Anonymous</option>
                 {% for item in users %}
                     <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
                 {% endfor %}
@@ -63,7 +64,15 @@
             {% for item in data %}
                 <tr>
                     {% for key in item.keys() %}
-                        <td> {{ item[key] }} </td>
+                        {% if key == "Reviewer" %}
+                            {% if item[key] == None %}
+                                <td> Anonymous </td>
+                            {% else %}
+                                <td> {{ item[key] }} </td>
+                            {% endif %}
+                        {% else %}
+                                <td> {{ item[key] }} </td>
+                        {% endif %}
                     {% endfor %}
                     <td><a href="edit_review/{{ item["Review ID"] }}" class="btn btn-default">Edit</a></td>
                 </tr>
@@ -78,4 +87,7 @@
 
 
 </body>
+
+{% endblock %}
+
 </html>

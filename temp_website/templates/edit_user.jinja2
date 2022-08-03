@@ -1,14 +1,18 @@
-<html>
+<html lang="en">
+
+{% extends 'base_template.jinja2' %}
+{% block content %}
 
 <head>
     <title>Edit User</title>
-    <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
 <div>
+    <h2> Editing User:</h2>
+
     <table border="1" cellpadding="5">
-        <caption> Editing User:</caption>
+
         {% if data %}
             <thead>
             <tr>
@@ -27,9 +31,11 @@
     </table>
 </div>
 
+<p>&nbsp;</p>
+
 <div id="edit">
     <form id="editUser" action="/edit_user/{{ data[0].userID }}" method="post">
-        <legend><strong>Edit User</strong></legend>
+        <legend><strong>Update User Details:</strong></legend>
         <fieldset>
             <input type="hidden" value="{{ data[0].userID }}" class="form-control" id="userID" name="userID" required>
 
@@ -57,5 +63,7 @@
     </form>
 </div>
 </body>
+
+{% endblock %}
 
 </html>

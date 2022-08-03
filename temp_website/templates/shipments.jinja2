@@ -1,16 +1,18 @@
-<html>
-<!-- NOTES Need to add edit/delete hyperlink functionality. Update the references and update the templates associated with them-->
+<html lang="en">
+
+{% extends 'base_template.jinja2' %}
+{% block content %}
+
 <head>
-	<title>Shipments</title>
-	<link href="style.css" rel="stylesheet" type="text/css" />
+    <title>Shipments</title>
 
 </head>
+
 <body>
 
-	[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a href="shipments">Shipments</a> ]
-	<h1>Shipments</h1>
+    <h1>Shipments</h1>
 
-	<div id="insert">
+	<div id="insert" class="container">
 		<!-- form to INSERT new data into Shipments-->
 		<form id="insertShipment" action="/shipments" method="post">
 			<legend><strong>Add Shipment: </strong></legend>
@@ -50,11 +52,13 @@
 
 		<input type="submit" value="Add Shipment" name="Add_Shipment" class="btn btn-primary" style="margin:.5rem;">
 
+
+
 		</form>
 	</div><!--insert-->
 
 
-	<div id="browse">
+	<div id="browse" class="container">
 		<h2><strong>Viewing all Shipments</strong></h2>
 		<p>To add or remove rocks from a shipment, select edit.</p>
 		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
@@ -80,10 +84,12 @@
 			</tbody>
 			{% endif %} 
 		</table> 
-		<p><strong>Headquarters Address:</strong><br/>
-		<em>YouBreccia Way 71, Ramersberg 6060 Switzerland</em></p>  
+
 	<p>&nbsp;</p>
 	</div>	<!-- browse -->
 
 </body>
+
+    {% endblock %}
+
 </html>
