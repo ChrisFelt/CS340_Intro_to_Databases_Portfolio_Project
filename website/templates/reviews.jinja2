@@ -17,7 +17,7 @@
 
             <label for="userID">Reviewer: </label>
             <select name="userID" id="userID">
-                <option value="">None</option>
+                <option value="">Anonymous</option>
                 {% for item in users %}
                     <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
                 {% endfor %}
@@ -64,7 +64,15 @@
             {% for item in data %}
                 <tr>
                     {% for key in item.keys() %}
-                        <td> {{ item[key] }} </td>
+                        {% if key == "Reviewer" %}
+                            {% if item[key] == None %}
+                                <td> Anonymous </td>
+                            {% else %}
+                                <td> {{ item[key] }} </td>
+                            {% endif %}
+                        {% else %}
+                                <td> {{ item[key] }} </td>
+                        {% endif %}
                     {% endfor %}
                     <td><a href="edit_review/{{ item["Review ID"] }}" class="btn btn-default">Edit</a></td>
                 </tr>

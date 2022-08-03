@@ -279,7 +279,18 @@ def rock_search(term):
 @app.route('/reviews', methods=["POST", "GET"])
 def review():
     if request.method == "GET":
-        query = "SELECT Reviews.reviewID AS 'Review ID', CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, Rocks.name AS Rock, Reviews.title AS Title, Reviews.body AS Review, Reviews.rating AS Rating FROM Reviews LEFT JOIN Users ON Reviews.userID = Users.userID INNER JOIN Rocks ON Reviews.rockID = Rocks.rockID ORDER BY Reviews.reviewID ASC"
+        query = """SELECT Reviews.reviewID AS 'Review ID', 
+                        CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, 
+                        Rocks.name AS Rock, 
+                        Reviews.title AS Title, 
+                        Reviews.body AS Review, 
+                        Reviews.rating AS Rating 
+                            FROM Reviews 
+                                LEFT JOIN Users 
+                                    ON Reviews.userID = Users.userID 
+                                INNER JOIN Rocks 
+                                    ON Reviews.rockID = Rocks.rockID 
+                        ORDER BY Reviews.reviewID ASC"""
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
@@ -323,6 +334,23 @@ def review():
 @app.route('/edit_review/<int:id>', methods=["POST", "GET"])
 def edit_review(id):
     if request.method == "GET":
+
+        query = """SELECT Reviews.reviewID AS 'Review ID', 
+                        CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, 
+                        Rocks.name AS Rock, 
+                        Reviews.title AS Title, 
+                        Reviews.body AS Review, 
+                        Reviews.rating AS Rating 
+                            FROM Reviews 
+                                LEFT JOIN Users 
+                                    ON Reviews.userID = Users.userID 
+                                INNER JOIN Rocks 
+                                    ON Reviews.rockID = Rocks.rockID
+                        WHERE Reviews.reviewID = %s""" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        readData = cur.fetchall()
+
         query = "SELECT * FROM Reviews WHERE reviewID = %s" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
@@ -338,7 +366,7 @@ def edit_review(id):
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
 
-        return render_template("edit_review.jinja2", data=data, users=users, rocks=rocks)
+        return render_template("edit_review.jinja2", readData=readData, data=data, users=users, rocks=rocks)
 
     if request.method == "POST":
         reviewID = id
@@ -351,13 +379,23 @@ def edit_review(id):
         if request.form.get("Edit_Review"):
             # account for NULL userID
             if userID == "":
-                query = "UPDATE Reviews SET Reviews.userID = NULL, Reviews.rockID = %s, Reviews.title = %s, Reviews.body = %s, Reviews.rating = %s WHERE Reviews.reviewID = %s"
+                query = """UPDATE Reviews SET Reviews.userID = NULL, 
+                                Reviews.rockID = %s, 
+                                Reviews.title = %s, 
+                                Reviews.body = %s, 
+                                Reviews.rating = %s 
+                                WHERE Reviews.reviewID = %s"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (rockID, title, body, rating, reviewID))
                 mysql.connection.commit()
             # account for no NULL
             else:
-                query = "UPDATE Reviews SET Reviews.userID = %s, Reviews.rockID = %s, Reviews.title = %s, Reviews.body = %s, Reviews.rating = %s WHERE Reviews.reviewID = %s"
+                query = """UPDATE Reviews SET Reviews.userID = %s, 
+                                Reviews.rockID = %s, 
+                                Reviews.title = %s, 
+                                Reviews.body = %s, 
+                                Reviews.rating = %s 
+                                WHERE Reviews.reviewID = %s"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (userID, rockID, title, body, rating, reviewID))
                 mysql.connection.commit()

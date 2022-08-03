@@ -10,19 +10,28 @@
 <body>
 <div id="browse">
     <table border="1" cellpadding="5">
-        {% if data %}
+        {% if readData %}
             <thead>
             <tr>
-                {% for key in data[0].keys() %}
+                {% for key in readData[0].keys() %}
                     <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
                 {% endfor %}
             </tr>
             </thead>
             <tbody>
-            {% for item in data %}
+            {% for item in readData %}
                 <tr>
                     {% for key in item.keys() %}
-                        <td> {{ item[key] }} </td>
+                        {% if key == "Reviewer" %}
+                            {% if item[key] == None %}
+                                <td> Anonymous </td>
+                            {% else %}
+                                <td> {{ item[key] }} </td>
+                            {% endif %}
+                        {% else %}
+                                <td> {{ item[key] }} </td>
+                        {% endif %}
+
                     {% endfor %}
                     {#                    <td><a href="edit_review/{{ item["Review ID"] }}" class="btn btn-default">Edit</a></td>#}
                 </tr>
@@ -42,7 +51,7 @@
 
             <label for="userID">Reviewer: </label>
             <select name="userID" id="userID">
-                <option value="">None</option>
+                <option value="">Anonymous</option>
                 {% for item in users %}
                     {% if item["userID"] == data[0]["userID"] %}
                         <option value={{ item["userID"] }} selected> {{ item["fullName"] }} </option>

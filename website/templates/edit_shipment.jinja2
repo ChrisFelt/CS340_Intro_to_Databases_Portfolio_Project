@@ -78,12 +78,12 @@
 
 	<div id="browse">
 		<legend><strong>Rocks in This Shipment:</strong></legend>
-		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
 		<table border="1" cellpadding="5">
 			{% if rocks %}
 			<thead>
 				<tr>
 					{% for key in rocks[0].keys() %}
+                        <!-- skip first column -->
 						{% if not loop.first %}
 							<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
 						{% endif %}
