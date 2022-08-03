@@ -188,10 +188,22 @@ def rock():
             description = request.form["description"]
             chemicalComp = request.form["chemicalComp"]
 
-            query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
+            # check if duplicate name
+            checkQuery = """SELECT COUNT(rockID) AS count FROM Rocks 
+                                WHERE name = %s"""
             cur = mysql.connection.cursor()
-            cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
-            mysql.connection.commit()
+            cur.execute(checkQuery, (name,))  # comma after name is required!
+            checkRock = cur.fetchall()
+
+            if checkRock[0]['count'] != 0:
+                flash('Duplicate rock names are not allowed! Please try again.', 'error')
+
+            # CREATE Rock
+            else:
+                query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
+                cur = mysql.connection.cursor()
+                cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
+                mysql.connection.commit()
 
             return redirect("/rocks")
 

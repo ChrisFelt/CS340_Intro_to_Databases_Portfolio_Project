@@ -1,19 +1,18 @@
-<html>
-<!-- NOTES Need to add edit/delete hyperlink functionality. Update the references and update the templates associated with them-->
+<html lang="en">
+
+{% extends 'base_template.jinja2' %}
+{% block content %}
+
 <head>
 	<title>Shipment Details</title>
-	<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
-	[ <a href="../index">Home</a> | <a href="../users">Users</a> | <a href="../rocks">Rocks</a> | <a href="../reviews">Reviews</a> | <a
-        href="../shipments">Shipments</a> ]
-
-	<p>&nbsp;</p>
+<h2>Editing Shipment:</h2>
 
     <div>
         <table border="1" cellpadding="5">
-            <legend><strong>Editing Shipment:</strong></legend>
+
             {% if readShipment %}
                 <thead>
                     <tr>
@@ -32,7 +31,8 @@
         </table>
     </div>
 
-<p>&nbsp;</p>
+<br>
+<br>
 
 	<div id="edit">
 	<!-- form to edit data in Shipment-->
@@ -105,9 +105,10 @@
 			{% endif %}
 		</table>
 		<p>Note: removing the last Rock will also delete the Shipment!</p>
-	<p>&nbsp;</p>
+
 	</div>	<!-- browse rocks in shipment-->
 
+<br>
 
 	<div id="edit">
 	<!-- form to add rocks to Shipment-->
@@ -142,4 +143,7 @@
 
 
 </body>
+
+{% endblock %}
+
 </html>

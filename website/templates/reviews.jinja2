@@ -1,12 +1,13 @@
-<html>
+<html lang="en">
+
+{% extends 'base_template.jinja2' %}
+{% block content %}
+
 <head>
     <title>Reviews</title>
-    <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 
-[ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a> | <a
-        href="shipments">Shipments</a> ]
 <h1>Reviews</h1>
 
 <div id="insert">
@@ -78,4 +79,7 @@
 
 
 </body>
+
+{% endblock %}
+
 </html>
