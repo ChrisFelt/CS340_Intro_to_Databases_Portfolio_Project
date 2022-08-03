@@ -10,7 +10,41 @@
 
 <body>
 
-    <h1>Shipments</h1>
+
+
+
+
+
+	<div id="browse" class="container">
+		<h2><strong>Viewing all Shipments</strong></h2>
+		<p>To add or remove rocks from a shipment, select edit.</p>
+		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
+		<table border="1" cellpadding="5">
+			{% if data %}
+			<thead>
+				<tr>
+					{% for key in data[0].keys() %}
+					<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in data %}
+				<tr>
+					{% for key in item.keys() %}
+					<td> {{item[key]}} </td>
+					{% endfor %}
+					<td><a href="edit_shipment/{{ item["Shipment Number"] }}" class="btn btn-default">Edit</a></td>
+					<td><a href="delete_shipment/{{ item["Shipment Number"] }}" class="btn btn-default">Delete</a></td>
+				</tr> 
+				{% endfor %} 
+			</tbody>
+			{% endif %} 
+		</table> 
+
+	<p>&nbsp;</p>
+	</div>	<!-- browse -->
+
 
 	<div id="insert" class="container">
 		<!-- form to INSERT new data into Shipments-->
@@ -56,37 +90,6 @@
 
 		</form>
 	</div><!--insert-->
-
-
-	<div id="browse" class="container">
-		<h2><strong>Viewing all Shipments</strong></h2>
-		<p>To add or remove rocks from a shipment, select edit.</p>
-		{# <p><a href="#" onClick="newUser()">Add New</a> </p> #}
-		<table border="1" cellpadding="5">
-			{% if data %}
-			<thead>
-				<tr>
-					{% for key in data[0].keys() %}
-					<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-					{% endfor %}
-				</tr>
-			</thead>
-			<tbody>
-				{% for item in data %}
-				<tr>
-					{% for key in item.keys() %}
-					<td> {{item[key]}} </td>
-					{% endfor %}
-					<td><a href="edit_shipment/{{ item["Shipment Number"] }}" class="btn btn-default">Edit</a></td>
-					<td><a href="delete_shipment/{{ item["Shipment Number"] }}" class="btn btn-default">Delete</a></td>
-				</tr> 
-				{% endfor %} 
-			</tbody>
-			{% endif %} 
-		</table> 
-
-	<p>&nbsp;</p>
-	</div>	<!-- browse -->
 
 </body>
 
