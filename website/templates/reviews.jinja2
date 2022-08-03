@@ -10,46 +10,6 @@
 
 <h1>Reviews</h1>
 
-<div id="insert">
-    <form id="insertReview" action="/reviews" method="post">
-        <legend><strong>Add Review</strong></legend>
-        <fieldset>
-
-            <label for="userID">Reviewer: </label>
-            <select name="userID" id="userID">
-                <option value="">Anonymous</option>
-                {% for item in users %}
-                    <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
-                {% endfor %}
-            </select>
-
-            <label for="rockID">Rock: </label>
-            <select name="rockID" id="rockID">
-                {% for item in rocks %}
-                    <option value={{ item["rockID"] }}> {{ item["name"] }} </option>
-                {% endfor %}
-            </select>
-
-            <label for="title"> Review Title: </label>
-            <input type="text" class="form-control" id="title" name="title" placeholder="" required>
-
-            <br/><label> Body </label><br/>
-            <textarea id="body" name="body" rows="5" cols="33" required></textarea>
-
-            <br/><label> Rating: </label>
-            <select name="rating" id="rating" required>
-                {% for x in range(6) %}
-                    <option value={{ x }}>{{ x }}</option>
-                {% endfor %}
-            </select>
-
-        </fieldset>
-
-        <input type="submit" value="Add Review" name="Add_Review" class="btn btn-primary" style="margin:.5rem;">
-    </form>
-</div><!--insert-->
-
-
 <div id="browse">
     <table border="1" cellpadding="5">
         {% if data %}
@@ -82,6 +42,46 @@
     </table>
     <p>&nbsp;</p>
 </div>    <!-- browse -->
+
+<div id="insert">
+    <form id="insertReview" action="/reviews" method="post">
+        <legend><strong>Add Review</strong></legend>
+        <fieldset>
+
+            <label for="userID">Reviewer: </label>
+            <select name="userID" id="userID">
+                <option value="">Anonymous</option>
+                {% for item in users %}
+                    <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
+                {% endfor %}
+            </select>
+
+            <label for="rockID">Rock: </label>
+            <select name="rockID" id="rockID">
+                {% for item in rocks %}
+                    <option value={{ item["rockID"] }}> {{ item["name"] }} </option>
+                {% endfor %}
+            </select>
+
+            <label for="title"> Review Title: </label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Required" required>
+
+            <br/><label> Body </label><br/>
+            <textarea id="body" name="body" rows="5" cols="33" placeholder="Required" required></textarea>
+
+            <br/><label> Rating: </label>
+            <select name="rating" id="rating" required>
+                {% for x in range(6) %}
+                    <option value={{ x }}>{{ x }}</option>
+                {% endfor %}
+            </select>
+
+        </fieldset>
+
+        <input type="submit" value="Add Review" name="Add_Review" class="btn btn-primary" style="margin:.5rem;">
+    </form>
+</div><!--insert-->
+
 
 <br>
 
