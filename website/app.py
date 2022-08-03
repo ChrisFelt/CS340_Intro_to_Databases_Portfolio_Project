@@ -56,31 +56,45 @@ def user():
         bio = request.form["bio"]
 
         if request.form.get("Add_User"):
-            # account for null specialization AND bio
-            if specialization == "" and bio == "":
-                # mySQL query to insert a new person into bsg_people with our form inputs
-                query = "INSERT INTO Users (firstName, lastName, address) VALUES (%s, %s, %s)"
-                cur = mysql.connection.cursor()
-                cur.execute(query, (firstName, lastName, address))
-                mysql.connection.commit()
-            # account for null specialization
-            elif specialization == "":
-                query = "INSERT INTO Users (firstName, lastName, address, bio) VALUES (%s, %s, %s, %s)"
-                cur = mysql.connection.cursor()
-                cur.execute(query, (firstName, lastName, address, bio))
-                mysql.connection.commit()
-            # account for null bio
-            elif bio == "":
-                query = "INSERT INTO Users (firstName, lastName, address, specialization) VALUES (%s, %s, %s, %s)"
-                cur = mysql.connection.cursor()
-                cur.execute(query, (firstName, lastName, address, specialization))
-                mysql.connection.commit()
-            # account for NO null
+
+            # check if duplicate entry
+            checkQuery = """SELECT COUNT(userID) AS count FROM Users 
+                                WHERE firstName = %s 
+                                AND lastName = %s"""
+            cur = mysql.connection.cursor()
+            cur.execute(checkQuery, (firstName, lastName))
+            checkUser = cur.fetchall()
+
+            if checkUser[0]['count'] != 0:
+                flash('Duplicate names are not allowed! Please try again.', 'error')
+
             else:
-                query = "INSERT INTO Users (firstName, lastName, address, specialization, bio) VALUES (%s, %s, %s, %s, %s)"
-                cur = mysql.connection.cursor()
-                cur.execute(query, (firstName, lastName, address, specialization, bio))
-                mysql.connection.commit()
+                # account for null specialization AND bio
+                if specialization == "" and bio == "":
+
+                    # mySQL query to insert a new person into bsg_people with our form inputs
+                    query = "INSERT INTO Users (firstName, lastName, address) VALUES (%s, %s, %s)"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address))
+                    mysql.connection.commit()
+                # account for null specialization
+                elif specialization == "":
+                    query = "INSERT INTO Users (firstName, lastName, address, bio) VALUES (%s, %s, %s, %s)"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, bio))
+                    mysql.connection.commit()
+                # account for null bio
+                elif bio == "":
+                    query = "INSERT INTO Users (firstName, lastName, address, specialization) VALUES (%s, %s, %s, %s)"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, specialization))
+                    mysql.connection.commit()
+                # account for NO null
+                else:
+                    query = "INSERT INTO Users (firstName, lastName, address, specialization, bio) VALUES (%s, %s, %s, %s, %s)"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (firstName, lastName, address, specialization, bio))
+                    mysql.connection.commit()
 
             return redirect("/users")
 
@@ -408,7 +422,7 @@ def shipment():
                 checkShipNone = cur.fetchall()
 
                 if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
-                    flash(u'Duplicate entry! Please try again.', 'error')
+                    flash('Duplicate entry! Shipment not added. Please try again.', 'error')
 
                 else:
                     # first, SQL query to insert new Shipment
@@ -447,7 +461,7 @@ def shipment():
                 checkShip = cur.fetchall()
 
                 if checkShip[0]['count'] != 0:
-                    flash('Duplicate entry! Please try again.', 'error')
+                    flash('Duplicate entry! Shipment not added. Please try again.', 'error')
 
                 else:
                     # first, SQL query to insert new Shipment
