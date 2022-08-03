@@ -131,7 +131,7 @@ def edit_user(id):
             checkUser = cur.fetchall()
             print(checkUser)
 
-            if userID != checkUser[0]['userID']:
+            if checkUser and int(userID) != checkUser[0]['userID']:
                 flash('Duplicate names are not allowed! Please try again.', 'error')
             else:
                 # account for null specialization AND bio
