@@ -245,14 +245,22 @@ VALUES (SELECT shipmentID
 
 -- CREATE I
 -- NULL miscNote
--- Part I: insert new row in Shipments
+-- Part I: check for duplicate entry (cannot have duplicate Shipments)
+SELECT COUNT(shipmentID) AS count FROM Shipments
+    WHERE shipOrigin = shipOriginInput
+    AND shipDest = :shipDestInput
+    AND shipDate = :shipDateInput
+    AND miscNote IS NULL;
+
+-- Part II: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
 VALUES (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
         SELECT address FROM Users WHERE CONCAT(firstName, ' ', lastName) = :auto_populates_from_name_dropdown_input,
         shipDest = :shipDestInput,
         shipDate = :shipDateInput,
         miscNote = :miscNoteInput);
--- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
+
+-- Part III: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
 VALUES ((SELECT shipmentID
         FROM Shipments
@@ -264,14 +272,22 @@ VALUES ((SELECT shipmentID
 
 -- CREATE II
 -- Not NULL miscNote
--- Part I: insert new row in Shipments
+-- Part I: check for duplicate entry (cannot have duplicate Shipments)
+SELECT COUNT(shipmentID) AS count FROM Shipments
+    WHERE shipOrigin = shipOriginInput
+    AND shipDest = :shipDestInput
+    AND shipDate = :shipDateInput
+    AND miscNote = :miscNoteInput;
+
+-- Part II: insert new row in Shipments
 INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote)
 VALUES (SELECT address FROM Users WHERE CONCAT(firstName, ' ', lastName) = :auto_populates_from_name_dropdown_input,
         SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = :name_from_dropdown_input,
         shipDest = :shipDestInput,
         shipDate = :shipDateInput,
         miscNote = :miscNoteInput);
--- Part II: insert new row in Shipments_has_Rocks intersection table for each rock shipped
+
+-- Part III: insert new row in Shipments_has_Rocks intersection table for each rock shipped
 INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
 VALUES ((SELECT shipmentID
         FROM Shipments
