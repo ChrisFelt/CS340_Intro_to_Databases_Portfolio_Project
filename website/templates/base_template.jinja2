@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    [ <a href="/index">Home</a> | <a href="users">Users</a> | <a href="rocks">Rocks</a> | <a href="reviews">Reviews</a>
+    | <a href="shipments">Shipments</a> ]
+
+
+        <!-- super basic alert, fancier dismissible alert: https://www.youtube.com/watch?v=zglBdzzoDjM <- JS plugin for Bootstrap
+            AND https://getbootstrap.com/docs/5.2/components/alerts/  <-- Bootstrap code  -->
+        {% for message in get_flashed_messages() %}
+
+            <script>
+            alert('{{ message }}');
+            </script>
+
+        {% endfor %}
+
+
+
+</head>
+
+
+    {% block content %}
+    {% endblock %}
+
+</html>

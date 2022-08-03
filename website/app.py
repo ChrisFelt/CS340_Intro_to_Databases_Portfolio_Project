@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, redirect, url_for
+from flask import Flask, render_template, json, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask import request
 import os
@@ -6,6 +6,7 @@ import database.db_connector as db
 
 # CONFIGURATION
 app = Flask(__name__)
+app.secret_key = 'rock lobster'
 db_connection = db.connect_to_database()
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
@@ -382,44 +383,94 @@ def shipment():
         miscNote = request.form["miscNote"]
 
         if request.form.get("Add_Shipment"):
+
             # account for null miscNote
             if miscNote == "":
-                # first, SQL query to insert new Shipment
-                shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote) 
-                                VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), %s, %s, %s, NULL)"""
+
+                # check if duplicate entry
+                checkQuery1 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
+                                    WHERE shipOrigin = %s 
+                                    AND shipDest = %s
+                                    AND shipDate = %s
+                                    AND miscNote IS NULL"""
                 cur = mysql.connection.cursor()
-                cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate))
-                mysql.connection.commit()
-                # next, SQL query to insert new Shipments_has_Rocks
-                shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
-                                    VALUES ((SELECT shipmentID FROM Shipments 
-                                        WHERE shipOrigin = %s 
-                                            AND shipDest = %s 
-                                            AND shipDate = %s 
-                                            AND miscNote IS NULL), 
-                                    (SELECT rockID FROM Rocks WHERE name = %s))"""
+                cur.execute(checkQuery1, (shipOrigin, shipDest, shipDate))
+                checkShipNull = cur.fetchall()
+
+                # Null value could be converted to 'None' in the form
+                checkQuery2 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
+                                    WHERE shipOrigin = %s 
+                                    AND shipDest = %s
+                                    AND shipDate = %s
+                                    AND miscNote = 'None' """
                 cur = mysql.connection.cursor()
-                cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
-                mysql.connection.commit()
+                cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
+                checkShipNone = cur.fetchall()
+
+                if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
+                    flash(u'Duplicate entry! Please try again.', 'error')
+
+                else:
+                    # first, SQL query to insert new Shipment
+                    shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote) 
+                                    VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), 
+                                    %s, 
+                                    %s, 
+                                    %s, 
+                                    NULL)"""
+                    cur = mysql.connection.cursor()
+                    cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate))
+                    mysql.connection.commit()
+                    # next, SQL query to insert new Shipments_has_Rocks
+                    shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
+                                        VALUES ((SELECT shipmentID FROM Shipments 
+                                            WHERE shipOrigin = %s 
+                                                AND shipDest = %s 
+                                                AND shipDate = %s 
+                                                AND miscNote IS NULL), 
+                                        (SELECT rockID FROM Rocks WHERE name = %s))"""
+                    cur = mysql.connection.cursor()
+                    cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
+                    mysql.connection.commit()
+
             # account for NO null
             else:
-                # first, SQL query to insert new Shipment
-                shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote) 
-                                VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), %s, %s, %s, %s)"""
+
+                # check if duplicate entry
+                checkQuery = """SELECT COUNT(shipmentID) AS count FROM Shipments 
+                                    WHERE shipOrigin = %s 
+                                    AND shipDest = %s
+                                    AND shipDate = %s
+                                    AND miscNote = %s"""
                 cur = mysql.connection.cursor()
-                cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate, miscNote))
-                mysql.connection.commit()
-                # next, SQL query to insert new Shipments_has_Rocks
-                shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
-                                    VALUES ((SELECT shipmentID FROM Shipments 
-                                        WHERE shipOrigin = %s 
-                                            AND shipDest = %s 
-                                            AND shipDate = %s 
-                                            AND miscNote = %s), 
-                                    (SELECT rockID FROM Rocks WHERE name = %s))"""
-                cur = mysql.connection.cursor()
-                cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, miscNote, rock))
-                mysql.connection.commit()
+                cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
+                checkShip = cur.fetchall()
+
+                if checkShip[0]['count'] != 0:
+                    flash('Duplicate entry! Please try again.', 'error')
+
+                else:
+                    # first, SQL query to insert new Shipment
+                    shipQuery = """INSERT INTO Shipments (userID, shipOrigin, shipDest, shipDate, miscNote) 
+                                    VALUES ((SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s), 
+                                    %s, 
+                                    %s, 
+                                    %s, 
+                                    %s)"""
+                    cur = mysql.connection.cursor()
+                    cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate, miscNote))
+                    mysql.connection.commit()
+                    # next, SQL query to insert new Shipments_has_Rocks
+                    shipRockQuery = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID) 
+                                        VALUES ((SELECT shipmentID FROM Shipments 
+                                            WHERE shipOrigin = %s 
+                                                AND shipDest = %s 
+                                                AND shipDate = %s 
+                                                AND miscNote = %s), 
+                                        (SELECT rockID FROM Rocks WHERE name = %s))"""
+                    cur = mysql.connection.cursor()
+                    cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, miscNote, rock))
+                    mysql.connection.commit()
 
             return redirect("/shipments")
 
@@ -483,8 +534,6 @@ def edit_shipment(id):
         cur = mysql.connection.cursor()
         cur.execute(addRocksQuery)
         addRocks = cur.fetchall()
-
-        print(addRocks)
 
         # get all User names BESIDES the original User in the Shipment
         shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
