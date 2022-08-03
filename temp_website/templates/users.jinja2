@@ -3,67 +3,69 @@
 {% extends 'base_template.jinja2' %}
 {% block content %}
 
-<head>
-    <title>Users</title>
-</head>
+    <head>
+        <title>Users</title>
+    </head>
 
-<body>
+    <body>
 
-<h1>Users</h1>
+    <h1>Users</h1>
 
-<div id="browse">
-    <table border="1" cellpadding="5">
-    <legend>To modify a user, select edit.</legend>
-        {% if data %}
-            <thead>
-            <tr>
-                {% for key in data[0].keys() %}
-                    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-                {% endfor %}
-            </tr>
-
-            <tbody>
-            {% for item in data %}
+    <div id="browse">
+        <table border="1" cellpadding="5">
+            <legend>To modify a user, select edit.</legend>
+            {% if data %}
+                <thead>
                 <tr>
-                    {% for key in item.keys() %}
-                        <td> {{ item[key] }} </td>
+                    {% for key in data[0].keys() %}
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
                     {% endfor %}
-                    <td><a href="edit_user/{{ item["User ID"] }}" class="btn btn-default">Edit</a></td>
                 </tr>
-            {% endfor %}
-        {% endif %}
-    </table>
-    <p>&nbsp;</p>
-</div>    <!-- browse -->
 
-<div id="insert">
-    <form id="insertUser" action="/users" method="post">
-        <legend><strong>Add User</strong></legend>
-        <fieldset>
-            <label for="firstName">First Name:</label>
-            <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]{1,}"
-                   placeholder="Required" required>
+                <tbody>
+                {% for item in data %}
+                    <tr>
+                        {% for key in item.keys() %}
+                            <td> {{ item[key] }} </td>
+                        {% endfor %}
+                        <td><a href="edit_user/{{ item["User ID"] }}" class="btn btn-default">Edit</a></td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+        <p>&nbsp;</p>
+    </div>    <!-- browse -->
 
-            <label for="lastName">Last Name:</label>
-            <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]{1,}"
-                   placeholder="Required" required>
+    <div id="insert">
+        <form id="insertUser" action="/users" method="post">
+            <legend><strong>Add User</strong></legend>
+            <fieldset>
+                <label for="firstName">First Name:</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]{1,}"
+                       placeholder="Required" required>
 
-            <label for="address"> Address </label>
-            <input type="text" class="form-control" id="address" name="address" placeholder="Required" required>
+                <label for="lastName">Last Name:</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]{1,}"
+                       placeholder="Required" required>
 
-            <label for="specialization"> Specialization </label>
-            <input type="text" class="form-control" id="specialization" name="specialization" placeholder="Optional">
+                <label for="address"> Address </label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Required" required>
 
-            <label for="bio"> Bio </label>
-            <input type="text" class="form-control" id="bio" name="bio" placeholder="Optional">
-        </fieldset>
+                <label for="specialization"> Specialization </label>
+                <input type="text" class="form-control" id="specialization" name="specialization"
+                       placeholder="Optional">
 
-        <input type="submit" value="Add User" name="Add_User" class="btn btn-primary" style="margin:.5rem;">
-    </form>
-</div><!--insert-->
+                <br/><label for="bio"> Bio </label><br/>
+                {#                <input type="text" class="form-control" id="bio" name="bio" placeholder="Optional">#}
+                <textarea class="form-control" id="bio" name="bio" rows="5" cols="33" placeholder="Optional"></textarea>
+            </fieldset>
+
+            <input type="submit" value="Add User" name="Add_User" class="btn btn-primary" style="margin:.5rem;">
+        </form>
+    </div><!--insert-->
 
 
-</body>
+    </body>
 
 {% endblock %}
 

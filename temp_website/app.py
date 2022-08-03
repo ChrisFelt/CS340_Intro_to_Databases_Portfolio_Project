@@ -123,7 +123,7 @@ def edit_user(id):
 
         if request.form.get("Edit_User"):
             # check if duplicate entry
-            checkQuery = """SELECT COUNT(userID) AS count FROM Users 
+            checkQuery = """SELECT userID FROM Users 
                                 WHERE firstName = %s 
                                 AND lastName = %s"""
             cur = mysql.connection.cursor()
@@ -131,7 +131,7 @@ def edit_user(id):
             checkUser = cur.fetchall()
             print(checkUser)
 
-            if checkUser[0]['count'] != 0:
+            if userID != checkUser[0]['userID']:
                 flash('Duplicate names are not allowed! Please try again.', 'error')
             else:
                 # account for null specialization AND bio
