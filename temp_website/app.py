@@ -342,8 +342,6 @@ def review():
         body = request.form["body"]
         rating = request.form["rating"]
 
-        print(userID)
-
         if request.form.get("Add_Review"):
 
             # check if duplicate Review only if userID NOT NULL
@@ -359,20 +357,21 @@ def review():
                 if checkReview[0]['count'] != 0:
                     flash('Duplicate reviews are not allowed! Please try again.', 'error')
 
-            # create new Review
-            else:
-                # account for NULL userID
-                if userID == "":
-                    query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s)"
-                    cur = mysql.connection.cursor()
-                    cur.execute(query, (rockID, title, body, rating))
-                    mysql.connection.commit()
-                # account for no NULL
+                # CREATE Review with userID
                 else:
                     query = "INSERT INTO Reviews (userID, rockID, title, body, rating) VALUES (%s, %s, %s, %s, %s)"
                     cur = mysql.connection.cursor()
                     cur.execute(query, (userID, rockID, title, body, rating))
                     mysql.connection.commit()
+
+                return redirect("/reviews")
+
+            # account for NULL userID
+            elif userID == "":
+                query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s)"
+                cur = mysql.connection.cursor()
+                cur.execute(query, (rockID, title, body, rating))
+                mysql.connection.commit()
 
         return redirect("/reviews")
 
