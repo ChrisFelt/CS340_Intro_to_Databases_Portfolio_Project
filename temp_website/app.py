@@ -331,6 +331,7 @@ def review():
 @app.route('/edit_review/<int:id>', methods=["POST", "GET"])
 def edit_review(id):
     if request.method == "GET":
+        # general READ query for Reviews
         query = """SELECT Reviews.reviewID AS 'Review ID', 
                         CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, 
                         Rocks.name AS Rock, 
@@ -347,16 +348,19 @@ def edit_review(id):
         cur.execute(query)
         readData = cur.fetchall()
 
+        # READ query for UPDATE
         query = "SELECT * FROM Reviews WHERE reviewID = %s" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
 
+        # fetch Reviewers
         usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
+        # fetch Rocks
         rocksQuery = "SELECT rockID, name FROM Rocks"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
@@ -365,6 +369,7 @@ def edit_review(id):
         return render_template("edit_review.jinja2", readData=readData, data=data, users=users, rocks=rocks)
 
     if request.method == "POST":
+        # collect form data
         reviewID = id
         userID = request.form["userID"]
         rockID = request.form["rockID"]
@@ -372,7 +377,9 @@ def edit_review(id):
         body = request.form["body"]
         rating = request.form["rating"]
 
+        # UPDATE Reviews
         if request.form.get("Edit_Review"):
+
             # account for NULL userID
             if userID == "":
                 query = """UPDATE Reviews SET Reviews.userID = NULL, 
@@ -384,6 +391,7 @@ def edit_review(id):
                 cur = mysql.connection.cursor()
                 cur.execute(query, (rockID, title, body, rating, reviewID))
                 mysql.connection.commit()
+
             # account for no NULL
             else:
                 query = """UPDATE Reviews SET Reviews.userID = %s, 
@@ -416,25 +424,23 @@ def shipment():
         cur.execute(shipmentsQuery)
         data = cur.fetchall()
 
+        # fetch Rocks
         rocksQuery = "SELECT name FROM Rocks"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
 
+        # fetch Users
         usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
-        shipment_id_query = "SELECT shipmentID FROM Shipments"
-        cur = mysql.connection.cursor()
-        cur.execute(shipment_id_query)
-        shipment_ids = cur.fetchall()
-
         return render_template("shipments.jinja2", data=data, rocks=rocks, users=users, shipment_ids=shipment_ids)
 
     # CREATE Shipment
     if request.method == "POST":
+        # collect form data
         user = request.form["user"]
         rock = request.form["rock"]
         shipOrigin = request.form["shipOrigin"]
@@ -467,6 +473,7 @@ def shipment():
                 cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
                 checkShipNone = cur.fetchall()
 
+                # notify user if entry is a duplicate
                 if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
                     flash('Duplicate entry! Shipment not added. Please try again.', 'error')
 
@@ -506,6 +513,7 @@ def shipment():
                 cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
                 checkShip = cur.fetchall()
 
+                # notify user if entry is a duplicate
                 if checkShip[0]['count'] != 0:
                     flash('Duplicate entry! Shipment not added. Please try again.', 'error')
 
@@ -589,10 +597,9 @@ def edit_shipment(id):
         # get Rock names and their owner's names
         addRocksQuery = """SELECT Rocks.name AS rock
                             FROM Rocks
-                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)""" % (
-            id)
+                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)"""
         cur = mysql.connection.cursor()
-        cur.execute(addRocksQuery)
+        cur.execute(addRocksQuery, (id,))
         addRocks = cur.fetchall()
 
         # get all User names BESIDES the original User in the Shipment
@@ -677,6 +684,7 @@ def edit_shipment(id):
                 cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
                 checkShip = cur.fetchall()
 
+                # notify user of duplicate shipment
                 if checkShip[0]['count'] != 0:
                     flash('Duplicate entry! Shipment not added. Please try again.', 'error')
 
@@ -712,10 +720,10 @@ def delete_shipment(id):
 def add_shipments_has_rocks(id):
     # add rock to shipment
     if request.form.get("Add_Shipments_has_Rocks"):
-        # gather variables from Add_Shipments_has_Rocks form
+        # gather variable from Add_Shipments_has_Rocks form
         rock = request.form["rock"]
 
-        # add Shipments_has_Rocks SQL query
+        # CREATE Shipments_has_Rocks SQL query
         query = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
                     VALUES (%s,
                     (SELECT rockID FROM Rocks WHERE name = %s));"""

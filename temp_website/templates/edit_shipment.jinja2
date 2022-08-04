@@ -12,7 +12,7 @@
 
     <div>
         <table border="1" cellpadding="5">
-
+            <!-- display Shipment that is currently being edited-->
             {% if readShipment %}
                 <thead>
                     <tr>
@@ -77,6 +77,7 @@
 <p>&nbsp;</p>
 
 	<div id="browse">
+        <!-- populate list of Rocks in the Shipment-->
 		<legend><strong>Rocks in This Shipment:</strong></legend>
 		<table border="1" cellpadding="5">
 			{% if rocks %}

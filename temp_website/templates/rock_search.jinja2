@@ -5,13 +5,13 @@
 
 <head>
 	<title>Rock Search</title>
-
 </head>
 <body onload="browseRocks()">
 
 	<h1>Rock Search</h1>
 
 	<div id="browse">
+        <!-- populate Rock Search results -->
         <legend><strong>Your Search Results: </strong></legend>
 		<table border="1" cellpadding="5">
 			{% if data %}
@@ -35,21 +35,22 @@
 			{% endif %}
 		</table>
 	<p>&nbsp;</p>
-	</div>
-	<!-- browse -->
+	</div> <!-- browse -->
 
 	<br/>
 
 	<div id="search">
+        <!-- form to make a new Rock Search -->
 		<form id="searchRocks" action="/rocks" method="post">
 			<legend><strong>New Rock Search</strong></legend>
 			<fieldset>
-				<input type="text" class="form-control" id="search" name="search" placeholder="New search criteria" required>
+				<input type="text" class="form-control" id="search" name="search"
+                       placeholder="New search criteria" required>
 			</fieldset>
 			<input type="submit" value="Rock Search" name="Rock_Search" class="btn btn-primary" style="margin:.5rem;">
             <a href='/rocks'><input class="btn" type="button" value="Return to Rocks"></a>
 		</form>
-	</div>
+	</div> <!-- search -->
 
 
 </body>

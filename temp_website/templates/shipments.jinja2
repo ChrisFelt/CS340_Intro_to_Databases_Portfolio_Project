@@ -5,14 +5,13 @@
 
 <head>
     <title>Shipments</title>
-
 </head>
 
 <body>
 
-	<div id="browse" class="container">
+	<div id="browse">
 		<h1>Shipments</h1>
-
+        <!-- populate browsing section of Shipments-->
 		<table border="1" cellpadding="5">
             <legend>To add/remove rocks from a shipment OR modify shipment details, select edit.</legend>
 			{% if data %}
@@ -41,7 +40,7 @@
 	</div>	<!-- browse -->
 
 
-	<div id="insert" class="container">
+	<div id="insert">
 		<!-- form to INSERT new data into Shipments-->
 		<form id="insertShipment" action="/shipments" method="post">
 			<legend><strong>Add Shipment: </strong></legend>
@@ -66,21 +65,26 @@
 				</select>
 
 				<label for="shipOrigin">Origin: </label>
-				<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z0-9, ]+" title="Shipment Origin (Special characters not allowed besides commas" placeholder="Required" required>
+				<input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z0-9, ]+"
+                       title="Shipment Origin (Special characters not allowed besides commas"
+                       placeholder="Required" required>
 
 				<label for="shipDest">Destination: </label>
-				<input type="text" class="form-control" id="shipDest" name="shipDest" pattern="[A-Za-z0-9, ]+" title="Shipment Destination (Special characters not allowed besides commas" placeholder="Required" required>
+				<input type="text" class="form-control" id="shipDest" name="shipDest" pattern="[A-Za-z0-9, ]+"
+                       title="Shipment Destination (Special characters not allowed besides commas"
+                       placeholder="Required" required>
 
 				<label for="shipDate">Shipment Date: </label>
 				<input type="Date" class="form-control" id="shipDate" name="shipDate" placeholder="Required" required>
 
 				<label for="miscNote">Notes: </label>
-				<input type="text" class="form-control" id="miscNote" name="miscNote" pattern="[A-Za-z0-9, ]+" title="Miscellaneous Notes (Special characters not allowed besides commas" placeholder="Optional">
+				<input type="text" class="form-control" id="miscNote" name="miscNote" pattern="[A-Za-z0-9, ]+"
+                       title="Miscellaneous Notes (Special characters not allowed besides commas"
+                       placeholder="Optional">
 
 			</fieldset>
 
 		<input type="submit" value="Add Shipment" name="Add_Shipment" class="btn btn-primary" style="margin:.5rem;">
-
 
 
 		</form>
