@@ -52,7 +52,7 @@
 
                 <label for="address">Address:</label>
                 <input type="text" value="{{ data[0].address }}" class="form-control" id="address" name="address"
-                       pattern="[A-Za-z0-9, ]{1,}" title="Address (No special characters besides commas)"
+                       pattern="[A-Za-z0-9,.#\- ]+" title="Address (Only alphanumeric and [,.#-] allowed)"
                        required>
 
                 <label for="specialization">Specialization:</label>

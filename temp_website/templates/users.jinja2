@@ -51,7 +51,7 @@
                        required>
 
                 <label for="address"> Address </label>
-                <input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9, ]{1,}" title="Address (No special characters besides commas)" placeholder="Required" required>
+                <input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9,.#\- ]+" title="Address (Only alphanumeric and [,.#-] allowed)" placeholder="Required" required>
 
                 <label for="specialization"> Specialization </label>
                 <input type="text" class="form-control" id="specialization" name="specialization" pattern="[A-Za-z0-9 ]+" title="Specialization (No special characters allowed)"
