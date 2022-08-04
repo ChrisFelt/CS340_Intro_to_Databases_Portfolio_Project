@@ -304,26 +304,46 @@ def review():
 
         return render_template("reviews.jinja2", data=data, rocks=rocks, users=users)
 
+    # CREATE Reviews
     if request.method == "POST":
+        # collect form data
         userID = request.form["userID"]
         rockID = request.form["rockID"]
         title = request.form["title"]
         body = request.form["body"]
         rating = request.form["rating"]
 
+        print(userID)
+
         if request.form.get("Add_Review"):
-            # account for NULL userID
-            if userID == "":
-                query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s)"
+
+            # check if duplicate Review only if userID NOT NULL
+            if userID != "":
+                checkQuery = """SELECT COUNT(reviewID) AS count FROM Reviews 
+                                    WHERE rockID = %s
+                                    AND userID = %s"""
                 cur = mysql.connection.cursor()
-                cur.execute(query, (rockID, title, body, rating))
-                mysql.connection.commit()
-            # account for no NULL
+                cur.execute(checkQuery, (rockID, userID))
+                checkReview = cur.fetchall()
+
+                # notify user if Review is a duplicate
+                if checkReview[0]['count'] != 0:
+                    flash('Duplicate reviews are not allowed! Please try again.', 'error')
+
+            # create new Review
             else:
-                query = "INSERT INTO Reviews (userID, rockID, title, body, rating) VALUES (%s, %s, %s, %s, %s)"
-                cur = mysql.connection.cursor()
-                cur.execute(query, (userID, rockID, title, body, rating))
-                mysql.connection.commit()
+                # account for NULL userID
+                if userID == "":
+                    query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s)"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (rockID, title, body, rating))
+                    mysql.connection.commit()
+                # account for no NULL
+                else:
+                    query = "INSERT INTO Reviews (userID, rockID, title, body, rating) VALUES (%s, %s, %s, %s, %s)"
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (userID, rockID, title, body, rating))
+                    mysql.connection.commit()
 
         return redirect("/reviews")
 
@@ -376,18 +396,35 @@ def edit_review(id):
         title = request.form["title"]
         body = request.form["body"]
         rating = request.form["rating"]
+        # get original User and Rock
+        prevUserID = request.form["prevUserID"]
+        prevRockID = request.form["prevRockID"]
 
         # UPDATE Reviews
         if request.form.get("Edit_Review"):
 
+            # check if duplicate Review only if userID NOT NULL
+            if userID != "" and (prevUserID != userID or prevRockID != rockID):
+                checkQuery = """SELECT COUNT(reviewID) AS count FROM Reviews 
+                                    WHERE rockID = %s
+                                    AND userID = %s"""
+                cur = mysql.connection.cursor()
+                cur.execute(checkQuery, (rockID, userID))
+                checkReview = cur.fetchall()
+
+                # notify user if Review is a duplicate
+                if checkReview[0]['count'] != 0:
+                    flash('Duplicate reviews are not allowed! Please try again.', 'error')
+                    return redirect("/reviews")
+
             # account for NULL userID
             if userID == "":
                 query = """UPDATE Reviews SET Reviews.userID = NULL, 
-                                Reviews.rockID = %s, 
-                                Reviews.title = %s, 
-                                Reviews.body = %s, 
-                                Reviews.rating = %s 
-                                WHERE Reviews.reviewID = %s"""
+                                    Reviews.rockID = %s, 
+                                    Reviews.title = %s, 
+                                    Reviews.body = %s, 
+                                    Reviews.rating = %s 
+                                    WHERE Reviews.reviewID = %s"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (rockID, title, body, rating, reviewID))
                 mysql.connection.commit()
@@ -395,11 +432,11 @@ def edit_review(id):
             # account for no NULL
             else:
                 query = """UPDATE Reviews SET Reviews.userID = %s, 
-                                Reviews.rockID = %s, 
-                                Reviews.title = %s, 
-                                Reviews.body = %s, 
-                                Reviews.rating = %s 
-                                WHERE Reviews.reviewID = %s"""
+                                    Reviews.rockID = %s, 
+                                    Reviews.title = %s, 
+                                    Reviews.body = %s, 
+                                    Reviews.rating = %s 
+                                    WHERE Reviews.reviewID = %s"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (userID, rockID, title, body, rating, reviewID))
                 mysql.connection.commit()
@@ -436,7 +473,7 @@ def shipment():
         cur.execute(usersQuery)
         users = cur.fetchall()
 
-        return render_template("shipments.jinja2", data=data, rocks=rocks, users=users, shipment_ids=shipment_ids)
+        return render_template("shipments.jinja2", data=data, rocks=rocks, users=users)
 
     # CREATE Shipment
     if request.method == "POST":
@@ -565,7 +602,7 @@ def edit_shipment(id):
 
         # get shipment data vanilla style
         editShipmentQuery = """SELECT Shipments.shipmentID, 
-                                CONCAT(Users.firstName, ' ', Users.lastName), 
+                                CONCAT(Users.firstName, ' ', Users.lastName) AS user, 
                                 Shipments.shipOrigin, 
                                 Shipments.shipDest, 
                                 Shipments.shipDate, 
@@ -634,72 +671,94 @@ def edit_shipment(id):
             shipDate = request.form["shipDate"]
             miscNote = request.form["miscNote"]
 
+            # get previous values
+            prevUser = request.form["prevUser"]
+            prevShipOrigin = request.form["prevShipOrigin"]
+            prevShipDest = request.form["prevShipDest"]
+            prevShipDate = request.form["prevShipDate"]
+            prevMiscNote = request.form["prevMiscNote"]
+
+            # check previous values against new
+            unchangedShipment = (user == prevUser) \
+                                and (shipOrigin == prevShipOrigin) \
+                                and (shipDest == prevShipDest) \
+                                and (shipDate == prevShipDate) \
+                                and (miscNote == prevMiscNote)
+
             # account for null miscNote
             if miscNote == "":
-                # check if duplicate entry
-                checkQuery1 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
-                                    WHERE shipOrigin = %s 
-                                    AND shipDest = %s
-                                    AND shipDate = %s
-                                    AND miscNote IS NULL"""
-                cur = mysql.connection.cursor()
-                cur.execute(checkQuery1, (shipOrigin, shipDest, shipDate))
-                checkShipNull = cur.fetchall()
 
-                # Null value could be converted to 'None' in the form
-                checkQuery2 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
-                                    WHERE shipOrigin = %s 
-                                    AND shipDest = %s
-                                    AND shipDate = %s
-                                    AND miscNote = 'None' """
-                cur = mysql.connection.cursor()
-                cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
-                checkShipNone = cur.fetchall()
-
-                if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
-                    flash('Duplicate entry! Shipment not added. Please try again.', 'error')
-
-                else:
-                    # first, SQL query to insert new Shipment
-                    shipUpdateQuery = """UPDATE Shipments
-                                            SET userID = (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s),
-                                            shipOrigin = %s,
-                                            shipDest = %s,
-                                            shipDate = %s, 
-                                            miscNote = NULL
-                                            WHERE shipmentID = %s;"""
+                # skip if no values changed
+                if not unchangedShipment:
+                    # check if duplicate entry
+                    checkQuery1 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
+                                        WHERE shipOrigin = %s 
+                                        AND shipDest = %s
+                                        AND shipDate = %s
+                                        AND miscNote IS NULL"""
                     cur = mysql.connection.cursor()
-                    cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
-                    mysql.connection.commit()
+                    cur.execute(checkQuery1, (shipOrigin, shipDest, shipDate))
+                    checkShipNull = cur.fetchall()
+
+                    # Null value could be converted to 'None' in the form
+                    checkQuery2 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
+                                        WHERE shipOrigin = %s 
+                                        AND shipDest = %s
+                                        AND shipDate = %s
+                                        AND miscNote = 'None' """
+                    cur = mysql.connection.cursor()
+                    cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
+                    checkShipNone = cur.fetchall()
+
+                    if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
+                        flash('Duplicate entry! Shipment not added. Please try again.', 'error')
+
+                    else:
+                        # first, SQL query to insert new Shipment
+                        shipUpdateQuery = """UPDATE Shipments
+                                                SET userID = (SELECT userID FROM Users 
+                                                WHERE CONCAT(firstName, ' ', lastName) = %s),
+                                                shipOrigin = %s,
+                                                shipDest = %s,
+                                                shipDate = %s, 
+                                                miscNote = NULL
+                                                WHERE shipmentID = %s;"""
+                        cur = mysql.connection.cursor()
+                        cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
+                        mysql.connection.commit()
 
             # account for NO null
             else:
-                # check if duplicate entry
-                checkQuery = """SELECT COUNT(shipmentID) AS count FROM Shipments 
-                                    WHERE shipOrigin = %s 
-                                    AND shipDest = %s
-                                    AND shipDate = %s
-                                    AND miscNote = %s"""
-                cur = mysql.connection.cursor()
-                cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
-                checkShip = cur.fetchall()
 
-                # notify user of duplicate shipment
-                if checkShip[0]['count'] != 0:
-                    flash('Duplicate entry! Shipment not added. Please try again.', 'error')
-
-                else:
-                    # first, SQL query to insert new Shipment
-                    shipUpdateQuery = """UPDATE Shipments
-                                            SET userID = (SELECT userID FROM Users WHERE CONCAT(firstName, ' ', lastName) = %s),
-                                            shipOrigin = %s,
-                                            shipDest = %s,
-                                            shipDate = %s,
-                                            miscNote = %s
-                                            WHERE shipmentID = %s;"""
+                # skip if no values changed
+                if not unchangedShipment:
+                    # check if duplicate entry
+                    checkQuery = """SELECT COUNT(shipmentID) AS count FROM Shipments 
+                                        WHERE shipOrigin = %s 
+                                        AND shipDest = %s
+                                        AND shipDate = %s
+                                        AND miscNote = %s"""
                     cur = mysql.connection.cursor()
-                    cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, miscNote, id))
-                    mysql.connection.commit()
+                    cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
+                    checkShip = cur.fetchall()
+
+                    # notify user of duplicate shipment
+                    if checkShip[0]['count'] != 0:
+                        flash('Duplicate entry! Shipment not added. Please try again.', 'error')
+
+                    else:
+                        # first, SQL query to insert new Shipment
+                        shipUpdateQuery = """UPDATE Shipments
+                                                SET userID = (SELECT userID FROM Users 
+                                                WHERE CONCAT(firstName, ' ', lastName) = %s),
+                                                shipOrigin = %s,
+                                                shipDest = %s,
+                                                shipDate = %s,
+                                                miscNote = %s
+                                                WHERE shipmentID = %s;"""
+                        cur = mysql.connection.cursor()
+                        cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, miscNote, id))
+                        mysql.connection.commit()
 
             return redirect("/shipments")
 

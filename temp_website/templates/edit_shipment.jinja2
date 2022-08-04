@@ -39,8 +39,25 @@
 	<form id="editShipment" action="/edit_shipment/{{editShipment[0].shipmentID}}" method="post">
 	<legend><strong>Update Shipment Details:</strong></legend>
 		<fieldset>
+                <!-- send previous values too -->
+                <input type="hidden" value="{{ editShipment[0].user }}" class="form-control" id="prevUser"
+                       name="prevUser" required>
 
-				<input type="hidden" value="{{ editShipment[0].shipmentID }}" class="form-control" id="shipmentID" name="shipmentID" required>
+				<input type="hidden" value="{{ editShipment[0].shipOrigin }}" class="form-control" id="prevShipOrigin"
+                       name="prevShipOrigin" required>
+
+				<input type="hidden" value="{{ editShipment[0].shipDest }}" class="form-control" id="prevShipDest"
+                       name="prevShipDest" required>
+
+				<input type="hidden" value="{{ editShipment[0].shipDate }}" class="form-control" id="prevShipDate"
+                       name="prevShipDate" required>
+
+				<input type="hidden" value="{{ editShipment[0].miscNote }}" class="form-control" id="prevMiscNote"
+                       name="prevMiscNote" >
+                <!-- end previous values -->
+
+				<input type="hidden" value="{{ editShipment[0].shipmentID }}" class="form-control" id="shipmentID"
+                       name="shipmentID" required>
 
 				<label for="user">User Name: </label>
 				<select name="user" id="user">
@@ -55,16 +72,22 @@
 				</select>
 
 				<label for="shipOrigin">Origin: </label>
-				<input type="text" value="{{ editShipment[0].shipOrigin }}" class="form-control" id="shipOrigin" name="shipOrigin" size="35"  pattern="[A-Za-z0-9, ]+" title="Shipment Origin (Special characters not allowed besides commas" required>
+				<input type="text" value="{{ editShipment[0].shipOrigin }}" class="form-control" id="shipOrigin"
+                       name="shipOrigin" size="35"  pattern="[A-Za-z0-9, ]+"
+                       title="Shipment Origin (Special characters not allowed besides commas" required>
 
 				<label for="shipDest">Destination: </label>
-				<input type="text" value="{{ editShipment[0].shipDest }}" class="form-control" id="shipDest" name="shipDest" size="35"  pattern="[A-Za-z0-9, ]+" title="Shipment Destination (Special characters not allowed besides commas" required>
+				<input type="text" value="{{ editShipment[0].shipDest }}" class="form-control" id="shipDest"
+                       name="shipDest" size="35"  pattern="[A-Za-z0-9, ]+"
+                       title="Shipment Destination (Special characters not allowed besides commas" required>
 
 				<label for="shipDate">Shipment Date: </label>
-				<input type="Date" value="{{ editShipment[0].shipDate }}" class="form-control" id="shipDate" name="shipDate" required>
+				<input type="Date" value="{{ editShipment[0].shipDate }}" class="form-control" id="shipDate"
+                       name="shipDate" required>
 
 				<label for="miscNote">Notes: </label>
-				<input type="text" value="{{ editShipment[0].miscNote }}" class="form-control" id="miscNote" name="miscNote" size="35" pattern="[A-Za-z0-9, ]+" title="Miscellaneous Notes (Special characters not allowed besides commas">
+				<input type="text" value="{{ editShipment[0].miscNote }}" class="form-control" id="miscNote"
+                       name="miscNote" >
 
 		</fieldset>
 

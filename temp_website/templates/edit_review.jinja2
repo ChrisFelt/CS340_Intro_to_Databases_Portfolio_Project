@@ -9,6 +9,7 @@
 
 <body>
 <div id="browse">
+    <h2> Editing Review:</h2>
     <table border="1" cellpadding="5">
         {% if readData %}
             <thead>
@@ -49,6 +50,12 @@
 
             <input type="hidden" value="{{ data[0].id }}" class="form-control" id="reviewID" name="reviewID" required>
 
+            <input type="hidden" value="{{ data[0]["userID"] }}" class="form-control" id="prevUserID"
+                   name="prevUserID" required>
+
+            <input type="hidden" value="{{ data[0]["rockID"] }}" class="form-control" id="prevRockID"
+                   name="prevRockID" required>
+
             <label for="userID">Reviewer: </label>
             <select name="userID" id="userID">
                 <option value="">Anonymous</option>
@@ -76,7 +83,7 @@
             <input type="text" value="{{ data[0]["title"] }}" class="form-control" id="title" name="title"
                    placeholder="" required>
 
-            <br/><label> Body </label><br/>
+            <br/><label> Body: </label><br/>
             <textarea id="body" name="body" rows="5" cols="33" required>{{ data[0]["body"] }}</textarea>
 
             <br/><label> Rating: </label>
