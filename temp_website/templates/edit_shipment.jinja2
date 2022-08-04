@@ -87,7 +87,8 @@
 
 				<label for="miscNote">Notes: </label>
 				<input type="text" value="{{ editShipment[0].miscNote }}" class="form-control" id="miscNote"
-                       name="miscNote" >
+                       name="miscNote" size="35" pattern="[A-Za-z0-9, ]+"
+                       title="Miscellaneous Notes (Special characters not allowed besides commas">
 
 		</fieldset>
 
