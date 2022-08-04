@@ -40,27 +40,27 @@
                 <input type="hidden" value="{{ data[0].userID }}" class="form-control" id="userID" name="userID"
                        required>
 
-                <label for="make">First name:</label>
+                <label for="make">First name:</label><br/>
                 <input type="text" value="{{ data[0].firstName }}" class="form-control" id="firstName" name="firstName"
                        pattern="[A-Za-z]{1,}" title="First Name (One word, numbers and special characters not allowed)"
-                       required>
+                       required><br/>
 
-                <label for="model">Last name:</label>
+                <label for="model">Last name:</label><br/>
                 <input type="text" value="{{ data[0].lastName }}" class="form-control" id="lastName" name="lastName"
                        pattern="[A-Za-z]{1,}" title="Last Name (One word, numbers and special characters not allowed)"
-                       required>
+                       required><br/>
 
-                <label for="address">Address:</label>
+                <label for="address">Address:</label><br/>
                 <input type="text" value="{{ data[0].address }}" class="form-control" id="address" name="address"
                        pattern="[A-Za-z0-9,.#\- ]+" title="Address (Only alphanumeric and [,.#-] allowed)"
-                       required>
+                       required><br/>
 
-                <label for="specialization">Specialization:</label>
+                <label for="specialization">Specialization:</label><br/>
                 <input type="text" value="{{ data[0].specialization }}" class="form-control" id="specialization"
                        name="specialization" pattern="[A-Za-z0-9 ]+"
-                       title="Specialization (No special characters allowed)">
+                       title="Specialization (No special characters allowed)"><br/>
 
-                <br/><label for="bio"> Bio </label><br/>
+                <br/><label for="bio"> Bio: </label><br/>
                 <textarea class="form-control" id="bio" name="bio" rows="5" cols="33"
                           placeholder="Optional">{{ data[0].bio }}</textarea>
 

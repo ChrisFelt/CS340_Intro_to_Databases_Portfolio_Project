@@ -11,9 +11,21 @@
 
     <h1>Rocks</h1>
 
+    <div id="search">
+        <form id="searchRocks" action="/rocks" method="post">
+            <legend><strong>Search Rocks</strong></legend>
+            <fieldset>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Search criteria"
+                       pattern="[A-Za-z0-9 ]+" title="Search criteria (Special characters not allowed)" required>
+            </fieldset>
+            <input type="submit" value="Rock Search" name="Rock_Search" class="btn btn-primary" style="margin:.5rem; margin-left: 22px;">
+        </form>
+    </div>
+
     <div id="browse">
         <table>
-            <legend>Search for rocks using any term in the Rocks table or Add a rock below</legend><br/>
+            <legend>Search for rocks using any term in the Rocks table or Add a rock below</legend>
+            <br/>
             {% if data %}
                 <thead>
                 <tr>
@@ -37,50 +49,40 @@
         <p>&nbsp;</p>
     </div><!-- browse -->
 
-    <div id="search">
-        <form id="searchRocks" action="/rocks" method="post">
-            <legend><strong>Search Rocks</strong></legend>
-            <fieldset>
-                <input type="text" class="form-control" id="search" name="search" placeholder="Search criteria"
-                       pattern="[A-Za-z0-9 ]+" title="Search criteria (Special characters not allowed)" required>
-            </fieldset>
-            <input type="submit" value="Rock Search" name="Rock_Search" class="btn btn-primary" style="margin:.5rem;">
-        </form>
-    </div>
-
 
     <div id="insert">
         <form id="insertRock" action="/rocks" method="post">
             <legend><strong>Add Rock</strong></legend>
             <fieldset>
 
-                <label for="userID">Owner: </label>
+                <label for="userID">Owner: </label><br/>
                 <select name="userID" id="userID">
                     {% for item in users %}
                         <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
                     {% endfor %}
-                </select>
+                </select><br/>
 
-                <label for="name"> Rock Name: </label>
+                <label for="name"> Rock Name: </label><br/>
                 <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z0-9 ]+"
-                       title="Rock Name (No special characters allowed)" placeholder="Required" required>
+                       title="Rock Name (No special characters allowed)" placeholder="Required" required><br/>
 
-                <label> Origin </label>
+                <label> Origin </label><br/>
                 <input type="text" class="form-control" id="geoOrigin" name="geoOrigin" pattern="[A-Za-z0-9, ]+"
                        title="Geological Origin (No special characters allowed besides commas)" placeholder="Required"
-                       required>
+                       required><br/>
 
-                <label>Type:</label>
+                <label>Type:</label><br/>
                 <select class="form-control" id="type" name="type" placeholder="" required>
                     <option value="">-- Rock Type --</option>
                     <option value="igneous">Igneous</option>
                     <option value="metamorphic">Metamorphic</option>
                     <option value="sedimentary">Sedimentary</option>
-                </select>
+                </select><br/>
 
-                <label> Chemical Composition </label>
+                <label> Chemical Composition </label><br/>
                 <input type="text" class="form-control" id="chemicalComp" name="chemicalComp" pattern="[A-Za-z0-9 ]+"
-                       title="Chemical Composition (No special characters allowed)" placeholder="Required" required>
+                       title="Chemical Composition (No special characters allowed)" placeholder="Required"
+                       required><br/>
 
                 <br/><label> Description </label><br/>
                 <textarea class="form-control" id="description" name="description" rows="5" cols="33"

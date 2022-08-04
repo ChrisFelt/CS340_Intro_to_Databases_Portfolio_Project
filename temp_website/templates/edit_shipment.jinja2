@@ -59,7 +59,7 @@
                 <input type="hidden" value="{{ editShipment[0].shipmentID }}" class="form-control" id="shipmentID"
                        name="shipmentID" required>
 
-                <label for="user">User Name: </label>
+                <label for="user">User Name: </label><br/>
                 <select name="user" id="user">
                     <option selected>
                         {{ shipUser[0].name }}
@@ -69,23 +69,23 @@
                             <option> {{ item[shipUsersOption] }} </option>
                         {% endfor %}
                     {% endfor %}
-                </select>
+                </select><br/>
 
-                <label for="shipOrigin">Origin: </label>
+                <label for="shipOrigin">Origin: </label><br/>
                 <input type="text" value="{{ editShipment[0].shipOrigin }}" class="form-control" id="shipOrigin"
                        name="shipOrigin" size="35" pattern="[A-Za-z0-9,.#\- ]+"
-                       title="Shipment Origin (Only alphanumeric and [,.#-] allowed)" required>
+                       title="Shipment Origin (Only alphanumeric and [,.#-] allowed)" required><br/>
 
-                <label for="shipDest">Destination: </label>
+                <label for="shipDest">Destination: </label><br/>
                 <input type="text" value="{{ editShipment[0].shipDest }}" class="form-control" id="shipDest"
                        name="shipDest" size="35" pattern="[A-Za-z0-9,.#\- ]+"
-                       title="Shipment Destination (Only alphanumeric and [,.#-] allowed)" required>
+                       title="Shipment Destination (Only alphanumeric and [,.#-] allowed)" required><br/>
 
-                <label for="shipDate">Shipment Date: </label>
+                <label for="shipDate">Shipment Date: </label><br/>
                 <input type="Date" value="{{ editShipment[0].shipDate }}" class="form-control" id="shipDate"
-                       name="shipDate" required>
+                       name="shipDate" required><br/>
 
-                <label for="miscNote">Notes: </label>
+                <label for="miscNote">Notes: </label><br/>
                 <input type="text" value="{{ editShipment[0].miscNote }}" class="form-control" id="miscNote"
                        name="miscNote" size="35" title="Miscellaneous Notes">
 
@@ -93,7 +93,7 @@
 
             <input type="submit" value="Update Shipment" name="Edit_Shipment" class="btn btn-primary"
                    style="margin:.5rem;">
-            <a href='/shipments'><input class="btn" type="button" value="Cancel"></a>
+            <a href='/shipments'><input class="btn-cancel" type="button" value="Cancel" style="margin: .5rem;"></a>
 
         </form>
     </div><!--edit-->
@@ -113,6 +113,7 @@
                             <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
                         {% endif %}
                     {% endfor %}
+                    <th scope="col">Remove</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -130,11 +131,9 @@
                 </tbody>
             {% endif %}
         </table>
-        <p>Note: removing the last Rock will also delete the Shipment!</p>
+        <h3>Note: removing the last Rock will also delete the Shipment!</h3>
 
     </div>    <!-- browse rocks in shipment-->
-
-    <br>
 
     <div id="edit">
         <!-- form to add rocks to Shipment-->

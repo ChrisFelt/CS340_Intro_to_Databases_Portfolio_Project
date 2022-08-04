@@ -51,35 +51,36 @@
             <legend><strong>Add Review</strong></legend>
             <fieldset>
 
-                <label for="userID">Reviewer: </label>
+                <label for="userID">Reviewer: </label><br/>
                 <select name="userID" id="userID">
                     <option value="">Anonymous</option>
                     {% for item in users %}
                         <option value={{ item["userID"] }}> {{ item["fullName"] }} </option>
                     {% endfor %}
-                </select>
+                </select><br/>
 
-                <label for="rockID">Rock: </label>
+                <label for="rockID">Rock: </label><br/>
                 <select name="rockID" id="rockID">
                     {% for item in rocks %}
                         <option value={{ item["rockID"] }}> {{ item["name"] }} </option>
                     {% endfor %}
-                </select>
+                </select><br/>
 
-                <label for="title"> Review Title: </label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="Required"
-                       pattern="[A-Za-z0-9!@#$%^&*)(_+\-='><.,?]+"
-                       title="Review Title (Alphanumeric and [!@#$%^&*()_+-='><.,?] allowed)" required>
-
-                <br/><label> Review: </label><br/>
-                <textarea id="body" name="body" rows="5" cols="33" placeholder="Required" required></textarea>
-
-                <br/><label> Rating: </label>
+                <label> Rating: </label><br/>
                 <select class="rating" name="rating" id="rating" required>
                     {% for x in range(6) %}
                         <option value={{ x }}>{{ x }}</option>
                     {% endfor %}
-                </select>
+                </select><br/>
+
+                <label for="title"> Review Title: </label><br/>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Required"
+                       pattern="[A-Za-z0-9!@#$%^&*)(_+\-='><.,?]+"
+                       title="Review Title (Alphanumeric and [!@#$%^&*()_+-='><.,?] allowed)" required><br/>
+
+                <br/><label> Review: </label><br/>
+                <textarea id="body" name="body" rows="5" cols="33" placeholder="Required" required></textarea>
+
 
             </fieldset>
 

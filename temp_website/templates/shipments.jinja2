@@ -50,38 +50,38 @@
             <legend><strong>Add Shipment: </strong></legend>
             <fieldset>
 
-                <label for="user">Ship to: </label>
+                <label for="user">Ship to: </label><br/>
                 <select name="user" id="user">
                     {% for item in users %}
                         {% for user in item %}
                             <option> {{ item[user] }} </option>
                         {% endfor %}
                     {% endfor %}
-                </select>
+                </select><br/>
 
-                <label for="rock">Rock: </label>
+                <label for="rock">Rock: </label><br/>
                 <select name="rock" id="rock">
                     {% for item in rocks %}
                         {% for rock in item %}
                             <option> {{ item[rock] }} </option>
                         {% endfor %}
                     {% endfor %}
-                </select>
+                </select><br/>
 
-                <label for="shipOrigin">Origin: </label>
+                <label for="shipOrigin">Origin: </label><br/>
                 <input type="text" class="form-control" id="shipOrigin" name="shipOrigin" pattern="[A-Za-z0-9,.#\- ]+"
                        title="Shipment Origin (Only alphanumeric and [,.#-] allowed)"
-                       placeholder="Required" required>
+                       placeholder="Required" required><br/>
 
-                <label for="shipDest">Destination: </label>
+                <label for="shipDest">Destination: </label><br/>
                 <input type="text" class="form-control" id="shipDest" name="shipDest" pattern="[A-Za-z0-9,.#\- ]+"
                        title="Shipment Destination (Only alphanumeric and [,.#-] allowed)"
-                       placeholder="Required" required>
+                       placeholder="Required" required><br/>
 
-                <label for="shipDate">Shipment Date: </label>
-                <input type="Date" class="form-control" id="shipDate" name="shipDate" placeholder="Required" required>
+                <label for="shipDate">Shipment Date: </label><br/>
+                <input type="Date" class="form-control" id="shipDate" name="shipDate" placeholder="Required" required><br/>
 
-                <label for="miscNote">Notes: </label>
+                <label for="miscNote">Notes: </label><br/>
                 <input type="text" class="form-control" id="miscNote" name="miscNote"
                        title="Miscellaneous Notes"
                        placeholder="Optional">

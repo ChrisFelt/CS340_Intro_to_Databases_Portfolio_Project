@@ -29,6 +29,15 @@ h2 {
     color: #999;
 }
 
+h3 {
+    font-size: 1.2em;
+    font-weight: 100;
+    margin-top: 30px;
+    text-align: center;
+    letter-spacing: -1px;
+    color: #999;
+}
+
 /* Table Style */
 table {
     margin: 0 auto;
@@ -107,10 +116,10 @@ form label {
 }
 
 /* Button styling */
-form input[type=submit] {
+form input[type=submit],
+.btn-cancel {
     align-items: center;
     appearance: none;
-    /*background-color: #3EB2FD;*/
     background-image: linear-gradient(1deg, #e60a0a, #b70404 99%);
     background-size: calc(100% + 20px) calc(100% + 20px);
     border-radius: 100px;
@@ -137,31 +146,29 @@ form input[type=submit] {
     white-space: nowrap;
 }
 
-form input[type=submit]:active,
-.button-21:focus {
-    outline: none;
-}
-
-form input[type=submit]:hover {
+form input[type=submit]:hover,
+.btn-cancel:hover {
     background-position: -20px -20px;
     background-image: linear-gradient(1deg, #a70606, #4f0202 99%);
-
 }
 
-form input[type=submit]:focus:not(:active) {
-    box-shadow: rgba(40, 170, 255, 0.25) 0 0 0 .125em;
-}
 
 form select {
-    width: 10%;
+    width: 12%;
     height: 3%;
 }
 
 .rating {
+    margin-left: 22px;
     width: 5%;
     height: 3%;
 }
 
 form textarea {
-    width: 100%;
+    width: 50%;
+    height: 25%;
+}
+
+form input[type=date] {
+    margin-left: 22px;
 }
