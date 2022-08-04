@@ -91,7 +91,11 @@ def user():
                     mysql.connection.commit()
                 # account for NO null
                 else:
-                    query = "INSERT INTO Users (firstName, lastName, address, specialization, bio) VALUES (%s, %s, %s, %s, %s)"
+                    query = """INSERT INTO Users (firstName, lastName, address, specialization, bio) VALUES (%s, 
+                                %s, 
+                                %s, 
+                                %s, 
+                                %s)"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization, bio))
                     mysql.connection.commit()
@@ -136,25 +140,45 @@ def edit_user(id):
             else:
                 # account for null specialization AND bio
                 if specialization == "" and bio == "":
-                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = NULL, Users.bio = NULL WHERE Users.userID = %s"
+                    query = """UPDATE Users SET Users.firstName = %s, 
+                                    Users.lastName = %s, 
+                                    Users.address = %s, 
+                                    Users.specialization = NULL, 
+                                    Users.bio = NULL 
+                                    WHERE Users.userID = %s"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, userID))
                     mysql.connection.commit()
                 # account for null specialization
                 elif specialization == "":
-                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = NULL, Users.bio = %s WHERE Users.userID = %s"
+                    query = """UPDATE Users SET Users.firstName = %s, 
+                                    Users.lastName = %s, 
+                                    Users.address = %s, 
+                                    Users.specialization = NULL, 
+                                    Users.bio = %s 
+                                    WHERE Users.userID = %s"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, bio, userID))
                     mysql.connection.commit()
                 # account for null bio
                 elif bio == "":
-                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = %s, Users.bio = NULL WHERE Users.userID = %s"
+                    query = """UPDATE Users SET Users.firstName = %s, 
+                                    Users.lastName = %s, 
+                                    Users.address = %s, 
+                                    Users.specialization = %s, 
+                                    Users.bio = NULL 
+                                    WHERE Users.userID = %s"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization, userID))
                     mysql.connection.commit()
                 # account for NO null
                 else:
-                    query = "UPDATE Users SET Users.firstName = %s, Users.lastName = %s, Users.address = %s, Users.specialization = %s, Users.bio = %s WHERE Users.userID = %s"
+                    query = """UPDATE Users SET Users.firstName = %s, 
+                                    Users.lastName = %s, 
+                                    Users.address = %s, 
+                                    Users.specialization = %s, 
+                                    Users.bio = %s 
+                                    WHERE Users.userID = %s"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization, bio, userID))
                     mysql.connection.commit()
@@ -211,7 +235,12 @@ def rock():
 
             # CREATE Rock
             else:
-                query = "INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, %s, %s, %s, %s, %s)"
+                query = """INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, 
+                            %s, 
+                            %s, 
+                            %s, 
+                            %s, 
+                            %s)"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
                 mysql.connection.commit()
