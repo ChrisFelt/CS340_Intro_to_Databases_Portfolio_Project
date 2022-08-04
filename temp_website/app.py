@@ -624,9 +624,9 @@ def edit_shipment(id):
                                 FROM Shipments 
                                     INNER JOIN Users 
                                         ON Shipments.userID = Users.userID 
-                                WHERE Shipments.shipmentID = %s""" % (id)
+                                WHERE Shipments.shipmentID = %s"""
         cur = mysql.connection.cursor()
-        cur.execute(readShipmentQuery)
+        cur.execute(readShipmentQuery, (id,))
         readShipment = cur.fetchall()
 
         # get shipment data vanilla style
@@ -639,9 +639,9 @@ def edit_shipment(id):
                                 FROM Shipments 
                                     INNER JOIN Users 
                                         ON Shipments.userID = Users.userID 
-                                WHERE Shipments.shipmentID = %s""" % (id)
+                                WHERE Shipments.shipmentID = %s"""
         cur = mysql.connection.cursor()
-        cur.execute(editShipmentQuery)
+        cur.execute(editShipmentQuery, (id,))
         editShipment = cur.fetchall()
 
         # get Rock names and their owner's names
@@ -655,9 +655,9 @@ def edit_shipment(id):
                                     ON Shipments_has_Rocks.rockID = Rocks.rockID
                                 LEFT JOIN Users
                                     ON Rocks.userID = Users.userID
-                            WHERE Shipments_has_Rocks.shipmentID = %s""" % (id)
+                            WHERE Shipments_has_Rocks.shipmentID = %s"""
         cur = mysql.connection.cursor()
-        cur.execute(rocksQuery)
+        cur.execute(rocksQuery, (id,))
         rocks = cur.fetchall()
 
         # get Rock names and their owner's names
@@ -672,17 +672,17 @@ def edit_shipment(id):
         shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
                                     FROM Users 
                                     WHERE userID != (SELECT userID from Shipments WHERE shipmentID = %s)
-                                    GROUP BY name""" % (id)
+                                    GROUP BY name"""
         cur = mysql.connection.cursor()
-        cur.execute(shipUsersOptionQuery)
+        cur.execute(shipUsersOptionQuery, (id,))
         shipUsersOption = cur.fetchall()
 
         # get the original User in the Shipment
         shipUserQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name 
                             FROM Users 
-                            WHERE userID = (SELECT userID from Shipments WHERE shipmentID = %s)""" % (id)
+                            WHERE userID = (SELECT userID from Shipments WHERE shipmentID = %s)"""
         cur = mysql.connection.cursor()
-        cur.execute(shipUserQuery)
+        cur.execute(shipUserQuery, (id,))
         shipUser = cur.fetchall()
 
         return render_template("edit_shipment.jinja2", readShipment=readShipment, editShipment=editShipment,
@@ -734,7 +734,7 @@ def edit_shipment(id):
                                         WHERE shipOrigin = %s 
                                         AND shipDest = %s
                                         AND shipDate = %s
-                                        AND miscNote = 'None' """
+                                        AND miscNote = 'None'"""
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
                     checkShipNone = cur.fetchall()
