@@ -107,9 +107,9 @@ def user():
 def edit_user(id):
     if request.method == "GET":
         # mySQL query to grab the info of the person with our passed id
-        query = "SELECT * FROM Users WHERE userID = %s" % (id)
+        query = "SELECT * FROM Users WHERE userID = %s"
         cur = mysql.connection.cursor()
-        cur.execute(query)
+        cur.execute(query, (id,))
         data = cur.fetchall()
 
         return render_template("edit_user.jinja2", data=data)
@@ -392,15 +392,15 @@ def edit_review(id):
                                     ON Reviews.userID = Users.userID 
                                 INNER JOIN Rocks 
                                     ON Reviews.rockID = Rocks.rockID
-                        WHERE Reviews.reviewID = %s""" % (id)
+                        WHERE Reviews.reviewID = %s"""
         cur = mysql.connection.cursor()
-        cur.execute(query)
+        cur.execute(query, (id,))
         readData = cur.fetchall()
 
         # READ query for UPDATE
-        query = "SELECT * FROM Reviews WHERE reviewID = %s" % (id)
+        query = "SELECT * FROM Reviews WHERE reviewID = %s"
         cur = mysql.connection.cursor()
-        cur.execute(query)
+        cur.execute(query, (id,))
         data = cur.fetchall()
 
         # fetch Reviewers
@@ -825,9 +825,9 @@ def add_shipments_has_rocks(id):
 @app.route("/delete_shipments_has_rocks/<int:id>")
 def delete_shipments_has_rocks(id):
     # save shipmentID
-    shipQuery = "SELECT shipmentID FROM Shipments_has_Rocks WHERE shipmentHasRockID = %s" % (id)
+    shipQuery = "SELECT shipmentID FROM Shipments_has_Rocks WHERE shipmentHasRockID = %s"
     cur = mysql.connection.cursor()
-    cur.execute(shipQuery)
+    cur.execute(shipQuery, (id,))
     shipmentID = cur.fetchall()
     # get value from query
     shipmentID = str(shipmentID[0]["shipmentID"])
