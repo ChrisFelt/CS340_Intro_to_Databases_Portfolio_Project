@@ -812,7 +812,7 @@ def delete_shipments_has_rocks(id):
     # check if no Rocks left in Shipment
     checkQuery = "SELECT COUNT(shipmentID) AS count FROM Shipments_has_Rocks WHERE shipmentID = %s"
     cur = mysql.connection.cursor()
-    cur.execute(checkQuery, (shipmentID))
+    cur.execute(checkQuery, (shipmentID,))
     checkRocks = cur.fetchall()
     # get value from query
     checkRocks = str(checkRocks[0]["count"])
