@@ -7,11 +7,11 @@
         <title>Edit User</title>
     </head>
 
-    <body>
+    <body class="container">
     <div>
-        <h2> Editing User:</h2>
+        <h1> Editing User:</h1>
 
-        <table border="1" cellpadding="5">
+        <table>
 
             {% if data %}
                 <thead>
@@ -57,7 +57,8 @@
 
                 <label for="specialization">Specialization:</label>
                 <input type="text" value="{{ data[0].specialization }}" class="form-control" id="specialization"
-                       name="specialization" pattern="[A-Za-z0-9 ]+" title="Specialization (No special characters allowed)">
+                       name="specialization" pattern="[A-Za-z0-9 ]+"
+                       title="Specialization (No special characters allowed)">
 
                 <br/><label for="bio"> Bio </label><br/>
                 <textarea class="form-control" id="bio" name="bio" rows="5" cols="33"

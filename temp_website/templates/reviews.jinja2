@@ -6,19 +6,21 @@
     <head>
         <title>Reviews</title>
     </head>
-    <body>
+    <body class="container">
 
     <h1>Reviews</h1>
 
     <div id="browse">
-        <table border="1" cellpadding="5">
+        <table>
             <legend>To modify a review, select edit.</legend>
+            <br/>
             {% if data %}
                 <thead>
                 <tr>
                     {% for key in data[0].keys() %}
                         <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
                     {% endfor %}
+                    <th scope="col">Edit</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -73,7 +75,7 @@
                 <textarea id="body" name="body" rows="5" cols="33" placeholder="Required" required></textarea>
 
                 <br/><label> Rating: </label>
-                <select name="rating" id="rating" required>
+                <select class="rating" name="rating" id="rating" required>
                     {% for x in range(6) %}
                         <option value={{ x }}>{{ x }}</option>
                     {% endfor %}

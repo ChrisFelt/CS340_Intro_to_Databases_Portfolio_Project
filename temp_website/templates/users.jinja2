@@ -7,19 +7,20 @@
         <title>Users</title>
     </head>
 
-    <body>
+    <body class="container">
 
     <h1>Users</h1>
 
     <div id="browse">
-        <table border="1" cellpadding="5">
-            <legend>To modify a user, select edit.</legend>
+        <table>
+            <legend>To modify a user, select edit.</legend><br/>
             {% if data %}
                 <thead>
                 <tr>
                     {% for key in data[0].keys() %}
                         <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
                     {% endfor %}
+                        <th scope="col">Edit</th>
                 </tr>
 
                 <tbody>
@@ -51,10 +52,12 @@
                        required>
 
                 <label for="address"> Address </label>
-                <input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9,.#\- ]+" title="Address (Only alphanumeric and [,.#-] allowed)" placeholder="Required" required>
+                <input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9,.#\- ]+"
+                       title="Address (Only alphanumeric and [,.#-] allowed)" placeholder="Required" required>
 
                 <label for="specialization"> Specialization </label>
-                <input type="text" class="form-control" id="specialization" name="specialization" pattern="[A-Za-z0-9 ]+" title="Specialization (No special characters allowed)"
+                <input type="text" class="form-control" id="specialization" name="specialization"
+                       pattern="[A-Za-z0-9 ]+" title="Specialization (No special characters allowed)"
                        placeholder="Optional">
 
                 <br/><label for="bio"> Bio </label><br/>
