@@ -115,9 +115,7 @@ def edit_user(id):
         return render_template("edit_user.jinja2", data=data)
 
     if request.method == "POST":
-        """
-        TODO: Create more user friendly error message when firstName/lastName are not unique.
-        """
+        # gather form data
         userID = request.form["userID"]
         firstName = request.form["firstName"]
         lastName = request.form["lastName"]
@@ -125,6 +123,7 @@ def edit_user(id):
         specialization = request.form["specialization"]
         bio = request.form["bio"]
 
+        # UPDATE
         if request.form.get("Edit_User"):
             # check if duplicate entry
             checkQuery = """SELECT userID FROM Users 
@@ -188,9 +187,7 @@ def edit_user(id):
 
 @app.route('/rocks', methods=["POST", "GET"])
 def rock():
-    """
-    TODO: Work on SEARCH
-    """
+    # READ
     if request.method == "GET":
         query = """SELECT Rocks.rockID AS 'Rock Number', 
                         Rocks.name AS 'Rock Name', 
@@ -212,6 +209,7 @@ def rock():
 
         return render_template("rocks.jinja2", data=data, users=users)
 
+    # CREATE
     if request.method == "POST":
 
         if request.form.get("Add_Rock"):
@@ -271,6 +269,7 @@ def rock_search(term):
     cur.execute(colNameQuery)
     colData = cur.fetchall()
 
+    # ROCK SEARCH
     if request.method == "GET":
         # mySQL query to return all rows in Rocks that contain the given substring
         query = """WITH rockSearch AS
@@ -304,6 +303,7 @@ def rock_search(term):
 
 @app.route('/reviews', methods=["POST", "GET"])
 def review():
+    # READ
     if request.method == "GET":
         query = """SELECT Reviews.reviewID AS 'Review ID', 
                         CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, 
@@ -378,6 +378,7 @@ def review():
 
 @app.route('/edit_review/<int:id>', methods=["POST", "GET"])
 def edit_review(id):
+    # READ
     if request.method == "GET":
         # general READ query for Reviews
         query = """SELECT Reviews.reviewID AS 'Review ID', 
@@ -416,6 +417,7 @@ def edit_review(id):
 
         return render_template("edit_review.jinja2", readData=readData, data=data, users=users, rocks=rocks)
 
+    # UPDATE
     if request.method == "POST":
         # collect form data
         reviewID = id
@@ -514,6 +516,25 @@ def shipment():
         miscNote = request.form["miscNote"]
 
         if request.form.get("Add_Shipment"):
+
+            # display error popup if shipment exists with same date and same rock
+            checkRock = """SELECT COUNT(Shipments_has_Rocks.shipmentID) AS count,
+                                Shipments.shipDate,
+                                Rocks.name 
+                                FROM Shipments_has_Rocks
+                                INNER JOIN Shipments
+                                ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
+                                INNER JOIN Rocks
+                                ON Shipments_has_Rocks.rockID = Rocks.rockID
+                                WHERE Rocks.name = %s AND Shipments.shipDate = %s"""
+            cur = mysql.connection.cursor()
+            cur.execute(checkRock, (rock, shipDate))
+            checkRockShip = cur.fetchall()
+
+            # notify user if entry is a duplicate
+            if checkRockShip[0]['count'] != 0:
+                flash('Duplicate rocks on the same date are not allowed! Please try again.', 'error')
+                return redirect("/shipments")
 
             # account for null miscNote
             if miscNote == "":
@@ -740,6 +761,7 @@ def edit_shipment(id):
 
                     if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
                         flash('Duplicate entry! Shipment not added. Please try again.', 'error')
+                        return redirect("/edit_shipment/" + str(id))
 
                     else:
                         # first, SQL query to insert new Shipment
@@ -773,6 +795,7 @@ def edit_shipment(id):
                     # notify user of duplicate shipment
                     if checkShip[0]['count'] != 0:
                         flash('Duplicate entry! Shipment not added. Please try again.', 'error')
+                        return redirect("/edit_shipment/" + str(id))
 
                     else:
                         # first, SQL query to insert new Shipment
@@ -809,14 +832,34 @@ def add_shipments_has_rocks(id):
     if request.form.get("Add_Shipments_has_Rocks"):
         # gather variable from Add_Shipments_has_Rocks form
         rock = request.form["rock"]
+        shipDate = request.form["shipDate"]
 
-        # CREATE Shipments_has_Rocks SQL query
-        query = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
-                    VALUES (%s,
-                    (SELECT rockID FROM Rocks WHERE name = %s));"""
+        # display error popup if shipment exists with same date and same rock
+        checkRock = """SELECT COUNT(Shipments_has_Rocks.shipmentID) AS count,
+                                        Shipments.shipDate,
+                                        Rocks.name 
+                                        FROM Shipments_has_Rocks
+                                        INNER JOIN Shipments
+                                        ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
+                                        INNER JOIN Rocks
+                                        ON Shipments_has_Rocks.rockID = Rocks.rockID
+                                        WHERE Rocks.name = %s AND Shipments.shipDate = %s"""
         cur = mysql.connection.cursor()
-        cur.execute(query, (id, rock))
-        mysql.connection.commit()
+        cur.execute(checkRock, (rock, shipDate))
+        checkRockShip = cur.fetchall()
+
+        # notify user if entry is a duplicate
+        if checkRockShip[0]['count'] != 0:
+            flash('Duplicate rocks on the same date are not allowed! Please try again.', 'error')
+
+        # CREATE Shipments_has_Rocks
+        else:
+            query = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
+                        VALUES (%s,
+                        (SELECT rockID FROM Rocks WHERE name = %s));"""
+            cur = mysql.connection.cursor()
+            cur.execute(query, (id, rock))
+            mysql.connection.commit()
 
         return redirect("/edit_shipment/" + str(id))
 

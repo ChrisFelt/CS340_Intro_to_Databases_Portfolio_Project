@@ -142,6 +142,9 @@
             <legend><strong>Add Rock to Shipment: </strong></legend>
             <fieldset>
 
+                <input type="hidden" value="{{ editShipment[0].shipDate }}" class="form-control" id="shipDate"
+                       name="shipDate" required>
+
                 {% if addRocks|length == 0 %}
                     <tr>No rocks remaining!</tr>
 
