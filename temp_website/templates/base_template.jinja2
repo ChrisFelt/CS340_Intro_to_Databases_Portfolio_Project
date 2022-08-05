@@ -3,7 +3,7 @@
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <nav>
+    <nav id="navbar">
         <a href="/index">Home</a>
         <a href="/users">Users</a>
         <a href="/rocks">Rocks</a>
@@ -26,8 +26,13 @@
 
 </head>
 
-
 {% block content %}
 {% endblock %}
+
+<p>&nbsp;</p>
+
+<footer>
+  <p>© Rock Bottom</p>
+</footer>
 
 </html>
