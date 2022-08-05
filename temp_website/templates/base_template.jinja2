@@ -2,12 +2,15 @@
 <html lang="en">
 
 <head>
-
-    <div class="container">
-        [ <a href="/index">Home</a> | <a href="/users">Users</a> | <a href="/rocks">Rocks</a> | <a
-            href="/reviews">Reviews</a> | <a href="/shipments">Shipments</a> ]
-    </div>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <nav>
+        <a href="/index">Home</a>
+        <a href="/users">Users</a>
+        <a href="/rocks">Rocks</a>
+        <a href="/reviews">Reviews</a>
+        <a href="/shipments">Shipments</a>
+    </nav>
+
 
 
     <!-- super basic alert, fancier dismissible alert: https://www.youtube.com/watch?v=zglBdzzoDjM <- JS plugin for Bootstrap

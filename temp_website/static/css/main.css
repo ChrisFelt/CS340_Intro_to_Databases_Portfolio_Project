@@ -13,6 +13,26 @@ body {
     margin: 0 auto;
 }
 
+/* Navigation styling */
+nav {
+  width: 1200px;
+  margin: 5px auto;
+  position:center;
+  top:20px;
+}
+nav a{
+  padding: 10px 10px;
+  background-color: rgb(64, 69, 79);
+  color: rgb(232, 232, 232);
+  vertical-align:center;
+  font-size:1.3em;
+  font-weight:bold;
+}
+nav a:hover {
+  color: rgb(66, 64, 64);
+  background-color: rgb(152, 158, 168);
+}
+
 h1 {
     font-size: 3em;
     margin-top: 40px;
@@ -26,7 +46,6 @@ h2 {
     margin-top: 30px;
     text-align: center;
     letter-spacing: -1px;
-    color: #999;
 }
 
 h3 {
@@ -35,7 +54,7 @@ h3 {
     margin-top: 30px;
     text-align: center;
     letter-spacing: -1px;
-    color: #999;
+    color: #606060;
 }
 
 /* Table Style */
@@ -54,7 +73,6 @@ legend {
     margin-top: 30px;
     text-align: center;
     letter-spacing: -1px;
-    color: #999;
 }
 
 table thead th,

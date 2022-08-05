@@ -11,6 +11,9 @@
 
     <h1>Rocks</h1>
 
+    <h3>Search for rocks using any term in the Rocks table or add a rock below</h3>
+
+    <!-- Rock Search -->
     <div id="search">
         <form id="searchRocks" action="/rocks" method="post">
             <legend><strong>Search Rocks</strong></legend>
@@ -20,11 +23,13 @@
             </fieldset>
             <input type="submit" value="Rock Search" name="Rock_Search" class="btn btn-primary" style="margin:.5rem; margin-left: 260px;">
         </form>
-    </div>
+    </div> <!-- search -->
+
+    <p>&nbsp;</p>
 
     <div id="browse">
         <table>
-            <legend>Search for rocks using any term in the Rocks table or Add a rock below</legend>
+            <legend>Browsing Rocks</legend>
             <br/>
             {% if data %}
                 <thead>
@@ -48,7 +53,6 @@
         </table>
         <p>&nbsp;</p>
     </div><!-- browse -->
-
 
     <div id="insert">
         <form id="insertRock" action="/rocks" method="post">
