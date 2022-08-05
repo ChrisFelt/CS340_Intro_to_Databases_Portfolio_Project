@@ -9,6 +9,7 @@
 
     <body class="container">
     <div id="browse">
+        <!-- display Review being edited -->
         <h1> Editing Review:</h1>
         <table>
             {% if readData %}
@@ -34,16 +35,16 @@
                             {% endif %}
 
                         {% endfor %}
-                        {#                    <td><a href="edit_review/{{ item["Review ID"] }}" class="btn btn-default">Edit</a></td>#}
                     </tr>
                 {% endfor %}
                 </tbody>
             {% endif %}
         </table>
         <p>&nbsp;</p>
-    </div>    <!-- browse -->
+    </div>    <!-- display -->
 
     <div id="edit">
+        <!-- update Review -->
         <form id="editReview" action="/edit_review/{{ data[0].reviewID }}" method="post">
             <legend><strong>Update Review</strong></legend>
             <fieldset>
@@ -106,7 +107,7 @@
             <a href='/reviews'><input class="btn-cancel" type="button" value="Cancel" style="margin: .5rem"></a>
 
         </form>
-    </div><!--edit-->
+    </div><!-- update -->
 
 
     <br>

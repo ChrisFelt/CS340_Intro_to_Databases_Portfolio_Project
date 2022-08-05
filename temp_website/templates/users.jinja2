@@ -12,6 +12,7 @@
     <h1>Users</h1>
 
     <div id="browse">
+        <!-- populate browsing section of Users -->
         <table>
             <legend>To modify a user, select edit.</legend><br/>
             {% if data %}
@@ -38,6 +39,7 @@
     </div>    <!-- browse -->
 
     <div id="insert">
+        <!-- insert new User -->
         <form id="insertUser" action="/users" method="post">
             <legend><strong>Add User</strong></legend>
             <fieldset>
