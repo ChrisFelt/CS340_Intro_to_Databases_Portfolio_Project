@@ -31,7 +31,9 @@ def index():
 
 @app.route('/users', methods=["POST", "GET"])
 def user():
+    # READ
     if request.method == "GET":
+        # get User data
         query = """SELECT Users.userID AS 'User ID', 
                         firstName AS 'First Name', 
                         lastName AS 'Last Name', 
@@ -45,10 +47,9 @@ def user():
 
         return render_template("users.jinja2", data=data)
 
+    # CREATE
     if request.method == "POST":
-        """
-        TODO: Create more user friendly error message when firstName/lastName are not unique.
-        """
+        # get form data
         firstName = request.form["firstName"]
         lastName = request.form["lastName"]
         address = request.form["address"]
@@ -105,6 +106,7 @@ def user():
 
 @app.route('/edit_user/<int:id>', methods=["POST", "GET"])
 def edit_user(id):
+    # READ
     if request.method == "GET":
         # mySQL query to grab the info of the person with our passed id
         query = "SELECT * FROM Users WHERE userID = %s"
@@ -114,6 +116,7 @@ def edit_user(id):
 
         return render_template("edit_user.jinja2", data=data)
 
+    # UPDATE
     if request.method == "POST":
         # gather form data
         userID = request.form["userID"]
@@ -123,8 +126,8 @@ def edit_user(id):
         specialization = request.form["specialization"]
         bio = request.form["bio"]
 
-        # UPDATE
         if request.form.get("Edit_User"):
+
             # check if duplicate entry
             checkQuery = """SELECT userID FROM Users 
                                 WHERE firstName = %s 
@@ -136,6 +139,7 @@ def edit_user(id):
 
             if checkUser and int(userID) != checkUser[0]['userID']:
                 flash('Duplicate names are not allowed! Please try again.', 'error')
+
             else:
                 # account for null specialization AND bio
                 if specialization == "" and bio == "":
@@ -189,6 +193,7 @@ def edit_user(id):
 def rock():
     # READ
     if request.method == "GET":
+        # get Rock data
         query = """SELECT Rocks.rockID AS 'Rock Number', 
                         Rocks.name AS 'Rock Name', 
                         CONCAT(Users.firstName, ' ', Users.lastName) AS Owner, 
@@ -202,6 +207,7 @@ def rock():
         cur.execute(query)
         data = cur.fetchall()
 
+        # get User names
         usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
@@ -231,7 +237,6 @@ def rock():
             if checkRock[0]['count'] != 0:
                 flash('Duplicate rock names are not allowed! Please try again.', 'error')
 
-            # CREATE Rock
             else:
                 query = """INSERT INTO Rocks (userID, name, geoOrigin, type, description, chemicalComp) VALUES (%s, 
                             %s, 
@@ -255,6 +260,7 @@ def rock():
 
 @app.route('/rock_search/<string:term>', methods=["POST", "GET"])
 def rock_search(term):
+    # READ
     # get rock column names for table - can't figure out how to make the search work with aliases containing spaces
     colNameQuery = """SELECT Rocks.rockID AS 'Rock Number', 
                     Rocks.name AS 'Rock Name', 
@@ -305,6 +311,7 @@ def rock_search(term):
 def review():
     # READ
     if request.method == "GET":
+        # get Reviews
         query = """SELECT Reviews.reviewID AS 'Review ID', 
                         CONCAT(Users.firstName, ' ', Users.lastName) AS Reviewer, 
                         Rocks.name AS Rock, 
@@ -321,11 +328,13 @@ def review():
         cur.execute(query)
         data = cur.fetchall()
 
+        # get User names
         usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
+        # get Rock names
         rocksQuery = "SELECT rockID, name FROM Rocks"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
@@ -333,7 +342,7 @@ def review():
 
         return render_template("reviews.jinja2", data=data, rocks=rocks, users=users)
 
-    # CREATE Reviews
+    # CREATE
     if request.method == "POST":
         # collect form data
         userID = request.form["userID"]
@@ -430,7 +439,6 @@ def edit_review(id):
         prevUserID = request.form["prevUserID"]
         prevRockID = request.form["prevRockID"]
 
-        # UPDATE Reviews
         if request.form.get("Edit_Review"):
 
             # check if duplicate Review only if userID NOT NULL
@@ -476,8 +484,9 @@ def edit_review(id):
 
 @app.route('/shipments', methods=["POST", "GET"])
 def shipment():
-    # READ Shipment data
+    # READ
     if request.method == "GET":
+        # get Shipment data
         shipmentsQuery = """SELECT Shipments.shipmentID AS 'Shipment Number', 
                                 CONCAT(Users.firstName, ' ', Users.lastName) AS 'User', 
                                 Shipments.shipOrigin AS 'Origin', 
@@ -632,7 +641,7 @@ def shipment():
 # edit Shipments and Shipments_has_Rocks page
 @app.route('/edit_shipment/<int:id>', methods=["POST", "GET"])
 def edit_shipment(id):
-    # READ Shipment data
+    # READ
     if request.method == "GET":
         # get shipment data with some snappy monikers
         readShipmentQuery = """SELECT Shipments.shipmentID AS 'Shipment Number', 
@@ -708,7 +717,7 @@ def edit_shipment(id):
         return render_template("edit_shipment.jinja2", readShipment=readShipment, editShipment=editShipment,
                                rocks=rocks, addRocks=addRocks, shipUsersOption=shipUsersOption, shipUser=shipUser)
 
-    # UPDATE Shipment
+    # UPDATE
     if request.method == "POST":
         # update shipment attributes only
         if request.form.get("Edit_Shipment"):
@@ -899,7 +908,6 @@ def delete_shipments_has_rocks(id):
         return redirect("/shipments")
 
     else:
-
         return redirect("/edit_shipment/" + shipmentID)
 
 
