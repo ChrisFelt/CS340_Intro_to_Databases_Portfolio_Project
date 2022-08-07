@@ -40,7 +40,7 @@ def user():
                         address AS Address, 
                         specialization AS Specialization, 
                         bio AS Biography 
-                    FROM Users"""
+                    FROM Users;"""
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
@@ -61,7 +61,7 @@ def user():
             # check if duplicate entry
             checkQuery = """SELECT COUNT(userID) AS count FROM Users 
                                 WHERE firstName = %s 
-                                AND lastName = %s"""
+                                AND lastName = %s;"""
             cur = mysql.connection.cursor()
             cur.execute(checkQuery, (firstName, lastName))
             checkUser = cur.fetchall()
@@ -74,19 +74,19 @@ def user():
                 if specialization == "" and bio == "":
 
                     # mySQL query to insert a new person into bsg_people with our form inputs
-                    query = "INSERT INTO Users (firstName, lastName, address) VALUES (%s, %s, %s)"
+                    query = "INSERT INTO Users (firstName, lastName, address) VALUES (%s, %s, %s);"
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address))
                     mysql.connection.commit()
                 # account for null specialization
                 elif specialization == "":
-                    query = "INSERT INTO Users (firstName, lastName, address, bio) VALUES (%s, %s, %s, %s)"
+                    query = "INSERT INTO Users (firstName, lastName, address, bio) VALUES (%s, %s, %s, %s);"
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, bio))
                     mysql.connection.commit()
                 # account for null bio
                 elif bio == "":
-                    query = "INSERT INTO Users (firstName, lastName, address, specialization) VALUES (%s, %s, %s, %s)"
+                    query = "INSERT INTO Users (firstName, lastName, address, specialization) VALUES (%s, %s, %s, %s);"
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization))
                     mysql.connection.commit()
@@ -96,7 +96,7 @@ def user():
                                 %s, 
                                 %s, 
                                 %s, 
-                                %s)"""
+                                %s);"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization, bio))
                     mysql.connection.commit()
@@ -109,7 +109,7 @@ def edit_user(id):
     # READ
     if request.method == "GET":
         # mySQL query to grab the info of the person with our passed id
-        query = "SELECT * FROM Users WHERE userID = %s"
+        query = "SELECT * FROM Users WHERE userID = %s;"
         cur = mysql.connection.cursor()
         cur.execute(query, (id,))
         data = cur.fetchall()
@@ -131,7 +131,7 @@ def edit_user(id):
             # check if duplicate entry
             checkQuery = """SELECT userID FROM Users 
                                 WHERE firstName = %s 
-                                AND lastName = %s"""
+                                AND lastName = %s;"""
             cur = mysql.connection.cursor()
             cur.execute(checkQuery, (firstName, lastName))
             checkUser = cur.fetchall()
@@ -148,7 +148,7 @@ def edit_user(id):
                                     Users.address = %s, 
                                     Users.specialization = NULL, 
                                     Users.bio = NULL 
-                                    WHERE Users.userID = %s"""
+                                    WHERE Users.userID = %s;"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, userID))
                     mysql.connection.commit()
@@ -159,7 +159,7 @@ def edit_user(id):
                                     Users.address = %s, 
                                     Users.specialization = NULL, 
                                     Users.bio = %s 
-                                    WHERE Users.userID = %s"""
+                                    WHERE Users.userID = %s;"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, bio, userID))
                     mysql.connection.commit()
@@ -170,7 +170,7 @@ def edit_user(id):
                                     Users.address = %s, 
                                     Users.specialization = %s, 
                                     Users.bio = NULL 
-                                    WHERE Users.userID = %s"""
+                                    WHERE Users.userID = %s;"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization, userID))
                     mysql.connection.commit()
@@ -181,7 +181,7 @@ def edit_user(id):
                                     Users.address = %s, 
                                     Users.specialization = %s, 
                                     Users.bio = %s 
-                                    WHERE Users.userID = %s"""
+                                    WHERE Users.userID = %s;"""
                     cur = mysql.connection.cursor()
                     cur.execute(query, (firstName, lastName, address, specialization, bio, userID))
                     mysql.connection.commit()
@@ -202,13 +202,13 @@ def rock():
                         Rocks.description AS 'Description', 
                         Rocks.chemicalComp AS 'Chemical Composition' 
                     FROM Rocks 
-                        INNER JOIN Users ON Rocks.userID = Users.userID"""
+                        INNER JOIN Users ON Rocks.userID = Users.userID;"""
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
 
         # get User names
-        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users;"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
@@ -229,7 +229,7 @@ def rock():
 
             # check if duplicate name
             checkQuery = """SELECT COUNT(rockID) AS count FROM Rocks 
-                                WHERE name = %s"""
+                                WHERE name = %s;"""
             cur = mysql.connection.cursor()
             cur.execute(checkQuery, (name,))  # comma after name is required!
             checkRock = cur.fetchall()
@@ -243,7 +243,7 @@ def rock():
                             %s, 
                             %s, 
                             %s, 
-                            %s)"""
+                            %s);"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (userID, name, geoOrigin, type, description, chemicalComp))
                 mysql.connection.commit()
@@ -270,7 +270,7 @@ def rock_search(term):
                     Rocks.description AS 'Description', 
                     Rocks.chemicalComp AS 'Chemical Composition' 
                 FROM Rocks 
-                    INNER JOIN Users ON Rocks.userID = Users.userID"""
+                    INNER JOIN Users ON Rocks.userID = Users.userID;"""
     cur = mysql.connection.cursor()
     cur.execute(colNameQuery)
     colData = cur.fetchall()
@@ -298,7 +298,7 @@ def rock_search(term):
                        OR geoOrigin LIKE %s
                        OR type LIKE %s
                        OR description LIKE %s
-                       OR chemicalComp LIKE %s"""
+                       OR chemicalComp LIKE %s;"""
         cur = mysql.connection.cursor()
         cur.execute(query, ('%' + term + '%', '%' + term + '%', '%' + term + '%', '%' + term + '%',
                             '%' + term + '%', '%' + term + '%'))
@@ -323,19 +323,19 @@ def review():
                                     ON Reviews.userID = Users.userID 
                                 INNER JOIN Rocks 
                                     ON Reviews.rockID = Rocks.rockID 
-                        ORDER BY Reviews.reviewID ASC"""
+                        ORDER BY Reviews.reviewID ASC;"""
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
 
         # get User names
-        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users;"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
         # get Rock names
-        rocksQuery = "SELECT rockID, name FROM Rocks"
+        rocksQuery = "SELECT rockID, name FROM Rocks;"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
@@ -357,7 +357,7 @@ def review():
             if userID != "":
                 checkQuery = """SELECT COUNT(reviewID) AS count FROM Reviews 
                                     WHERE rockID = %s
-                                    AND userID = %s"""
+                                    AND userID = %s;"""
                 cur = mysql.connection.cursor()
                 cur.execute(checkQuery, (rockID, userID))
                 checkReview = cur.fetchall()
@@ -368,7 +368,7 @@ def review():
 
                 # CREATE Review with userID
                 else:
-                    query = "INSERT INTO Reviews (userID, rockID, title, body, rating) VALUES (%s, %s, %s, %s, %s)"
+                    query = "INSERT INTO Reviews (userID, rockID, title, body, rating) VALUES (%s, %s, %s, %s, %s);"
                     cur = mysql.connection.cursor()
                     cur.execute(query, (userID, rockID, title, body, rating))
                     mysql.connection.commit()
@@ -377,7 +377,7 @@ def review():
 
             # account for NULL userID
             elif userID == "":
-                query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s)"
+                query = "INSERT INTO Reviews (rockID, title, body, rating) VALUES (%s, %s, %s, %s);"
                 cur = mysql.connection.cursor()
                 cur.execute(query, (rockID, title, body, rating))
                 mysql.connection.commit()
@@ -401,25 +401,25 @@ def edit_review(id):
                                     ON Reviews.userID = Users.userID 
                                 INNER JOIN Rocks 
                                     ON Reviews.rockID = Rocks.rockID
-                        WHERE Reviews.reviewID = %s"""
+                        WHERE Reviews.reviewID = %s;"""
         cur = mysql.connection.cursor()
         cur.execute(query, (id,))
         readData = cur.fetchall()
 
         # READ query for UPDATE
-        query = "SELECT * FROM Reviews WHERE reviewID = %s"
+        query = "SELECT * FROM Reviews WHERE reviewID = %s;"
         cur = mysql.connection.cursor()
         cur.execute(query, (id,))
         data = cur.fetchall()
 
         # fetch Reviewers
-        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users"
+        usersQuery = "SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName FROM Users;"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
 
         # fetch Rocks
-        rocksQuery = "SELECT rockID, name FROM Rocks"
+        rocksQuery = "SELECT rockID, name FROM Rocks;"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
@@ -445,7 +445,7 @@ def edit_review(id):
             if userID != "" and (prevUserID != userID or prevRockID != rockID):
                 checkQuery = """SELECT COUNT(reviewID) AS count FROM Reviews 
                                     WHERE rockID = %s
-                                    AND userID = %s"""
+                                    AND userID = %s;"""
                 cur = mysql.connection.cursor()
                 cur.execute(checkQuery, (rockID, userID))
                 checkReview = cur.fetchall()
@@ -462,7 +462,7 @@ def edit_review(id):
                                     Reviews.title = %s, 
                                     Reviews.body = %s, 
                                     Reviews.rating = %s 
-                                    WHERE Reviews.reviewID = %s"""
+                                    WHERE Reviews.reviewID = %s;"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (rockID, title, body, rating, reviewID))
                 mysql.connection.commit()
@@ -474,7 +474,7 @@ def edit_review(id):
                                     Reviews.title = %s, 
                                     Reviews.body = %s, 
                                     Reviews.rating = %s 
-                                    WHERE Reviews.reviewID = %s"""
+                                    WHERE Reviews.reviewID = %s;"""
                 cur = mysql.connection.cursor()
                 cur.execute(query, (userID, rockID, title, body, rating, reviewID))
                 mysql.connection.commit()
@@ -495,19 +495,19 @@ def shipment():
                                 Shipments.miscNote AS 'Notes' 
                                 FROM Shipments 
                                     INNER JOIN Users 
-                                        ON Shipments.userID = Users.userID"""
+                                        ON Shipments.userID = Users.userID;"""
         cur = mysql.connection.cursor()
         cur.execute(shipmentsQuery)
         data = cur.fetchall()
 
         # fetch Rocks
-        rocksQuery = "SELECT name FROM Rocks"
+        rocksQuery = "SELECT name FROM Rocks;"
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery)
         rocks = cur.fetchall()
 
         # fetch Users
-        usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users"
+        usersQuery = "SELECT CONCAT(firstName, ' ', lastName) FROM Users;"
         cur = mysql.connection.cursor()
         cur.execute(usersQuery)
         users = cur.fetchall()
@@ -535,7 +535,7 @@ def shipment():
                                 ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
                                 INNER JOIN Rocks
                                 ON Shipments_has_Rocks.rockID = Rocks.rockID
-                                WHERE Rocks.name = %s AND Shipments.shipDate = %s"""
+                                WHERE Rocks.name = %s AND Shipments.shipDate = %s;"""
             cur = mysql.connection.cursor()
             cur.execute(checkRock, (rock, shipDate))
             checkRockShip = cur.fetchall()
@@ -553,7 +553,7 @@ def shipment():
                                     WHERE shipOrigin = %s 
                                     AND shipDest = %s
                                     AND shipDate = %s
-                                    AND miscNote IS NULL"""
+                                    AND miscNote IS NULL;"""
                 cur = mysql.connection.cursor()
                 cur.execute(checkQuery1, (shipOrigin, shipDest, shipDate))
                 checkShipNull = cur.fetchall()
@@ -563,7 +563,7 @@ def shipment():
                                     WHERE shipOrigin = %s 
                                     AND shipDest = %s
                                     AND shipDate = %s
-                                    AND miscNote = 'None' """
+                                    AND miscNote = 'None';"""
                 cur = mysql.connection.cursor()
                 cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
                 checkShipNone = cur.fetchall()
@@ -579,7 +579,7 @@ def shipment():
                                     %s, 
                                     %s, 
                                     %s, 
-                                    NULL)"""
+                                    NULL);"""
                     cur = mysql.connection.cursor()
                     cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate))
                     mysql.connection.commit()
@@ -590,7 +590,7 @@ def shipment():
                                                 AND shipDest = %s 
                                                 AND shipDate = %s 
                                                 AND miscNote IS NULL), 
-                                        (SELECT rockID FROM Rocks WHERE name = %s))"""
+                                        (SELECT rockID FROM Rocks WHERE name = %s));"""
                     cur = mysql.connection.cursor()
                     cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, rock))
                     mysql.connection.commit()
@@ -603,7 +603,7 @@ def shipment():
                                     WHERE shipOrigin = %s 
                                     AND shipDest = %s
                                     AND shipDate = %s
-                                    AND miscNote = %s"""
+                                    AND miscNote = %s;"""
                 cur = mysql.connection.cursor()
                 cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
                 checkShip = cur.fetchall()
@@ -619,7 +619,7 @@ def shipment():
                                     %s, 
                                     %s, 
                                     %s, 
-                                    %s)"""
+                                    %s);"""
                     cur = mysql.connection.cursor()
                     cur.execute(shipQuery, (user, shipOrigin, shipDest, shipDate, miscNote))
                     mysql.connection.commit()
@@ -630,7 +630,7 @@ def shipment():
                                                 AND shipDest = %s 
                                                 AND shipDate = %s 
                                                 AND miscNote = %s), 
-                                        (SELECT rockID FROM Rocks WHERE name = %s))"""
+                                        (SELECT rockID FROM Rocks WHERE name = %s));"""
                     cur = mysql.connection.cursor()
                     cur.execute(shipRockQuery, (shipOrigin, shipDest, shipDate, miscNote, rock))
                     mysql.connection.commit()
@@ -653,7 +653,7 @@ def edit_shipment(id):
                                 FROM Shipments 
                                     INNER JOIN Users 
                                         ON Shipments.userID = Users.userID 
-                                WHERE Shipments.shipmentID = %s"""
+                                WHERE Shipments.shipmentID = %s;"""
         cur = mysql.connection.cursor()
         cur.execute(readShipmentQuery, (id,))
         readShipment = cur.fetchall()
@@ -668,7 +668,7 @@ def edit_shipment(id):
                                 FROM Shipments 
                                     INNER JOIN Users 
                                         ON Shipments.userID = Users.userID 
-                                WHERE Shipments.shipmentID = %s"""
+                                WHERE Shipments.shipmentID = %s;"""
         cur = mysql.connection.cursor()
         cur.execute(editShipmentQuery, (id,))
         editShipment = cur.fetchall()
@@ -684,7 +684,7 @@ def edit_shipment(id):
                                     ON Shipments_has_Rocks.rockID = Rocks.rockID
                                 LEFT JOIN Users
                                     ON Rocks.userID = Users.userID
-                            WHERE Shipments_has_Rocks.shipmentID = %s"""
+                            WHERE Shipments_has_Rocks.shipmentID = %s;"""
         cur = mysql.connection.cursor()
         cur.execute(rocksQuery, (id,))
         rocks = cur.fetchall()
@@ -692,7 +692,7 @@ def edit_shipment(id):
         # get Rock names and their owner's names
         addRocksQuery = """SELECT Rocks.name AS rock
                             FROM Rocks
-                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s)"""
+                                WHERE rockID NOT IN (SELECT rockID FROM Shipments_has_Rocks WHERE shipmentID = %s);"""
         cur = mysql.connection.cursor()
         cur.execute(addRocksQuery, (id,))
         addRocks = cur.fetchall()
@@ -701,7 +701,7 @@ def edit_shipment(id):
         shipUsersOptionQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name
                                     FROM Users 
                                     WHERE userID != (SELECT userID from Shipments WHERE shipmentID = %s)
-                                    GROUP BY name"""
+                                    GROUP BY name;"""
         cur = mysql.connection.cursor()
         cur.execute(shipUsersOptionQuery, (id,))
         shipUsersOption = cur.fetchall()
@@ -709,7 +709,7 @@ def edit_shipment(id):
         # get the original User in the Shipment
         shipUserQuery = """SELECT CONCAT(firstName, ' ', lastName) AS name 
                             FROM Users 
-                            WHERE userID = (SELECT userID from Shipments WHERE shipmentID = %s)"""
+                            WHERE userID = (SELECT userID from Shipments WHERE shipmentID = %s);"""
         cur = mysql.connection.cursor()
         cur.execute(shipUserQuery, (id,))
         shipUser = cur.fetchall()
@@ -757,7 +757,7 @@ def edit_shipment(id):
                                         WHERE shipOrigin = %s 
                                         AND shipDest = %s
                                         AND shipDate = %s
-                                        AND miscNote IS NULL"""
+                                        AND miscNote IS NULL;"""
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery1, (shipOrigin, shipDest, shipDate))
                     checkShipNull = cur.fetchall()
@@ -767,7 +767,7 @@ def edit_shipment(id):
                                         WHERE shipOrigin = %s 
                                         AND shipDest = %s
                                         AND shipDate = %s
-                                        AND miscNote = 'None'"""
+                                        AND miscNote = 'None';"""
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
                     checkShipNone = cur.fetchall()
@@ -785,7 +785,7 @@ def edit_shipment(id):
                                                 shipDest = %s,
                                                 shipDate = %s, 
                                                 miscNote = NULL
-                                                WHERE shipmentID = %s"""
+                                                WHERE shipmentID = %s;"""
                         cur = mysql.connection.cursor()
                         cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
                         mysql.connection.commit()
@@ -800,7 +800,7 @@ def edit_shipment(id):
                                         WHERE shipOrigin = %s 
                                         AND shipDest = %s
                                         AND shipDate = %s
-                                        AND miscNote = %s"""
+                                        AND miscNote = %s;"""
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
                     checkShip = cur.fetchall()
@@ -819,7 +819,7 @@ def edit_shipment(id):
                                                 shipDest = %s,
                                                 shipDate = %s,
                                                 miscNote = %s
-                                                WHERE shipmentID = %s"""
+                                                WHERE shipmentID = %s;"""
                         cur = mysql.connection.cursor()
                         cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, miscNote, id))
                         mysql.connection.commit()
@@ -830,7 +830,7 @@ def edit_shipment(id):
 @app.route("/delete_shipment/<int:id>")
 def delete_shipment(id):
     # SQL query to delete the Shipment given id
-    query = "DELETE FROM Shipments WHERE shipmentID =  %s"
+    query = "DELETE FROM Shipments WHERE shipmentID =  %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
@@ -856,7 +856,7 @@ def add_shipments_has_rocks(id):
                                         ON Shipments_has_Rocks.shipmentID = Shipments.shipmentID
                                         INNER JOIN Rocks
                                         ON Shipments_has_Rocks.rockID = Rocks.rockID
-                                        WHERE Rocks.name = %s AND Shipments.shipDate = %s"""
+                                        WHERE Rocks.name = %s AND Shipments.shipDate = %s;"""
         cur = mysql.connection.cursor()
         cur.execute(checkRock, (rock, shipDate))
         checkRockShip = cur.fetchall()
@@ -869,7 +869,7 @@ def add_shipments_has_rocks(id):
         else:
             query = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
                         VALUES (%s,
-                        (SELECT rockID FROM Rocks WHERE name = %s))"""
+                        (SELECT rockID FROM Rocks WHERE name = %s));"""
             cur = mysql.connection.cursor()
             cur.execute(query, (id, rock))
             mysql.connection.commit()
@@ -882,7 +882,7 @@ def add_shipments_has_rocks(id):
 @app.route("/delete_shipments_has_rocks/<int:id>")
 def delete_shipments_has_rocks(id):
     # save shipmentID
-    shipQuery = "SELECT shipmentID FROM Shipments_has_Rocks WHERE shipmentHasRockID = %s"
+    shipQuery = "SELECT shipmentID FROM Shipments_has_Rocks WHERE shipmentHasRockID = %s;"
     cur = mysql.connection.cursor()
     cur.execute(shipQuery, (id,))
     shipmentID = cur.fetchall()
@@ -894,7 +894,7 @@ def delete_shipments_has_rocks(id):
                         FROM Rocks 
                         INNER JOIN Shipments_has_Rocks
                         ON Rocks.rockID = Shipments_has_Rocks.rockID
-                        WHERE shipmentHasRockID = %s"""
+                        WHERE shipmentHasRockID = %s;"""
     cur = mysql.connection.cursor()
     cur.execute(rockQuery, (id,))
     rock = cur.fetchall()
@@ -902,13 +902,13 @@ def delete_shipments_has_rocks(id):
     rock = str(rock[0]["Rock"])
 
     # SQL query to delete the Shipment given id
-    query = "DELETE FROM Shipments_has_Rocks WHERE shipmentHasRockID =  %s"
+    query = "DELETE FROM Shipments_has_Rocks WHERE shipmentHasRockID =  %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
 
     # check if no Rocks left in Shipment
-    checkQuery = "SELECT COUNT(shipmentID) AS count FROM Shipments_has_Rocks WHERE shipmentID = %s"
+    checkQuery = "SELECT COUNT(shipmentID) AS count FROM Shipments_has_Rocks WHERE shipmentID = %s;"
     cur = mysql.connection.cursor()
     cur.execute(checkQuery, (shipmentID,))
     checkRocks = cur.fetchall()
@@ -918,7 +918,7 @@ def delete_shipments_has_rocks(id):
     # if no Rocks left in Shipment, delete Shipment
     if checkRocks == "0":
         # delete Shipment
-        deleteShipmentQuery = "DELETE FROM Shipments WHERE shipmentID = %s"
+        deleteShipmentQuery = "DELETE FROM Shipments WHERE shipmentID = %s;"
         cur = mysql.connection.cursor()
         cur.execute(deleteShipmentQuery, (shipmentID,))
         mysql.connection.commit()
