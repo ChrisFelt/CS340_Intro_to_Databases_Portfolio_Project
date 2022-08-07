@@ -65,6 +65,11 @@ h3 {
     color: #606060;
 }
 
+/* remove link underlines */
+a{
+  text-decoration:none;
+}
+
 /* Table Style */
 table {
     margin: 0 auto;
@@ -150,7 +155,7 @@ form input[type=submit],
 .btn-cancel {
     align-items: center;
     appearance: none;
-    background-image: linear-gradient(1deg, #e19a9a, #b67b7b 99%);
+    background-image: linear-gradient(1deg, rgb(124, 209, 249), rgb(92, 152, 180) 99%);
     background-size: calc(100% + 20px) calc(100% + 20px);
     border-radius: 100px;
     border-width: 0;
@@ -179,7 +184,7 @@ form input[type=submit],
 form input[type=submit]:hover,
 .btn-cancel:hover {
     background-position: -20px -20px;
-    background-image: linear-gradient(1deg, #a94545, #541e1e 99%);
+    background-image: linear-gradient(1deg, rgb(139, 212, 246), rgb(126, 188, 217) 99%);
 }
 
 form input[type=submit] {

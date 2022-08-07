@@ -388,10 +388,6 @@ SET name       = :userID_from_dropdown_input,
     shipDate   = :shipDateInput,
     miscNote   = :miscNoteInput
 WHERE shipmentID = :shipmentID_selected_in_form;
--- additionally, update Shipments_has_Rocks
-UPDATE Shipments_has_Rocks
-SET rockID = :rockID_from_rock_input
-WHERE shipmentID = :shipmentID_selected_in_form;
 
 
 -- DELETE I
@@ -412,3 +408,10 @@ SELECT COUNT(shipmentID) AS count
     FROM Shipments_has_Rocks
     WHERE shipmentHasRockID = :shipmentHasRockID_from_browse_shipment_page;
 -- if empty set is returned, browser runs DELETE I as well
+
+-- get Rock name to use in popup for notifying user rock has been removed.
+SELECT Rocks.name AS Rock
+    FROM Rocks
+        INNER JOIN Shipments_has_Rocks
+            ON Rocks.rockID = Shipments_has_Rocks.rockID
+    WHERE shipmentHasRockID = :shipmentHasRockID_from_browse_shipment_page;

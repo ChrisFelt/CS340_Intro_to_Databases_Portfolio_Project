@@ -736,6 +736,10 @@ def edit_shipment(id):
             prevShipDate = request.form["prevShipDate"]
             prevMiscNote = request.form["prevMiscNote"]
 
+            # replace 'None' with ""
+            if prevMiscNote == 'None':
+                prevMiscNote = ""
+
             # check previous values against new
             unchangedShipment = (user == prevUser) \
                                 and (shipOrigin == prevShipOrigin) \
@@ -870,6 +874,8 @@ def add_shipments_has_rocks(id):
             cur.execute(query, (id, rock))
             mysql.connection.commit()
 
+            flash(rock + ' added to shipment.', 'success')
+
         return redirect("/edit_shipment/" + str(id))
 
 
@@ -882,6 +888,18 @@ def delete_shipments_has_rocks(id):
     shipmentID = cur.fetchall()
     # get value from query
     shipmentID = str(shipmentID[0]["shipmentID"])
+
+    # get Rock name
+    rockQuery = """SELECT Rocks.name AS Rock
+                        FROM Rocks 
+                        INNER JOIN Shipments_has_Rocks
+                        ON Rocks.rockID = Shipments_has_Rocks.rockID
+                        WHERE shipmentHasRockID = %s"""
+    cur = mysql.connection.cursor()
+    cur.execute(rockQuery, (id,))
+    rock = cur.fetchall()
+    # get value from query
+    rock = str(rock[0]["Rock"])
 
     # SQL query to delete the Shipment given id
     query = "DELETE FROM Shipments_has_Rocks WHERE shipmentHasRockID =  %s"
@@ -905,9 +923,11 @@ def delete_shipments_has_rocks(id):
         cur.execute(deleteShipmentQuery, (shipmentID,))
         mysql.connection.commit()
 
+        flash('Last rock removed! Shipment deleted.', 'success')
         return redirect("/shipments")
 
     else:
+        flash(rock + ' removed from shipment.', 'success')
         return redirect("/edit_shipment/" + shipmentID)
 
 

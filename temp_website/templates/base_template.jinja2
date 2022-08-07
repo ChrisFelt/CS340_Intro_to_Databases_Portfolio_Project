@@ -13,11 +13,12 @@
         <a href="/shipments">Shipments</a>
     </nav>
 
-    <!-- super basic alert -->
+    <!-- import sweetalert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     {% for message in get_flashed_messages() %}
 
         <script>
-            alert('{{ message }}');
+            swal('{{ message }}');
         </script>
 
     {% endfor %}

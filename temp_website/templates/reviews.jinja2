@@ -77,8 +77,8 @@
 
                 <label for="title"> Review Title: </label><br/>
                 <input type="text" class="form-control" id="title" name="title" placeholder="Required"
-                       pattern="[A-Za-z0-9!@#$%^&*)(_+\-='><.,?]+"
-                       title="Review Title (Alphanumeric and [!@#$%^&*()_+-='><.,?] allowed)" required><br/>
+                       pattern="[A-Za-z0-9!@#$%^&*)( _+\-='><.,?|{}]+"
+                       title="Review Title (Alphanumeric and [ !@#$%^&*()_+-='><.,?] allowed)" required><br/>
 
                 <br/><label> Review: </label><br/>
                 <textarea id="body" name="body" rows="5" cols="33" placeholder="Required" required></textarea>
