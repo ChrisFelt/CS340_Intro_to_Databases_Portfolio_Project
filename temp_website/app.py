@@ -135,7 +135,6 @@ def edit_user(id):
             cur = mysql.connection.cursor()
             cur.execute(checkQuery, (firstName, lastName))
             checkUser = cur.fetchall()
-            print(checkUser)
 
             if checkUser and int(userID) != checkUser[0]['userID']:
                 flash('Duplicate names are not allowed! Please try again.', 'error')
@@ -740,18 +739,12 @@ def edit_shipment(id):
             if prevMiscNote == 'None':
                 prevMiscNote = ""
 
-            print(prevUser)
-            print(user)
-
             # check previous values against new
             unchangedUser = (user == prevUser)
             unchangedShipment = (shipOrigin == prevShipOrigin) \
                                 and (shipDest == prevShipDest) \
                                 and (shipDate == prevShipDate) \
                                 and (miscNote == prevMiscNote)
-
-            print(unchangedUser)
-            print(unchangedShipment)
 
             # account for null miscNote
             if miscNote == "":
@@ -777,9 +770,6 @@ def edit_shipment(id):
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
                     checkShipNone = cur.fetchall()
-
-                    print(checkShipNull[0]['count'])
-                    print(checkShipNone[0]['count'])
 
                     if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
                         flash('Duplicate entry! Shipment not added. Please try again.', 'error')
@@ -828,8 +818,6 @@ def edit_shipment(id):
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
                     checkShip = cur.fetchall()
-
-                    print(checkShip[0]['count'])
 
                     # notify user of duplicate shipment
                     if checkShip[0]['count'] != 0:
