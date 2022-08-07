@@ -740,18 +740,24 @@ def edit_shipment(id):
             if prevMiscNote == 'None':
                 prevMiscNote = ""
 
+            print(prevUser)
+            print(user)
+
             # check previous values against new
-            unchangedShipment = (user == prevUser) \
-                                and (shipOrigin == prevShipOrigin) \
+            unchangedUser = (user == prevUser)
+            unchangedShipment = (shipOrigin == prevShipOrigin) \
                                 and (shipDest == prevShipDest) \
                                 and (shipDate == prevShipDate) \
                                 and (miscNote == prevMiscNote)
+
+            print(unchangedUser)
+            print(unchangedShipment)
 
             # account for null miscNote
             if miscNote == "":
 
                 # skip if no values changed
-                if not unchangedShipment:
+                if not unchangedShipment or not unchangedUser:
                     # check if duplicate entry
                     checkQuery1 = """SELECT COUNT(shipmentID) AS count FROM Shipments 
                                         WHERE shipOrigin = %s 
@@ -772,6 +778,9 @@ def edit_shipment(id):
                     cur.execute(checkQuery2, (shipOrigin, shipDest, shipDate))
                     checkShipNone = cur.fetchall()
 
+                    print(checkShipNull[0]['count'])
+                    print(checkShipNone[0]['count'])
+
                     if checkShipNull[0]['count'] != 0 or checkShipNone[0]['count'] != 0:
                         flash('Duplicate entry! Shipment not added. Please try again.', 'error')
                         return redirect("/edit_shipment/" + str(id))
@@ -790,11 +799,26 @@ def edit_shipment(id):
                         cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
                         mysql.connection.commit()
 
+                # if just user changed, allow update
+                elif not unchangedUser:
+                    # first, SQL query to insert new Shipment
+                    shipUpdateQuery = """UPDATE Shipments
+                                            SET userID = (SELECT userID FROM Users 
+                                            WHERE CONCAT(firstName, ' ', lastName) = %s),
+                                            shipOrigin = %s,
+                                            shipDest = %s,
+                                            shipDate = %s, 
+                                            miscNote = NULL
+                                            WHERE shipmentID = %s;"""
+                    cur = mysql.connection.cursor()
+                    cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
+                    mysql.connection.commit()
+
             # account for NO null
             else:
 
                 # skip if no values changed
-                if not unchangedShipment:
+                if not unchangedShipment or not unchangedUser:
                     # check if duplicate entry
                     checkQuery = """SELECT COUNT(shipmentID) AS count FROM Shipments 
                                         WHERE shipOrigin = %s 
@@ -804,6 +828,8 @@ def edit_shipment(id):
                     cur = mysql.connection.cursor()
                     cur.execute(checkQuery, (shipOrigin, shipDest, shipDate, miscNote))
                     checkShip = cur.fetchall()
+
+                    print(checkShip[0]['count'])
 
                     # notify user of duplicate shipment
                     if checkShip[0]['count'] != 0:
@@ -823,6 +849,21 @@ def edit_shipment(id):
                         cur = mysql.connection.cursor()
                         cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, miscNote, id))
                         mysql.connection.commit()
+
+                # if just user changed, allow update
+                elif not unchangedUser:
+                    # first, SQL query to insert new Shipment
+                    shipUpdateQuery = """UPDATE Shipments
+                                            SET userID = (SELECT userID FROM Users 
+                                            WHERE CONCAT(firstName, ' ', lastName) = %s),
+                                            shipOrigin = %s,
+                                            shipDest = %s,
+                                            shipDate = %s, 
+                                            miscNote = NULL
+                                            WHERE shipmentID = %s;"""
+                    cur = mysql.connection.cursor()
+                    cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
+                    mysql.connection.commit()
 
             return redirect("/shipments")
 
