@@ -298,7 +298,7 @@ def rock_search(term):
                        OR geoOrigin LIKE %s
                        OR type LIKE %s
                        OR description LIKE %s
-                       OR chemicalComp LIKE %s;"""
+                       OR chemicalComp LIKE %s"""
         cur = mysql.connection.cursor()
         cur.execute(query, ('%' + term + '%', '%' + term + '%', '%' + term + '%', '%' + term + '%',
                             '%' + term + '%', '%' + term + '%'))
@@ -785,7 +785,7 @@ def edit_shipment(id):
                                                 shipDest = %s,
                                                 shipDate = %s, 
                                                 miscNote = NULL
-                                                WHERE shipmentID = %s;"""
+                                                WHERE shipmentID = %s"""
                         cur = mysql.connection.cursor()
                         cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, id))
                         mysql.connection.commit()
@@ -819,7 +819,7 @@ def edit_shipment(id):
                                                 shipDest = %s,
                                                 shipDate = %s,
                                                 miscNote = %s
-                                                WHERE shipmentID = %s;"""
+                                                WHERE shipmentID = %s"""
                         cur = mysql.connection.cursor()
                         cur.execute(shipUpdateQuery, (user, shipOrigin, shipDest, shipDate, miscNote, id))
                         mysql.connection.commit()
@@ -830,7 +830,7 @@ def edit_shipment(id):
 @app.route("/delete_shipment/<int:id>")
 def delete_shipment(id):
     # SQL query to delete the Shipment given id
-    query = "DELETE FROM Shipments WHERE shipmentID =  '%s';"
+    query = "DELETE FROM Shipments WHERE shipmentID =  %s"
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
@@ -869,7 +869,7 @@ def add_shipments_has_rocks(id):
         else:
             query = """INSERT INTO Shipments_has_Rocks (shipmentID, rockID)
                         VALUES (%s,
-                        (SELECT rockID FROM Rocks WHERE name = %s));"""
+                        (SELECT rockID FROM Rocks WHERE name = %s))"""
             cur = mysql.connection.cursor()
             cur.execute(query, (id, rock))
             mysql.connection.commit()
