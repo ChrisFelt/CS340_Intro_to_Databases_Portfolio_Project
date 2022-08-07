@@ -542,7 +542,7 @@ def shipment():
 
             # notify user if entry is a duplicate
             if checkRockShip[0]['count'] != 0:
-                flash('The same rock cannot be shipped more than once on the same date! Please try again.', 'error')
+                flash('The same rock cannot be in more than one shipment on the same date! Please try again.', 'error')
                 return redirect("/shipments")
 
             # account for null miscNote
@@ -863,7 +863,7 @@ def add_shipments_has_rocks(id):
 
         # notify user if entry is a duplicate
         if checkRockShip[0]['count'] != 0:
-            flash('Duplicate rocks on the same date are not allowed! Please try again.', 'error')
+            flash('The same rock cannot be in more than one shipment on the same date! Please try again.', 'error')
 
         # CREATE Shipments_has_Rocks
         else:
