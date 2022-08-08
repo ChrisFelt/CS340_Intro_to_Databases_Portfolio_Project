@@ -123,7 +123,7 @@ FROM Rocks
 SELECT userID, CONCAT(firstName, ' ', lastName) AS fullName
 FROM Users
 
-         -- SEARCH
+-- SEARCH
 -- search all non-key attributes as well as owners of Rocks for any rows that match the search criteria
          WITH rockSearch AS
          (SELECT Rocks.rockID,
