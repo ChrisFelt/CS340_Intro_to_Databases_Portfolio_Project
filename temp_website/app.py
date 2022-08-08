@@ -303,7 +303,7 @@ def rock_search(term):
                             '%' + term + '%', '%' + term + '%'))
         data = cur.fetchall()
 
-        return render_template("rock_search.jinja2", data=data, colData=colData)
+        return render_template("rock_search.jinja2", term=term, data=data, colData=colData)
 
 
 @app.route('/reviews', methods=["POST", "GET"])
