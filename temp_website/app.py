@@ -250,8 +250,11 @@ def rock():
             return redirect("/rocks")
 
         elif request.form.get("Rock_Search"):
-            # get search term
             term = request.form["search"]
+
+            # URI cannot end in a period
+            if term == ".":
+                return redirect(url_for("rock_search", term='%2E'))
 
             # send GET request to rock search page
             return redirect(url_for("rock_search", term=str(term)))
@@ -259,6 +262,11 @@ def rock():
 
 @app.route('/rock_search/<string:term>', methods=["POST", "GET"])
 def rock_search(term):
+
+    # convert if term is a period
+    if term == '%2E':
+        term = "."
+
     # READ
     # get rock column names for table - can't figure out how to make the search work with aliases containing spaces
     colNameQuery = """SELECT Rocks.rockID AS 'Rock Number', 
